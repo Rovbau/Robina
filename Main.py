@@ -1,5 +1,5 @@
 #Robo Main
-
+#Die Main Loop des Robos
 
 import Scanner
 
