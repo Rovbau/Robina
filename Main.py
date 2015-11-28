@@ -1,5 +1,5 @@
 #Robo Main
-#Die Main Loop des Robos
+
 
 import Scanner
 
@@ -26,7 +26,7 @@ while Robo==True:
 
     Karte.updateRoboPos(DeltaDist,SteerDiff,KompassCourse)
 
-    PumperL,PumperR=Encoder.pumper()
+    PumperL,PumperR=Encoder.getPumper()
     Karte.updateHardObstacles(PumperL,PumperR)
 
     Plan.getCourse(Steer,Speed)

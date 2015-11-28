@@ -16,6 +16,9 @@ class Encoder():
         self.TasteL=13
         self.TasteR=15
 
+        self.PortLRueck=29
+        self.PortRRueck=33
+
         self.WegCount=0
         self.DiffCount=0
 
@@ -28,6 +31,13 @@ class Encoder():
         GPIO.setup(self.PortEncoderH,GPIO.IN)
         GPIO.setup(self.TasteL,GPIO.IN)
         GPIO.setup(self.TasteR,GPIO.IN)
+
+        GPIO.setup(self.PortLRueck,GPIO.OUT)
+        GPIO.setup(self.PortRRueck,GPIO.OUT)
+
+        #Motorern EIN/AUS
+        #GPIO.output(self.PortRRueck,0)
+        #GPIO.output(self.PortLRueck,0)
         
         print("Init Encoder Done")    
 
@@ -51,8 +61,10 @@ class Encoder():
                 EncoderROld= GPIO.input(self.PortEncoderR)
     
             if GPIO.input(self.PortEncoderH) != EncoderHOld:
-                self.CountH +=1
-                #print(self.CountH)
+                if GPIO.input(self.PortLRueck)and GPIO.input(self.PortRRueck)==1:
+                    self.CountH -=1
+                else:
+                    self.CountH +=1                
                 EncoderHOld= GPIO.input(self.PortEncoderH)
     
             self.DiffCount=self.CountR-self.CountL
