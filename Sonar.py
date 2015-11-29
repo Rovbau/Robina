@@ -2,32 +2,24 @@
 
 import RPi.GPIO as GPIO
 import time
-
 import smbus
 bus = smbus.SMBus(1)
 
 class Sonar():
-
     def __init__ (self):
-        pass
-
-    def init(self):
-        global PortTrig,PortEcho
-        
-        PortTrig=38
-        PortEcho=40
+        self.PortTrig=38
+        self.PortEcho=40
         OnTime=0
         OffTime=0
 
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(PortTrig,GPIO.OUT)
-        GPIO.output(PortTrig,0)
-        GPIO.setup(PortEcho,GPIO.IN)
-        time.sleep(2)
+        GPIO.setup(self.PortTrig,GPIO.OUT)
+        GPIO.output(self.PortTrig,0)
+        GPIO.setup(self.PortEcho,GPIO.IN)
         print("Init Sonar")
 
     def GetScanDist(self):
-        global PortTrig,PortEcho     
+        """Distanz von Ultraschall-Sensor (cm)"""
         Distance=0
         Durchschnitt=0
         ErrScan=0
@@ -36,19 +28,19 @@ class Sonar():
             OffTime=0
             
             #Start Puls
-            GPIO.output(PortTrig,1)
+            GPIO.output(self.PortTrig,1)
             time.sleep(0.00002)
-            GPIO.output(PortTrig,0)
+            GPIO.output(self.PortTrig,0)
             time.sleep(0.00022)
 
             #Warte Echo
             PulsStart=time.time()
-            while GPIO.input(PortEcho)==0:
+            while GPIO.input(self.PortEcho)==0:
                 if OnTime-PulsStart>1:
                     print("Fehler Sonar RE-Init")
                     break
                 OnTime=time.time()    
-            while GPIO.input(PortEcho)==1:
+            while GPIO.input(self.PortEcho)==1:
                 if OffTime-PulsStart>1:
                     print("Fehler Sonar RE-Init")
                     break
@@ -71,7 +63,7 @@ class Sonar():
 
 
     def GetADC(self):
-            """Returns A/D Wert Korr in Dist"""
+            """Returns A/D Wert an Port 0. Distanz Infrarot (cm)"""
             Ref=3.3
             Adress=0x48
             ADCCannel=0
@@ -87,7 +79,7 @@ class Sonar():
             return(Dist, ErrScan)
 
     def GetBatSpann(self):
-            """Returns A/D Wert an Port 1"""
+            """Returns A/D Wert an Port 1. Batt. spannung (V)"""
             Ref=3.3
             Adress=0x48
             ADCCannel=1

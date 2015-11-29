@@ -22,7 +22,6 @@ class Scanner():
         setServoConfig()
         
         self.Sonar1=Sonar()
-        self.Sonar1.init()
 
         self.lock=Lock()
         
