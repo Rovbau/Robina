@@ -2,27 +2,30 @@
 
 
 import Scanner
+import Encoder
+import Kompass
+
 
 Scanner=Scanner()
-Scanner.init()
 Karte=Karte()
-Karte.reset()
 Plan=Plan()
-Plan.clearAll()
 
-ThreadScanner=Thread(target=Scanner.scanAllTime())
-ThreadScanner.start()
 
-ThreadEncoder=Thread(target=Encoder.runAllTime())
+ThreadScanAllTime=Thread(target=Scanner1.runAllTime, args=(1,))
+ThreadScanAllTime.daemon=True
+ThreadScanAllTime.start()
+
+ThreadEncoder=Thread(target=Encoder.runAllTime,args=())
+ThreadEncoder.daemon=True
 ThreadEncoder.start()
 
 while Robo==True:  
-    Obstacles=Scanner.getScanDiff()
+    Obstacles=Scanner.getNewDistValues()
     Karte.updateObstacles(Obstacles)
 
     DeltaDist=Encoder.getDistCounts()
     SteerDiff=Encoder.getSteerDiff()
-    KompassCourse=Encoder.getKompass()
+    KompassCourse=Kompass.getKompass()
 
     Karte.updateRoboPos(DeltaDist,SteerDiff,KompassCourse)
 
