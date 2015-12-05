@@ -13,7 +13,7 @@ class Kompass():
     def __init__(self):
         self.Kurs=0
         self.KompassAdress=0x60
-        print("Kompass init")
+        print("Init Kompass")
 
     def getKompass(self):
         """Returns KompassKurs"""

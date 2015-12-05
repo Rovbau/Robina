@@ -39,7 +39,7 @@ class Encoder():
         #GPIO.output(self.PortRRueck,0)
         #GPIO.output(self.PortLRueck,0)
         
-        print("Init Encoder Done")    
+        print("Init Encoder")    
 
     def runAllTime(self):
         """Count pulse L und R und DistanzRad, loop"""

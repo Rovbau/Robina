@@ -1,17 +1,22 @@
 #Robo Main
 
+Robo=True
 
-import Scanner
-import Encoder
-import Kompass
+from Scanner import *
+from Encoder import *
+from Kompass import *
+from Karte import *
+from Plan import *
 
 
 Scanner=Scanner()
 Karte=Karte()
 Plan=Plan()
+Encoder=Encoder()
+Kompass=Kompass()
+Navigation=Navigation()
 
-
-ThreadScanAllTime=Thread(target=Scanner1.runAllTime, args=(1,))
+ThreadScanAllTime=Thread(target=Scanner.runAllTime, args=(1,))
 ThreadScanAllTime.daemon=True
 ThreadScanAllTime.start()
 
@@ -30,8 +35,9 @@ while Robo==True:
     Karte.updateRoboPos(DeltaDist,SteerDiff,KompassCourse)
 
     PumperL,PumperR=Encoder.getPumper()
-    Karte.updateHardObstacles(PumperL,PumperR)
+ #   Karte.updateHardObstacles(PumperL,PumperR)
+    
 
-    Plan.getCourse(Steer,Speed)
-    Motor.setCommand(Steer,Speed)
+    Plan.getCourse()
+ #   Motor.setCommand(Steer,Speed)
 

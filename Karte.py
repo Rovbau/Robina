@@ -7,18 +7,19 @@ class Karte():
         self.RoboPosY=0
         self.RoboPosX=0
         self.RoboPath=[]
+        self.ScanList=[]
         GlobalKurs=0
 
     def updateObstacles(self,Obstacles):
         """Obstacles werden in ScanList eingetragen"""
-        ScanList=[[-90,0],[-80,0],[-70,0],[-60,0],[-50,0],
+        self.ScanList=[[-90,0],[-80,0],[-70,0],[-60,0],[-50,0],
                     [-40,0],[10,0],[20,0],[30,0],[40,0],[50,0]]
 
         for i in range(len(Obstacles)): 
-            for k in range(len(ScanList)):              
-                if Obstacles[i][0]==ScanList[k][0]:
-                    ScanList[k][1]=Obstacles[i][1]
-        return(ScanList)
+            for k in range(len(self.ScanList)):              
+                if Obstacles[i][0]==self.ScanList[k][0]:
+                    self.ScanList[k][1]=Obstacles[i][1]
+        return(self.ScanList)
 
 
 
@@ -63,14 +64,19 @@ class Karte():
         return(round(self.RoboPosX,1),round(self.RoboPosY,1))
     
     def getRoboPath(self):
-        """returns RoboPos X,Y"""
+        """returns RoboPath X,Y"""
         return(self.RoboPath)
+
+    def getObstacles(self):
+        """return latest Obstacles"""
+        return(self.ScanList)
 
 if __name__ == "__main__":
 
     Obstacles=[[-60,110],[-50,110],[-40,130],[10,140]]
     K=Karte()
-    print(K.updateObstacles(Obstacles))
+    K.updateObstacles(Obstacles)
+    print(K.getObstacles())
     
     DeltaDist=10
     SteerDiff=0
