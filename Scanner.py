@@ -46,7 +46,7 @@ class Scanner():
                 self.ScanList.append([(90-angle),Messwert])
                 self.lock.release()
             
-            ScanList=[]
+            #self.ScanList=[]
             NewScanAvailable=1
                    
             for angle in range(10, 170, 10):
@@ -54,15 +54,15 @@ class Scanner():
                 sleep(0.2)
                 Messwert,Error=self.Sonar1.GetADC()
                 Messwert,Error=self.Sonar1.GetADC()
-                ScanList.append([(90-angle),Messwert])
+                self.ScanList.append([(90-angle),Messwert])
                 
-            ScanList.reverse()
+            #ScanList.reverse()
             
             self.lock.acquire() 
             self.AusgabeList=ScanList[:]  #Deepcopy
             self.lock.release()
             
-            ScanList=[]
+            #ScanList=[]
             NewScanAvailable=1             
         return()
 

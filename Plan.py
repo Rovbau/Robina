@@ -3,37 +3,44 @@
 
 #from Karte import *
 
-
+from  time import *
 
 class Plan():
-    def __intit__(self):
+    def __init__(self,karte,navigation):
+        self.karte=karte
+        self.navigation=navigation
         Speed=0
         Steer=False
 
     def getCourse(self):
-        Obstacles=Karte.getObstacles()
-        Kurse=Navigation.LueckeInX(80,Obstacles)
-        
-        
+        print("*****************")
+	Xobstacles=self.karte.getObstacles()
+        print(Xobstacles)
+	x=self.navigation.LueckeInX(80,Xobstacles)
+	print("x :" +str(x))
+        return()
         
 
 class Navigation():
     def __init__(self):
         pass
     
-    def LueckeInX(self, Dist,ScanList):
+    def LueckeInX(self, Dist,ScanList3):
         """Returns aus ScanList ->LueckeList[[Winkel,MinimaleDist]],wenn 3Werte nacheinander grösser "Dist" sind. """
         global SollKurs
         
-        ScanCopy=ScanList
+        ScanCopy1=ScanList3
         LueckeList=[]
-        
-        for i in range(len(ScanList)):
-            if ScanList[i][1]>Dist:
-                ScanCopy[i][1]=ScanList[i][1]
+
+	sleep(0.03)        
+        for i in range(len(ScanList3)):
+            if ScanList3[i][1]>Dist:
+                ScanCopy1[i][1]=ScanList3[i][1]
             else:
-                ScanCopy[i][1]=0
-               
+                ScanCopy1[i][1]=0
+
+	print("wird das ausgegeben?")
+	return(ScanList3)      
         for i in range(len(ScanCopy)-2):
             if ScanCopy[i][1]>Dist and ScanCopy[i+1][1]>Dist and ScanCopy[i+2][1]>Dist:
                 #Hier wird die MinDist der drei Elemente ermittelt

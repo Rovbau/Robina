@@ -8,36 +8,38 @@ from Kompass import *
 from Karte import *
 from Plan import *
 
+karte=Karte()
+navigation=Navigation()
+scanner=Scanner()
+plan=Plan(karte,navigation)
+encoder=Encoder()
+kompass=Kompass()
 
-Scanner=Scanner()
-Karte=Karte()
-Plan=Plan()
-Encoder=Encoder()
-Kompass=Kompass()
-Navigation=Navigation()
 
-ThreadScanAllTime=Thread(target=Scanner.runAllTime, args=(1,))
+ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(1,))
 ThreadScanAllTime.daemon=True
 ThreadScanAllTime.start()
 
-ThreadEncoder=Thread(target=Encoder.runAllTime,args=())
+ThreadEncoder=Thread(target=encoder.runAllTime,args=())
 ThreadEncoder.daemon=True
 ThreadEncoder.start()
 
 while Robo==True:  
-    Obstacles=Scanner.getNewDistValues()
-    Karte.updateObstacles(Obstacles)
+    obstacles=scanner.getNewDistValues()
+    karte.updateObstacles(obstacles)
+    #print(karte.getObstacles())
 
-    DeltaDist=Encoder.getDistCounts()
-    SteerDiff=Encoder.getSteerDiff()
-    KompassCourse=Kompass.getKompass()
+    deltaDist=encoder.getDistCounts()
+    steerDiff=encoder.getSteerDiff()
+    kompassCourse=kompass.getKompass()
 
-    Karte.updateRoboPos(DeltaDist,SteerDiff,KompassCourse)
+    karte.updateRoboPos(deltaDist,steerDiff,kompassCourse)
 
-    PumperL,PumperR=Encoder.getPumper()
+    pumperL,pumperR=encoder.getPumper()
  #   Karte.updateHardObstacles(PumperL,PumperR)
     
+    plan.getCourse()
+## #   Motor.setCommand(Steer,Speed)
 
-    Plan.getCourse()
- #   Motor.setCommand(Steer,Speed)
+    sleep(1.5)
 
