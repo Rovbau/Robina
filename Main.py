@@ -11,7 +11,7 @@ from Plan import *
 karte=Karte()
 navigation=Navigation()
 scanner=Scanner()
-plan=Plan(karte,navigation)
+plan=Plan(karte)
 encoder=Encoder()
 kompass=Kompass()
 
@@ -27,7 +27,6 @@ ThreadEncoder.start()
 while Robo==True:  
     obstacles=scanner.getNewDistValues()
     karte.updateObstacles(obstacles)
-    #print(karte.getObstacles())
 
     deltaDist=encoder.getDistCounts()
     steerDiff=encoder.getSteerDiff()
@@ -36,10 +35,10 @@ while Robo==True:
     karte.updateRoboPos(deltaDist,steerDiff,kompassCourse)
 
     pumperL,pumperR=encoder.getPumper()
- #   Karte.updateHardObstacles(PumperL,PumperR)
+#   Karte.updateHardObstacles(PumperL,PumperR)
     
-    plan.getCourse()
-## #   Motor.setCommand(Steer,Speed)
+    plan.getCourse(navigation)
+#   Motor.setCommand(Steer,Speed)
 
     sleep(1.5)
 
