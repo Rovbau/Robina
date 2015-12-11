@@ -4,16 +4,16 @@ Robo=True
 
 from Scanner import *
 from Encoder import *
-from Kompass import *
+import Kompass
 from Karte import *
 from Plan import *
 
 karte=Karte()
 navigation=Navigation()
 scanner=Scanner()
-plan=Plan(karte)
+plan=Plan(karte,navigation)
 encoder=Encoder()
-kompass=Kompass()
+
 
 
 ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(1,))
@@ -30,14 +30,15 @@ while Robo==True:
 
     deltaDist=encoder.getDistCounts()
     steerDiff=encoder.getSteerDiff()
-    kompassCourse=kompass.getKompass()
+    kompassCourse=Kompass.getKompass()
 
     karte.updateRoboPos(deltaDist,steerDiff,kompassCourse)
 
     pumperL,pumperR=encoder.getPumper()
-#   Karte.updateHardObstacles(PumperL,PumperR)
+    karte.updateHardObstacles(pumperL,pumperR)
     
-    plan.getCourse(navigation)
+    steer,speed=plan.getCourse()
+    print(steer,speed)
 #   Motor.setCommand(Steer,Speed)
 
     sleep(1.5)

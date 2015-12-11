@@ -1,52 +1,99 @@
 # -*- coding: utf-8 -*-
 #Plan
 
-#from Karte import *
-
 from  time import *
+from copy import deepcopy
+import Kompass
+import math
 
 class Plan():
-    def __init__(self,karte):
+    def __init__(self,karte,navigation):
         self.karte=karte
-        #self.navigation=navigation
-        Speed=0
-        Steer=False
+        self.navigation=navigation
+        speed=0
+        steer=None
 
-    def getCourse(self,navigation):
+    def getCourse(self):
+        #Obstacles aus karte lesen
         obstacles=self.karte.getObstacles()
-        print(obstacles)
-        xx=navigation.LueckeInX(80,obstacles)
-        return()
+        
+        #Wenn Vorne kein Platz retour
+        steer,speed=self.navigation.MinInFront(obstacles)
+        if speed == -1:
+            return(steer,speed)
+
+        #Wenn Pumper Hinderniss erkannt retour
+        pumpL,pumpR=self.karte.getPumperStatus()
+        if pumpL == True:
+            return(0,-1)
+        if pumpR == True:
+            return(0,-1)
+        
+        #Bei Hinderniss R oder L nicht drehen
+            #obstacles=self.navigation.Querab(obstacles)
+        
+        #Parallele Wand erkennen
+        obstacles=self.navigation.WandParallel(obstacles)
+        
+        #Suche Luecke in Dist
+        obstacles=self.navigation.LueckeInX(80,obstacles)
+
+        sollkurs=self.karte.getZielkurs()
+        istkurs=Kompass.getKompass()
+        
+        #Lokale Koordinaten in Globale umwandeln
+        LueckeList=self.navigation.LokalZuGlobal(istkurs,obstacles)
+        
+        #Suche beste Luecke um nach Zielkurs zu kommen       
+        to_steer=self.navigation.BesteLueckeKompass(sollkurs,istkurs,obstacles)      
+        #print(to_steer)
+        
+        #Ausgabe der Motor Comands steer und speed
+        steer,speed=self.navigation.SteuerkursInSteerSpeed(to_steer)
+        #print(steer,speed)
+        
+        return(steer,speed)
         
 
 class Navigation():
     def __init__(self):
         pass
     
-    def LueckeInX(self, Dist,ScanList4):
-        """Returns aus ScanList ->LueckeList[[Winkel,MinimaleDist]],wenn 3Werte nacheinander grösser "Dist" sind. """
-        global SollKurs
+    def LueckeInX(self, dist,scanList):
+        """Returns aus scanList ->LueckeList[[Winkel,MinimaleDist]],wenn 3Werte nacheinander grösser "Dist" sind. """
         
-        ScanCopy3=ScanList4
-        LueckeList=[]
+        scanCopy=deepcopy(scanList)
+        lueckeList=[]
         
-        for i in range(len(ScanList4)):
-            if ScanList4[i][1]>Dist:
-                ScanCopy3[i][1]=ScanList4[i][1]
+        for i in range(len(scanList)):
+            if scanList[i][1]>dist:
+                scanCopy[i][1]=scanList[i][1]
             else:
-                ScanCopy3[i][1]=0
-
-        return()      
-        for i in range(len(ScanCopy)-2):
-            if ScanCopy[i][1]>Dist and ScanCopy[i+1][1]>Dist and ScanCopy[i+2][1]>Dist:
+                scanCopy[i][1]=0
+     
+        for i in range(len(scanCopy)-2):
+            if scanCopy[i][1]>dist and scanCopy[i+1][1]>dist and scanCopy[i+2][1]>dist:
                 #Hier wird die MinDist der drei Elemente ermittelt
-                Slice=ScanCopy[i:i+2]
-                Min=min(Slice, key= lambda t: t[1])
-                ScanCopy[i+1][1]=Min[1]
-                LueckeList.append(ScanCopy[i+1])
+                slicen=scanCopy[i:i+2]
+                minimum=min(slicen, key= lambda t: t[1])
+                scanCopy[i+1][1]=minimum[1]
+                lueckeList.append(scanCopy[i+1])
                 
-        return(LueckeList)
+        return(lueckeList)
 
+    def SteuerkursInSteerSpeed(self,steuerkurs):
+        """Die eingabe [Steuerkurs,Dist] wird in (steer, speed) umgewandelt ->returns (steer,speed)"""
+        if steuerkurs[0][0] > 0:
+            steer=1
+        else:
+            steer=-1
+
+        if steuerkurs[0][1] > 0:
+            speed=1
+        else:
+            speed=-1
+        return(steer,speed)
+        
     def BesteLueckeKompass(self,SollKurs,IstKurs,LueckeList):
         """Aus LueckeList -> Returns Steuerkurs, Steuerkurs wird anhand SollKurs ZU IstKurs optimiert
         Wenn LueckeList leer -> Returns Kurve 45/-45grad""" 
@@ -113,19 +160,22 @@ class Navigation():
         return(Winkel)
 
     def MinInFront(self,ScanList):
-        """Returns MIN aus den Mittleren Werten von ScanList->Int"""
+        """Returns MIN aus den Mittleren Werten von ScanList->Returns steer=0 retour=-1"""
         try:
-            Slice=ScanList[5:13]
+            Slice=deepcopy(ScanList[5:13])
         except:
             print("Slicing not Working")
             return(0)
         Min=min(Slice, key= lambda t: t[1])
-        return(Min)
+        if Min[1]<25:
+            return(0,-1)
+        else:
+            return(0,1)
 
     def Querab(self,ScanList):
         """Wenn 90 OR 80Grad < Dist: Werte bis 0Grad Nullen """
         
-        ScanCopy=ScanList[:]
+        ScanCopy=deepcopy(ScanList)
         Dist=30
 
         Laenge=len(ScanList)
@@ -144,7 +194,7 @@ class Navigation():
     def WandParallel(self,ScanList):
         """Mit TrigoMath paralle Wand in DIST erkennen und ScanList anpassen"""
         
-        ScanCopy=ScanList[:]
+        ScanCopy=deepcopy(ScanList)
         Dist=30
         
         for i in range(len(ScanCopy)):
@@ -165,7 +215,7 @@ class Navigation():
 
     def FlacheHindernisse(self,ScanList,Alarm):
 
-        ScanCopy=ScanList[:]
+        ScanCopy=deepcopy(ScanList)
 
         Laenge=len(ScanList)
         if Alarm=="L":

@@ -23,10 +23,13 @@ class Karte():
                     self.ScanList2[k][1]=Obstacles[i][1]
         #print(self.ScanList2)
         return(self.ScanList2)
+    
+    def updateHardObstacles(self,pumperL,pumperR):
+        """Status der Stosstange in Karte eintragen"""
+        self.pumperL=pumperL
+        self.pumperR=pumperR
 
-
-
-    def updateRoboPos(self,DeltaDist,SteerDiff,KompassCourse):
+    def updateRoboPos(self,deltaDist,SteerDiff,KompassCourse):
         """Update Robo Position auf Karte"""
 
         #RoboSchwerpunkt bis Rad mm
@@ -35,6 +38,7 @@ class Karte():
         
         self.KursBeiStart=KompassCourse
         WinkelDiff=SteerDiff*5.2    #Counts in Winkle umwandeln
+        deltaDist=deltaDist*1.3
         
 
         if SteerDiff != 0:
@@ -54,10 +58,10 @@ class Karte():
             self.RoboPosX=b*cos(radians(GlobalKurs))+self.RoboPosX
 
 
-        if SteerDiff == 0 and DeltaDist != 0:
+        if SteerDiff == 0 and deltaDist != 0:
             #Position des Robo auf Karte updaten
-            self.RoboPosX=DeltaDist*sin(radians(self.KursBeiStart))+self.RoboPosX
-            self.RoboPosY=DeltaDist*cos(radians(self.KursBeiStart))+self.RoboPosY
+            self.RoboPosX=deltaDist*sin(radians(self.KursBeiStart))+self.RoboPosX
+            self.RoboPosY=deltaDist*cos(radians(self.KursBeiStart))+self.RoboPosY
        
         self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1)])
 
@@ -74,6 +78,14 @@ class Karte():
         """return latest Obstacles"""
         return(self.ScanList2)
 
+    def getZielkurs(self):
+        """return Zielkurs 0-360"""
+        return(0)
+    
+    def getPumperStatus(self):
+        """return Stosstangen status"""
+        return(self.pumperL,self.pumperR)
+
 if __name__ == "__main__":
 
     K=Karte()
@@ -83,15 +95,15 @@ if __name__ == "__main__":
     K.updateObstacles(Obstacles)
     print(K.getObstacles())
 
-    DeltaDist=10
+    deltaDist=10
     SteerDiff=0
     KompassCourse=0
-    K.updateRoboPos(DeltaDist,SteerDiff,KompassCourse)
+    K.updateRoboPos(deltaDist,SteerDiff,KompassCourse)
 
-    DeltaDist=5
+    deltaDist=5
     SteerDiff=0
     KompassCourse=90
-    K.updateRoboPos(DeltaDist,SteerDiff,KompassCourse)
+    K.updateRoboPos(deltaDist,SteerDiff,KompassCourse)
     
     print(K.getRoboPos())
     print(K.getRoboPath())
