@@ -7,12 +7,14 @@ from Encoder import *
 import Kompass
 from Karte import *
 from Plan import *
+from Motor import *
 
 karte=Karte()
 navigation=Navigation()
 scanner=Scanner()
 plan=Plan(karte,navigation)
 encoder=Encoder()
+motor=Motor()
 
 
 
@@ -39,7 +41,7 @@ while Robo==True:
     
     steer,speed=plan.getCourse()
     print(steer,speed)
-#   Motor.setCommand(Steer,Speed)
+    motor.setCommand(steer,speed)
 
     sleep(1.5)
 

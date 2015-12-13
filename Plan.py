@@ -5,6 +5,9 @@ from  time import *
 from copy import deepcopy
 import Kompass
 import math
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 class Plan():
     def __init__(self,karte,navigation):
@@ -82,16 +85,23 @@ class Navigation():
         return(lueckeList)
 
     def SteuerkursInSteerSpeed(self,steuerkurs):
-        """Die eingabe [Steuerkurs,Dist] wird in (steer, speed) umgewandelt ->returns (steer,speed)"""
-        if steuerkurs[0][0] > 0:
-            steer=1
+        """Die eingabe steuerkurs=[zielkurs,Dist] wird in (steer, speed) umgewandelt ->returns (steer,speed)"""
+        logging.info(steuerkurs[0][0])
+        if steuerkurs[0][0] > 10:
+            steer = 1
+            print("HIer")
+        elif steuerkurs[0][0] < -10:
+            print("Da")
+            steer = -1
         else:
-            steer=-1
-
+            steer = 0
+            print("falsch")
+                
         if steuerkurs[0][1] > 0:
             speed=1
         else:
-            speed=-1
+            speed=0
+            
         return(steer,speed)
         
     def BesteLueckeKompass(self,SollKurs,IstKurs,LueckeList):
