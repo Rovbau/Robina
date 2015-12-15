@@ -1,13 +1,14 @@
 #Karte
 
 from math import sin,cos,radians,sqrt
+from copy import deepcopy
 
 class Karte():
     def __init__(self):
         self.RoboPosY=0
         self.RoboPosX=0
         self.RoboPath=[]
-        GlobalKurs=0
+        self.global_kurs=0
         self.ScanList2=[[-90,0],[-80,0],[-70,0],[-60,0],[-50,0],[-40,0],[-30,0],[-20,0],[-10,0],
                        [0,0],
                        [10,0],[20,0],[30,0],[40,0],[50,0],[60,0],[70,0],[80,0],[90,0]]
@@ -21,8 +22,8 @@ class Karte():
                 if Obstacles[i][0]==self.ScanList2[k][0]:
          #           print("IF: "+str(self.ScanList2[k][1])+"   "+str(Obstacles[i][1]))
                     self.ScanList2[k][1]=Obstacles[i][1]
-        #print(self.ScanList2)
-        return(self.ScanList2)
+        Ausgabe=deepcopy(self.ScanList2)
+        return(Ausgabe)
     
     def updateHardObstacles(self,pumperL,pumperR):
         """Status der Stosstange in Karte eintragen"""
@@ -36,26 +37,26 @@ class Karte():
         a=180   
         c=180
         
-        self.KursBeiStart=KompassCourse
-        WinkelDiff=SteerDiff*5.2    #Counts in Winkle umwandeln
+        self.global_kurs=KompassCourse
+        WinkelDiff=SteerDiff*5.2    #Counts in Winkel umwandeln
         deltaDist=deltaDist*1.3
-        
+        print(WinkelDiff)
 
         if SteerDiff != 0:
             #Kosinussatz: Schwerpunkt Wegversatz berechnen
             b=sqrt(pow(a,2)+pow(c,2)-2*a*c*cos(radians(WinkelDiff)))
 
             #Richtung des Wegversatz in GlobalKurs umrechnen
-            GlobalKurs=self.KursBeiStart+WinkelDiff
-            if GlobalKurs>360:
-                GlobalKurs=GlobalKurs-360
-            if GlobalKurs<0:
-                GlobalKurs=360-abs(GlobalKurs)
+            self.global_kurs=self.global_kurs+WinkelDiff
+            if self.global_kurs>360:
+                self.global_kurs=self.global_kurs-360
+            if self.global_kurs<0:
+                self.global_kurs=360-abs(self.global_kurs)
                 
 
             #Position des Robo auf Karte updaten
-            self.RoboPosY=b*sin(radians(GlobalKurs))+self.RoboPosY
-            self.RoboPosX=b*cos(radians(GlobalKurs))+self.RoboPosX
+            self.RoboPosY=b*sin(radians(self.global_kurs))+self.RoboPosY
+            self.RoboPosX=b*cos(radians(self.global_kurs))+self.RoboPosX
 
 
         if SteerDiff == 0 and deltaDist != 0:
@@ -63,12 +64,12 @@ class Karte():
             self.RoboPosX=deltaDist*sin(radians(self.KursBeiStart))+self.RoboPosX
             self.RoboPosY=deltaDist*cos(radians(self.KursBeiStart))+self.RoboPosY
        
-        self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1)])
+        self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1),self.global_kurs])
 
 
     def getRoboPos(self):
-        """returns RoboPos X,Y"""
-        return(round(self.RoboPosX,1),round(self.RoboPosY,1))
+        """returns RoboPos X,Y,pose"""
+        return(round(self.RoboPosX,1),round(self.RoboPosY,1),self.global_kurs)
     
     def getRoboPath(self):
         """returns RoboPath X,Y"""

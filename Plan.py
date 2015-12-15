@@ -33,23 +33,25 @@ class Plan():
             return(0,-1)
         
         #Bei Hinderniss R oder L nicht drehen
-            #obstacles=self.navigation.Querab(obstacles)
+        #obstacles=self.navigation.Querab(obstacles)
         
         #Parallele Wand erkennen
         obstacles=self.navigation.WandParallel(obstacles)
+
         
         #Suche Luecke in Dist
-        obstacles=self.navigation.LueckeInX(80,obstacles)
+        obstacles=self.navigation.LueckeInX(30,obstacles)
 
         sollkurs=self.karte.getZielkurs()
-        istkurs=Kompass.getKompass()
+        _,_,istkurs=self.karte.getRoboPos()
+        print("DER KURS: "+str(istkurs))
         
         #Lokale Koordinaten in Globale umwandeln
-        LueckeList=self.navigation.LokalZuGlobal(istkurs,obstacles)
-        
+        luecke_list=self.navigation.LokalZuGlobal(istkurs,obstacles)
+        #print(luecke_list)
         #Suche beste Luecke um nach Zielkurs zu kommen       
-        to_steer=self.navigation.BesteLueckeKompass(sollkurs,istkurs,obstacles)      
-        #print(to_steer)
+        to_steer=self.navigation.BesteLueckeKompass(sollkurs,istkurs,luecke_list)      
+        print(to_steer)
         
         #Ausgabe der Motor Comands steer und speed
         steer,speed=self.navigation.SteuerkursInSteerSpeed(to_steer)
@@ -89,13 +91,10 @@ class Navigation():
         logging.info(steuerkurs[0][0])
         if steuerkurs[0][0] > 10:
             steer = 1
-            print("HIer")
         elif steuerkurs[0][0] < -10:
-            print("Da")
             steer = -1
         else:
             steer = 0
-            print("falsch")
                 
         if steuerkurs[0][1] > 0:
             speed=1
@@ -303,7 +302,9 @@ class Navigation():
 
 if __name__ == "__main__":
 
-    N=Navigation()
-    K=Karte()
-    Plan=Plan()
-    Plan.getCourse()
+    from Karte import *
+    n=Navigation()
+    k=Karte()
+    Plan=Plan(k,n)
+    x=Plan.getCourse()
+    print(x)

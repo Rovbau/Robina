@@ -15,6 +15,7 @@ class Encoder():
         self.PortEncoderH=7
         self.TasteL=13
         self.TasteR=15
+        self.portRoteTaste=37
 
         self.PortLRueck=29
         self.PortRRueck=33
@@ -31,6 +32,7 @@ class Encoder():
         GPIO.setup(self.PortEncoderH,GPIO.IN)
         GPIO.setup(self.TasteL,GPIO.IN)
         GPIO.setup(self.TasteR,GPIO.IN)
+        GPIO.setup(self.portRoteTaste,GPIO.IN)
 
         GPIO.setup(self.PortLRueck,GPIO.OUT)
         GPIO.setup(self.PortRRueck,GPIO.OUT)
@@ -90,11 +92,17 @@ class Encoder():
 
     def getSteerDiff(self):
         """Abweichung zwischen L und R"""
-        return(self.DiffCount)
+        Ausgabe=self.DiffCount
+        self.DiffCount=0
+        self.CountR=0
+        self.CountL=0
+        return(Ausgabe)
 
     def getDistCounts(self):
         """counts an Wegrad"""
-        return(self.WegCount)
+        Ausgabe=self.WegCount
+        self.WegCount=0
+        return(Ausgabe)
 
     def getPumper(self):
         """TRUE,TRUE wenn Stossstange L/R gedrückt"""
@@ -104,6 +112,9 @@ class Encoder():
         self.AlarmR=False
         return (AlarmL,AlarmR)
 
+    def getTaste(self):
+        """Status der Roten Taste ausgeben"""
+        return(GPIO.input(self.portRoteTaste))
 
 
 if __name__ == "__main__":
