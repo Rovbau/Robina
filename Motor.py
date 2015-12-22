@@ -13,9 +13,9 @@ GPIO.setwarnings(False)
 
 class Motor():
     def __init__(self):
-        self.PortLVor=31
+        self.PortLVor=35
         self.PortLRueck=29
-        self.PortRVor=35
+        self.PortRVor=31
         self.PortRRueck=33
 
         self.steerOld=0
@@ -41,11 +41,13 @@ class Motor():
         """Setze Motor Commands Steer= -1,0-1 (L/R/0) and Speed -1,0,1 (Vor/Ret/0)"""
 
         #Stromspitzen verhindern warte 100ms
-        if steer != self.steerOld or speed != self.steerOld:
+        if steer != self.steerOld or speed != self.speedOld:
             GPIO.output(self.PortLRueck,0)
             GPIO.output(self.PortRRueck,0)
             GPIO.output(self.PortRVor,0)
             GPIO.output(self.PortLVor,0)
+            self.steerOld=steer
+            self.speedOld=speed
             sleep(0.1)
         
         if steer == 0 and speed == 1:        
@@ -85,8 +87,7 @@ class Motor():
             GPIO.output(self.PortRRueck,0)
         else:
             return(False)
-        self.steerOld=steer
-        self.speedOld=speed
+
         return(steer,speed)
         
 

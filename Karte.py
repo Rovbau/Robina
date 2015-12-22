@@ -4,11 +4,13 @@ from math import sin,cos,radians,sqrt
 from copy import deepcopy
 
 class Karte():
-    def __init__(self):
+    def __init__(self,encoder):
+        self.encoder=encoder
         self.RoboPosY=0
         self.RoboPosX=0
         self.RoboPath=[]
         self.global_kurs=0
+        self.kompassOld=0
         self.ScanList2=[[-90,0],[-80,0],[-70,0],[-60,0],[-50,0],[-40,0],[-30,0],[-20,0],[-10,0],
                        [0,0],
                        [10,0],[20,0],[30,0],[40,0],[50,0],[60,0],[70,0],[80,0],[90,0]]
@@ -36,11 +38,13 @@ class Karte():
         #RoboSchwerpunkt bis Rad mm
         a=180   
         c=180
-        
+
         self.global_kurs=KompassCourse
+        print("Kompass ist:" +str(KompassCourse))
+            
         WinkelDiff=SteerDiff*5.2    #Counts in Winkel umwandeln
         deltaDist=deltaDist*1.3
-        print(WinkelDiff)
+        print("WinkelDiff ist:" +str(WinkelDiff))
 
         if SteerDiff != 0:
             #Kosinussatz: Schwerpunkt Wegversatz berechnen
@@ -52,7 +56,8 @@ class Karte():
                 self.global_kurs=self.global_kurs-360
             if self.global_kurs<0:
                 self.global_kurs=360-abs(self.global_kurs)
-                
+
+            self.encoder.clearEncoderLR()   
 
             #Position des Robo auf Karte updaten
             self.RoboPosY=b*sin(radians(self.global_kurs))+self.RoboPosY
@@ -61,8 +66,8 @@ class Karte():
 
         if SteerDiff == 0 and deltaDist != 0:
             #Position des Robo auf Karte updaten
-            self.RoboPosX=deltaDist*sin(radians(self.KursBeiStart))+self.RoboPosX
-            self.RoboPosY=deltaDist*cos(radians(self.KursBeiStart))+self.RoboPosY
+            self.RoboPosX=deltaDist*sin(radians(self.global_kurs))+self.RoboPosX
+            self.RoboPosY=deltaDist*cos(radians(self.global_kurs))+self.RoboPosY
        
         self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1),self.global_kurs])
 

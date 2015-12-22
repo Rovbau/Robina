@@ -81,21 +81,22 @@ class Encoder():
 
             sleep(0.05)
 
-    def EncoderClear(self):
-        """clears L / R and Dist"""
+    def clearEncoderDist(self):
+        """clears Dist-Counst"""
         self.WegCount=0
+        self.CountH=0
+        return
+    
+    def clearEncoderLR(self):
+        """clears L / R Counts"""
         self.DiffCount=0
         self.CountR=0
         self.CountL=0
-        self.CountH=0
         return
-
+    
     def getSteerDiff(self):
         """Abweichung zwischen L und R"""
         Ausgabe=self.DiffCount
-        self.DiffCount=0
-        self.CountR=0
-        self.CountL=0
         return(Ausgabe)
 
     def getDistCounts(self):

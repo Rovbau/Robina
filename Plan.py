@@ -23,6 +23,7 @@ class Plan():
         #Wenn Vorne kein Platz retour
         steer,speed=self.navigation.MinInFront(obstacles)
         if speed == -1:
+            print("Da ist was VOR mir")
             return(steer,speed)
 
         #Wenn Pumper Hinderniss erkannt retour
@@ -40,18 +41,21 @@ class Plan():
 
         
         #Suche Luecke in Dist
-        obstacles=self.navigation.LueckeInX(30,obstacles)
+        obstacles=self.navigation.LueckeInX(80,obstacles)
 
         sollkurs=self.karte.getZielkurs()
+        
         _,_,istkurs=self.karte.getRoboPos()
         print("DER KURS: "+str(istkurs))
-        
+        print("Lokal: "+str(obstacles))
         #Lokale Koordinaten in Globale umwandeln
         luecke_list=self.navigation.LokalZuGlobal(istkurs,obstacles)
-        #print(luecke_list)
-        #Suche beste Luecke um nach Zielkurs zu kommen       
+
+        #Suche beste Luecke um nach Zielkurs zu kommen 
+        #luecke_list=[[-20,199],[-10,200],[0,201],[10,222],[20,233]]      
+        print("Global-Luecken: "+str(luecke_list))
         to_steer=self.navigation.BesteLueckeKompass(sollkurs,istkurs,luecke_list)      
-        print(to_steer)
+        print("To Steer: "+str(to_steer))
         
         #Ausgabe der Motor Comands steer und speed
         steer,speed=self.navigation.SteuerkursInSteerSpeed(to_steer)
@@ -119,7 +123,7 @@ class Navigation():
         for i in range(len(LueckeList)):
             Diff=self.KursDiff(LueckeList[i][0],SollKurs)
             if abs(Diff)<abs(MinDiff):
-                KursAbw=self.KursDiff(LueckeList[i][0],IstKurs)
+                KursAbw=round(self.KursDiff(LueckeList[i][0],IstKurs),1)
                 Steuerkurs=[[KursAbw,LueckeList[i][1]]]
                 MinDiff=Diff
         return(Steuerkurs)
@@ -150,7 +154,7 @@ class Navigation():
                 Wert=Wert-360
             if Wert<0:
                 Wert=360-abs(Wert)
-            ScanListGlobal.append([Wert,ScanList[i][1]])
+            ScanListGlobal.append([int(Wert),ScanList[i][1]])
         return(ScanListGlobal)
 
         
@@ -207,19 +211,14 @@ class Navigation():
         Dist=30
         
         for i in range(len(ScanCopy)):
-
             Trigo=10+(Dist/math.cos(math.radians(90-abs(ScanCopy[i][0]))))
             if Trigo>100:
                 Trigo=100
             
             if ScanCopy[i][1]<Trigo:
                 ScanCopy[i][1]=0
-                #print("Wand")
-            #else:
-                #print("----")
-
-        ScanList=ScanCopy[:]
-        return(ScanList)
+                
+        return(ScanCopy)
 
 
     def FlacheHindernisse(self,ScanList,Alarm):
