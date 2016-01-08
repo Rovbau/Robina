@@ -15,28 +15,36 @@ class Karte():
         self.RoboPosY=0
         self.RoboPosX=0
         self.RoboPath=[]
+        self.globalObstaclesList=0
         self.global_kurs=0
         self.kompassOld=0
-        self.ScanList2=[[-90,0],[-80,0],[-70,0],[-60,0],[-50,0],[-40,0],[-30,0],[-20,0],[-10,0],
-                       [0,0],
-                       [10,0],[20,0],[30,0],[40,0],[50,0],[60,0],[70,0],[80,0],[90,0]]
 
-    def updateObstacles(self,Obstacles):
+    def updateObstacles(self, Obstacles):
         """Obstacles werden in ScanList eingetragen"""
 
-        #print("obstacles: "+str(Obstacles))
-        for i in range(len(Obstacles)): 
-            for k in range(len(self.ScanList2)):              
-                if Obstacles[i][0]==self.ScanList2[k][0]:
-         #           print("IF: "+str(self.ScanList2[k][1])+"   "+str(Obstacles[i][1]))
-                    self.ScanList2[k][1]=Obstacles[i][1]
-        Ausgabe=deepcopy(self.ScanList2)
-        return(Ausgabe)
+        for Obstacle in Obstacles:            
+            #Wandeln Winkeldaten für Globalberechnung: -90zu+90 und +90zu-90 0=0
+            #ScanList[i][0]=degrees(asin(sin(radians(ScanList[i][0])+radians(180))))
+
+            Dx = Obstacle[0]
+            Dy = Obstacle[1]
+
+            #Drehmatrix für X, Returns Global Hindernis Position
+            X=(Dx*cos(radians(self.global_kurs))-Dy*(-sin(radians(self.global_kurs))))+self.RoboPosX
+
+            #Drehmatrix für Y, Returns Global Hindernis Position
+            Y=(Dx*sin(radians(self.global_kurs))+Dy*(-cos(radians(self.global_kurs))))+self.RoboPosY
+
+            self.globalObstaclesList.append([X,Y])
     
-    def updateHardObstacles(self,pumperL,pumperR):
+    def updateHardObstacles(self,bumperL,bumperR):
         """Status der Stosstange in Karte eintragen"""
-        self.pumperL=pumperL
-        self.pumperR=pumperR
+        self.pumperL = bumperL
+        self.pumperR = bumperR
+        if bumperL:
+            self.updateObstacles([(-150, 0)])
+        if bumperR:
+            self.updateObstacles([150, 0)])
 
     def updateRoboPos(self,deltaDist,SteerDiff,KompassCourse):
         """Update Robo Position auf Karte"""

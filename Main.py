@@ -48,9 +48,10 @@ while Robo==True:
 
     steer,speed=plan.getCourse()
     print("Motor Command:" +str(steer))
-
+    #sleep(2)
     motor.setCommand(steer,speed)
-
+    #sleep(0.2)
+    #motor.setCommand(0,0)
     if encoder.getTaste() == 1:
         motor.setCommand(0,0)
         print("By By goto Sleep")
