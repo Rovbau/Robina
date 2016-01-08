@@ -1,7 +1,13 @@
-#Karte
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
 
 from math import sin,cos,radians,sqrt
+
+
+
 from copy import deepcopy
+from time import *
+import pickle
 
 class Karte():
     def __init__(self,encoder):
@@ -68,9 +74,15 @@ class Karte():
             #Position des Robo auf Karte updaten
             self.RoboPosX=deltaDist*sin(radians(self.global_kurs))+self.RoboPosX
             self.RoboPosY=deltaDist*cos(radians(self.global_kurs))+self.RoboPosY
-       
-        self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1),self.global_kurs])
 
+        if time.time()-timeold > 2:
+            #Jede Sec Path speichern            
+            self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1),self.global_kurs])
+            
+            pickelRoboPath=open( "RoboPath.p", "wb" )
+            pickle.dump(self.RoboPath, pickelRoboPath)
+            
+            timeold = time.time()
 
     def getRoboPos(self):
         """returns RoboPos X,Y,pose"""
