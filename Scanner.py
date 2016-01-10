@@ -32,7 +32,7 @@ class Scanner():
             for angle in range(10, 170, 10):
                 self.readSensorAndUpdateObstacles(angle)
 
-    def readSensorAndUpdateObstacles(angle):
+    def readSensorAndUpdateObstacles(self,angle):
         self.setServo(angle)
         sleep(0.2)
         Messwert,Error=self.Sonar1.GetADC()
@@ -54,13 +54,13 @@ class Scanner():
         self.ScanList=[]
         return(Ausgabe)
 
-    def setServoConfig():
+    def setServoConfig(self):
         self.setPwmPropertyset("delayed", "0")
         self.setPwmPropertyset("mode", "servo")
         self.setPwmPropertyset("servo_max", "180")
         self.setPwmPropertyset("active", "1")
 
-    def setPwmProperty(prop, value):
+    def setPwmPropertyset(self,prop, value):
         try:
             f = open("/sys/class/rpi-pwm/pwm0/" + prop, 'w')
             f.write(value)

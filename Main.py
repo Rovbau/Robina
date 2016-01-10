@@ -11,11 +11,15 @@ from Motor import *
 import sys
 import atexit
 
+count=1
+speed=1
+steer=0
 encoder=Encoder()
 navigation=Navigation()
 scanner=Scanner()
 karte=Karte(encoder)
 plan=Plan(karte,navigation)
+
 motor=Motor()
 
 def cleaning():
@@ -33,12 +37,14 @@ ThreadEncoder.daemon=True
 ThreadEncoder.start()
 
 while Robo==True:
-    print("***************************************")  
+    #print("***************************************")  
     obstacles=scanner.getNewDistValues()
     karte.updateObstacles(obstacles)
 
     deltaDist=encoder.getDistCounts()
+    print("Dist  "+str(deltaDist))
     steerDiff=encoder.getSteerDiff()
+    print("Steer "+str(steerDiff))
     kompassCourse=Kompass.getKompass()
 
     karte.updateRoboPos(deltaDist,steerDiff,kompassCourse)
@@ -46,9 +52,34 @@ while Robo==True:
     pumperL,pumperR=encoder.getPumper()
     karte.updateHardObstacles(pumperL,pumperR)
 
-    steer,speed=plan.getCourse()
-    print("Motor Command:" +str(steer))
-    #sleep(2)
+    count += 1
+    if count == 20:
+        speed=0
+        steer=0
+        count=0
+        motor.setCommand(steer,speed)
+        print(karte.getRoboPos())
+        karte.setRoboPosZero()
+        comm=input("COMMAND PLEASE: ")
+        if comm == 8:
+            speed=1
+            steer=0
+        elif comm == 6:
+            speed=0
+            steer=1
+        elif comm == 4:
+            speed=0
+            steer=-1
+        elif comm == 0:
+            speed=0
+            steer=0
+
+        
+        
+
+    #steer,speed=plan.getCourse()
+    #print("Motor Command:" +str(steer))
+
     motor.setCommand(steer,speed)
     #sleep(0.2)
     #motor.setCommand(0,0)
