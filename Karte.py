@@ -48,45 +48,52 @@ class Karte():
         if bumperR:
             self.updateObstacles([(150, 0)])
 
-    def updateRoboPos(self,deltaDist,SteerDiff,KompassCourse):
+    def updateRoboPos(self,deltaDist,SteerDiff,deltaDistRad,KompassCourse):
         """Update Robo Position auf Karte"""
 
         #RoboSchwerpunkt bis Rad cm
         a=18  
         c=18
-            
+
+        self.global_kurs=KompassCourse
         WinkelDiff=SteerDiff*5.2    #Counts in Winkel umwandeln
         deltaDist=deltaDist*1.3
-        print(WinkelDiff)
+        #print(WinkelDiff)
 
-        if abs(SteerDiff) >= 1:
+        if abs(SteerDiff) > 1:
             #Kosinussatz: Schwerpunkt Wegversatz berechnen
             b=sqrt(pow(a,2)+pow(c,2)-2*a*c*cos(radians(WinkelDiff)))
-
+                        
             #Richtung des Wegversatz in GlobalKurs umrechnen
-            self.global_kurs=KompassCourse
-            self.global_kurs=self.global_kurs+WinkelDiff
-            if self.global_kurs>360:
-                self.global_kurs=self.global_kurs-360
-            if self.global_kurs<0:
-                self.global_kurs=360-abs(self.global_kurs)   
+##            self.global_kurs=KompassCourse
+##            self.global_kurs=self.global_kurs+WinkelDiff
+##            if self.global_kurs>360:
+##                self.global_kurs=self.global_kurs-360
+##            if self.global_kurs<0:
+##                self.global_kurs=360-abs(self.global_kurs)   
 
             #Delta x,y anhand SteerDiff berrechnen
             Dx=b*cos(radians((180-abs(WinkelDiff))/2))
             Dy=b*sin(radians((180-abs(WinkelDiff))/2))
+            print("STEER SubProz: "+str(Dx)+"  "+str(Dy))
             
             #Position des Robo auf Karte updaten
             self.Drehmatrix(Dx,Dy)
+
+            #Clear Encoder    
             self.encoder.clearEncoderLR()
 
-        if  deltaDist != 0 and SteerDiff == 0:        
+        if deltaDistRad > 0:       
             #Position des Robo auf Karte updaten
             Dx=0
-            Dy=deltaDist
-            
+            Dy=deltaDistRad*2.9
+            print("DIST SubProz: "+str(Dx)+"  "+str(Dy))
             self.Drehmatrix(Dx,Dy)
-            self.encoder.clearEncoderDist()
-            
+
+            #Clear Encoder    
+            self.encoder.clearEncoderLR()
+
+
         if time.time()-self.timeold > 2:
             #Jede Sec Path speichern            
             self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1),self.global_kurs])

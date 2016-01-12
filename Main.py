@@ -12,7 +12,7 @@ import sys
 import atexit
 
 count=1
-speed=1
+speed=0
 steer=0
 encoder=Encoder()
 navigation=Navigation()
@@ -42,24 +42,24 @@ while Robo==True:
     karte.updateObstacles(obstacles)
 
     deltaDist=encoder.getDistCounts()
-    print("Dist  "+str(deltaDist))
-    steerDiff=encoder.getSteerDiff()
-    print("Steer "+str(steerDiff))
+    #print("Dist  "+str(deltaDist))
+    steerDiff,deltaDistRad=encoder.getSteerDiff()
+    #print("Dist: "+str(deltaDist)+"Steer:"+str(steerDiff))
     kompassCourse=Kompass.getKompass()
 
-    karte.updateRoboPos(deltaDist,steerDiff,kompassCourse)
+    karte.updateRoboPos(deltaDist,steerDiff,deltaDistRad,kompassCourse)
 
     pumperL,pumperR=encoder.getPumper()
     karte.updateHardObstacles(pumperL,pumperR)
-
+    #print(Kompass.getKompass())
     count += 1
-    if count == 20:
+    if count == 10:
         speed=0
         steer=0
         count=0
         motor.setCommand(steer,speed)
         print(karte.getRoboPos())
-        karte.setRoboPosZero()
+        #karte.setRoboPosZero()
         comm=input("COMMAND PLEASE: ")
         if comm == 8:
             speed=1

@@ -22,6 +22,7 @@ class Encoder():
 
         self.WegCount=0
         self.DiffCount=0
+        self.DistRad=0
 
         self.AlarmL=False
         self.AlarmR=False
@@ -51,6 +52,7 @@ class Encoder():
         self.CountL=0
         self.CountR=0
         self.CountH=0
+        self.DistRad=0
   
         while True:
             
@@ -68,8 +70,9 @@ class Encoder():
                 else:
                     self.CountH +=1                
                 EncoderHOld= GPIO.input(self.PortEncoderH)
-    
+
             self.DiffCount=self.CountR-self.CountL
+            self.DistRad=min([self.CountR,self.CountL])
             self.WegCount=self.CountH    
     
             ###Alarme### 
@@ -79,7 +82,7 @@ class Encoder():
             if GPIO.input(self.TasteR)==1:
                 self.AlarmR=True
 
-            sleep(0.05)
+            sleep(0.02)
 
     def clearEncoderDist(self):
         """clears Dist-Counst"""
@@ -92,12 +95,12 @@ class Encoder():
         self.DiffCount=0
         self.CountR=0
         self.CountL=0
+        self.DistRad=0
         return
     
     def getSteerDiff(self):
-        """Abweichung zwischen L und R"""
-        Ausgabe=self.DiffCount
-        return(Ausgabe)
+        """Abweichung zwischen L und R und gemeinsame Pulse"""
+        return(self.DiffCount,self.DistRad)
 
     def getDistCounts(self):
         """counts an Wegrad"""
