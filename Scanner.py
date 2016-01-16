@@ -6,7 +6,7 @@ ScanList=[[-90,10],[-80,20],[-70,10],[-60,10],[-50,110],
 from time import *
 import RPi.GPIO as GPIO
 from Sonar import *
-import math
+from math import cos,sin,radians
 from threading import *
 GPIO.setwarnings(False)
 import smbus
@@ -68,8 +68,8 @@ class Scanner():
         except:
             print("Error writing to: " + prop + " value: " + value)
 
-    def setServo(angle):
-        setPwmProperty("servo", str(angle))
+    def setServo(self,angle):
+        self.setPwmPropertyset("servo", str(angle))
         
 #Funktionen für Servo intit
 

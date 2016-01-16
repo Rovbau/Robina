@@ -94,4 +94,8 @@ class Sonar():
             ErrScan=False
             return(Dist, ErrScan)
 
+if __name__ == "__main__":
+
+    s=Sonar()
+    print(s.GetADC())
     

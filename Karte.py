@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-from math import sin,cos,radians,sqrt
+from math import sin,cos,radians,degrees,sqrt,pi
 from copy import deepcopy
 import time
 import pickle
@@ -9,8 +9,8 @@ import pickle
 class Karte():
     def __init__(self,encoder):
         self.encoder=encoder
-        self.RoboPosY=10
-        self.RoboPosX=10
+        self.RoboPosY=0
+        self.RoboPosX=0
         self.RoboPath=[]
         self.globalObstaclesList=[]
         self.global_kurs=0
@@ -19,7 +19,6 @@ class Karte():
 
     def updateObstacles(self, Obstacles):
         """Obstacles werden in ScanList eingetragen"""
-
         for Obstacle in Obstacles:            
             #Wandeln Winkeldaten für Globalberechnung: -90zu+90 und +90zu-90 0=0
             #ScanList[i][0]=degrees(asin(sin(radians(ScanList[i][0])+radians(180))))
@@ -28,16 +27,11 @@ class Karte():
             Dy = Obstacle[1]
 
             #Drehmatrix für X, Returns Global Hindernis Position
-            X=(Dx*cos(radians(self.global_kurs))-Dy*(-sin(radians(self.global_kurs))))+self.RoboPosX
-
+            X=(Dx*cos(radians(self.global_kurs))+Dy*(sin(radians(self.global_kurs))))+self.RoboPosX
             #Drehmatrix für Y, Returns Global Hindernis Position
-            Y=(Dx*sin(radians(self.global_kurs))+Dy*(-cos(radians(self.global_kurs))))+self.RoboPosY
+            Y=(-Dx*sin(radians(self.global_kurs))+Dy*(cos(radians(self.global_kurs))))+self.RoboPosY
 
             self.globalObstaclesList.append([X,Y])
-
-    def getGlobalObstaclesListDiff(self):
-        self.globalObstaclesList=[[60,60],[50,50],[0,130],[0,140]]
-        return(self.globalObstaclesList)
     
     def updateHardObstacles(self,bumperL,bumperR):
         """Status der Stosstange in Karte eintragen"""
@@ -52,47 +46,47 @@ class Karte():
         """Update Robo Position auf Karte"""
 
         #RoboSchwerpunkt bis Rad cm
-        a=18  
+        a=18 
         c=18
+        countsRadGross=72
 
+        #Werte Uebernehmen: Counts in (cm) umrechnen
         self.global_kurs=KompassCourse
-        WinkelDiff=SteerDiff*5.2    #Counts in Winkel umwandeln
-        deltaDist=deltaDist*1.3
-        #print(WinkelDiff)
+        distPerCount=SteerDiff*((15.0*pi)/countsRadGross)           #(Radumfang)/counts
+        WinkelDiff=degrees(distPerCount/(a+c))                      #Raddist/Radstandbreite
+        deltDistGeradefahrt=deltaDistRad*(15.0*pi/countsRadGross)   #GeradeFahrt in cm (Radumfang)/counts        
+        #deltaHintenDist=deltaDist*((8.5*pi)/20)                    #(RadumfangHinten)/counts
+
 
         if abs(SteerDiff) > 1:
             #Kosinussatz: Schwerpunkt Wegversatz berechnen
-            b=sqrt(pow(a,2)+pow(c,2)-2*a*c*cos(radians(WinkelDiff)))
-                        
-            #Richtung des Wegversatz in GlobalKurs umrechnen
-##            self.global_kurs=KompassCourse
-##            self.global_kurs=self.global_kurs+WinkelDiff
-##            if self.global_kurs>360:
-##                self.global_kurs=self.global_kurs-360
-##            if self.global_kurs<0:
-##                self.global_kurs=360-abs(self.global_kurs)   
+            b=sqrt(pow(a,2)+pow(c,2)-2*a*c*cos(radians(WinkelDiff)))          
 
-            #Delta x,y anhand SteerDiff berrechnen
-            Dx=b*cos(radians((180-abs(WinkelDiff))/2))
-            Dy=b*sin(radians((180-abs(WinkelDiff))/2))
+            #Delta x,y anhand WinkelDiff berrechnen, Links/Rechtskurve anders
+            if WinkelDiff>0:
+                Dx=b*cos(radians((180-abs(WinkelDiff))/2))
+                Dy=b*sin(radians((180-abs(WinkelDiff))/2))
+
+            if WinkelDiff<0:
+                Dx=-b*cos(radians((180-abs(WinkelDiff))/2))
+                Dy=b*sin(radians((180-abs(WinkelDiff))/2))
+             
             print("STEER SubProz: "+str(Dx)+"  "+str(Dy))
             
             #Position des Robo auf Karte updaten
             self.Drehmatrix(Dx,Dy)
-
             #Clear Encoder    
             self.encoder.clearEncoderLR()
 
         if deltaDistRad > 0:       
-            #Position des Robo auf Karte updaten
             Dx=0
-            Dy=deltaDistRad*2.9
+            Dy=deltDistGeradefahrt
             print("DIST SubProz: "+str(Dx)+"  "+str(Dy))
+            
+            #Position des Robo auf Karte updaten
             self.Drehmatrix(Dx,Dy)
-
             #Clear Encoder    
             self.encoder.clearEncoderLR()
-
 
         if time.time()-self.timeold > 2:
             #Jede Sec Path speichern            
@@ -108,7 +102,6 @@ class Karte():
             self.RoboPosX=(Dx*cos(radians(self.global_kurs))+Dy*(sin(radians(self.global_kurs))))+self.RoboPosX
             #Drehmatrix für Y, Returns Global Hindernis Position
             self.RoboPosY=(-Dx*sin(radians(self.global_kurs))+Dy*(cos(radians(self.global_kurs))))+self.RoboPosY
-
 
     def getRoboPos(self):
         """returns RoboPos X,Y,pose"""
@@ -136,6 +129,7 @@ class Karte():
 
 if __name__ == "__main__":
 
+
     enc=1
     K=Karte(enc)
     
@@ -144,15 +138,17 @@ if __name__ == "__main__":
     K.updateObstacles(Obstacles)
     print(K.getObstacles())
 
-    deltaDist=10
+    deltaDist=0
     SteerDiff=0
+    deltaDistRad=10
     KompassCourse=0
-    K.updateRoboPos(deltaDist,SteerDiff,KompassCourse)
-
+    K.updateRoboPos(deltaDist,SteerDiff,deltaDistRad,KompassCourse)
+    print(K.getRoboPos())
+    
     deltaDist=5
     SteerDiff=0
     KompassCourse=90
-    K.updateRoboPos(deltaDist,SteerDiff,KompassCourse)
+    K.updateRoboPos(deltaDist,SteerDiff,deltaDistRad,KompassCourse)
     
     print(K.getRoboPos())
     print(K.getRoboPath())
