@@ -10,8 +10,8 @@ GPIO.setwarnings(False)
 class Encoder():
     def __init__(self):
         """init aller Ports, clears all counts"""
-        self.PortEncoderL=36
-        self.PortEncoderR=32
+        self.PortEncoderL=32
+        self.PortEncoderR=36
         self.PortEncoderH=7
         self.TasteL=13
         self.TasteR=15
@@ -72,7 +72,6 @@ class Encoder():
                 EncoderHOld= GPIO.input(self.PortEncoderH)
 
             self.DiffCount=self.CountR-self.CountL
-            self.DistRad=min([self.CountR,self.CountL])
             self.WegCount=self.CountH    
     
             ###Alarme### 
@@ -95,15 +94,14 @@ class Encoder():
         self.DiffCount=0
         self.CountR=0
         self.CountL=0
-        self.DistRad=0
         return
     
-    def getSteerDiff(self):
-        """Abweichung zwischen L und R und gemeinsame Pulse"""
-        return(self.DiffCount,self.DistRad)
+    def getPulseLR(self):
+        """Pulse an  L und R Rad"""
+        return(self.CountL,self.CountR)
 
     def getDistCounts(self):
-        """counts an Wegrad"""
+        """counts an Wegrad hinten"""
         Ausgabe=self.WegCount
         self.WegCount=0
         return(Ausgabe)
@@ -130,8 +128,9 @@ if __name__ == "__main__":
     ThreadEncoder.daemon=True
     ThreadEncoder.start()
 
+    sleep(0.3)
     while True:
-        print(Encoder.getSteerDiff())
+        print(Encoder.getPulseLR())
         sleep(1)
 
 

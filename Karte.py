@@ -13,7 +13,7 @@ class Karte():
         self.RoboPosX=0
         self.RoboPath=[]
         self.globalObstaclesList=[]
-        self.global_kurs=0
+        self.global_kurs=90
         self.kompassOld=0
         self.timeold=0
 
@@ -42,49 +42,47 @@ class Karte():
         if bumperR:
             self.updateObstacles([(150, 0)])
 
-    def updateRoboPos(self,deltaDist,SteerDiff,deltaDistRad,KompassCourse):
+    def updateRoboPos(self,deltaL,deltaR,KompassCourse):
         """Update Robo Position auf Karte"""
-
+        print("Counts: "+str(deltaL)+" "+str(deltaR))
         #RoboSchwerpunkt bis Rad cm
-        a=18 
-        c=18
+        a=14.5 
+        c=14.5
+        Radstand=a+c
         countsRadGross=72
 
         #Werte Uebernehmen: Counts in (cm) umrechnen
-        self.global_kurs=KompassCourse
-        distPerCount=SteerDiff*((15.0*pi)/countsRadGross)           #(Radumfang)/counts
-        WinkelDiff=degrees(distPerCount/(a+c))                      #Raddist/Radstandbreite
-        deltDistGeradefahrt=deltaDistRad*(15.0*pi/countsRadGross)   #GeradeFahrt in cm (Radumfang)/counts        
+        deltaL=deltaL*((15.0*pi)/countsRadGross)           #(Radumfang)/counts
+        deltaR=deltaR*((15.0*pi)/countsRadGross)           #(Radumfang)/counts
+        WinkelDiff=degrees((deltaR-deltaL)/Radstand)      #Raddist/Radstandbreite
+        self.global_kurs=self.global_kurs+WinkelDiff        #Global Kurs anhand Weg berechnen
+        global_kurs_radiant=radians(self.global_kurs)
+        #self.global_kurs=KompassCourse                           
         #deltaHintenDist=deltaDist*((8.5*pi)/20)                    #(RadumfangHinten)/counts
 
 
-        if abs(SteerDiff) > 1:
-            #Kosinussatz: Schwerpunkt Wegversatz berechnen
-            b=sqrt(pow(a,2)+pow(c,2)-2*a*c*cos(radians(WinkelDiff)))          
+        if deltaL == deltaR  and a==20:
+            da=(deltaR-deltaL)/Radstand     #Drehwinkel in  [rad]
+            ds=(deltaL+deltaR)/2            #Mittler Strecke von L und R
 
-            #Delta x,y anhand WinkelDiff berrechnen, Links/Rechtskurve anders
-            if WinkelDiff>0:
-                Dx=b*cos(radians((180-abs(WinkelDiff))/2))
-                Dy=b*sin(radians((180-abs(WinkelDiff))/2))
-
-            if WinkelDiff<0:
-                Dx=-b*cos(radians((180-abs(WinkelDiff))/2))
-                Dy=b*sin(radians((180-abs(WinkelDiff))/2))
-             
-            print("STEER SubProz: "+str(Dx)+"  "+str(Dy))
+            #delta X und Y berechnen nach einer Kurve Dx->Waagerecht Dy->senkrecht
+            dx=(ds/da)*(cos((pi/2)+global_kurs_radiant-da)+cos(global_kurs_radiant-(pi/2)))
+            dy=(ds/da)*(sin((pi/2)+global_kurs_radiant-da)+sin(global_kurs_radiant-(pi/2)))
+            
+            print("STEER: "+str(round(dx,2))+"  "+str(round(dy,2))+"  "+str(deltaL)+str(deltaR))
             
             #Position des Robo auf Karte updaten
-            self.Drehmatrix(Dx,Dy)
+            self.Drehmatrix(dx,dy)
             #Clear Encoder    
             self.encoder.clearEncoderLR()
 
-        if deltaDistRad > 0:       
-            Dx=0
-            Dy=deltDistGeradefahrt
-            print("DIST SubProz: "+str(Dx)+"  "+str(Dy))
+        else:       
+            dx=deltaR*cos(global_kurs_radiant)
+            dy=deltaL*sin(global_kurs_radiant)
+            print("DIST : "+str(round(dx,2))+"  "+str(round(dy,2))+"  "+str(deltaL)+str(deltaR))
             
             #Position des Robo auf Karte updaten
-            self.Drehmatrix(Dx,Dy)
+            self.Drehmatrix(dx,dy)
             #Clear Encoder    
             self.encoder.clearEncoderLR()
 
@@ -97,11 +95,14 @@ class Karte():
             
             self.timeold = time.time()
 
-    def Drehmatrix(self,Dx,Dy):
+    def Drehmatrix(self,dx,dy):
+            self.RoboPosX=self.RoboPosX+dx
+            self.RoboPosY=self.RoboPosY+dy
+
             #Drehmatrix für X, Returns Global Hindernis Position
-            self.RoboPosX=(Dx*cos(radians(self.global_kurs))+Dy*(sin(radians(self.global_kurs))))+self.RoboPosX
+            #self.RoboPosX=(Dx*cos(radians(self.global_kurs))+Dy*(sin(radians(self.global_kurs))))+self.RoboPosX
             #Drehmatrix für Y, Returns Global Hindernis Position
-            self.RoboPosY=(-Dx*sin(radians(self.global_kurs))+Dy*(cos(radians(self.global_kurs))))+self.RoboPosY
+            #self.RoboPosY=(-Dx*sin(radians(self.global_kurs))+Dy*(cos(radians(self.global_kurs))))+self.RoboPosY
 
     def getRoboPos(self):
         """returns RoboPos X,Y,pose"""

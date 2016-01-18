@@ -19,7 +19,7 @@ navigation=Navigation()
 scanner=Scanner()
 karte=Karte(encoder)
 plan=Plan(karte,navigation)
-
+kreis=0
 motor=Motor()
 
 def cleaning():
@@ -28,26 +28,25 @@ def cleaning():
 
 atexit.register(cleaning)
 
-ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(1,))
+ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(0,))
 ThreadScanAllTime.daemon=True
 ThreadScanAllTime.start()
 
 ThreadEncoder=Thread(target=encoder.runAllTime,args=())
 ThreadEncoder.daemon=True
 ThreadEncoder.start()
+sleep(0.2)
 
 while Robo==True:
     #print("***************************************")  
     obstacles=scanner.getNewDistValues()
     karte.updateObstacles(obstacles)
 
-    deltaDist=encoder.getDistCounts()
-    #print("Dist  "+str(deltaDist))
-    steerDiff,deltaDistRad=encoder.getSteerDiff()
-    #print("Dist: "+str(deltaDist)+"Steer:"+str(steerDiff))
+    deltaL,deltaR=encoder.getPulseLR()
+
     kompassCourse=Kompass.getKompass()
 
-    karte.updateRoboPos(deltaDist,steerDiff,deltaDistRad,kompassCourse)
+    karte.updateRoboPos(deltaL,deltaR,kompassCourse)
 
     pumperL,pumperR=encoder.getPumper()
     karte.updateHardObstacles(pumperL,pumperR)
@@ -59,7 +58,7 @@ while Robo==True:
         count=0
         motor.setCommand(steer,speed)
         print(karte.getRoboPos())
-        #karte.setRoboPosZero()
+        print(kreis)        #karte.setRoboPosZero()
         comm=input("COMMAND PLEASE: ")
         if comm == 8:
             speed=1
