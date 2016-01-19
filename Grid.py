@@ -1,7 +1,8 @@
 import heapq
+import pickle
 
 
-class SquareGrid:
+class SquareGrid(object):
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -25,23 +26,28 @@ class SquareGrid:
 
 class GridWithWeights(SquareGrid):
     def __init__(self, width, height):
-        super().__init__(width, height)
+        super(GridWithWeights,self).__init__(width, height)
         self.weights = {}
     
     def cost(self, a, b):
         return self.weights.get(b, 1)
 
-
     def obstaclesInGrid(self, obstacles):
-        """GlobaleHinderniss (x[mm],y[mm]) in Grid eintragen (RasterX,RasterY)"""
-        
+        """GlobaleHinderniss (x[cm],y[cm]) in Grid eintragen (RasterX,RasterY)"""        
         unpaintedObstacles=obstacles
 
         for obstacle in unpaintedObstacles:
-            obstacle_x_grid=round(obstacle[0]/10)
-            obstacle_y_grid=round(obstacle[1]/10)
-            self.walls.append((obstacle_x_grid,obstacle_y_grid))
+            obstacle_x_grid=int(obstacle[0]/10)
+            obstacle_y_grid=int(obstacle[1]/10)
             
+            if (obstacle_x_grid,obstacle_y_grid) not in  self.walls:
+                self.walls.append((obstacle_x_grid,obstacle_y_grid))
+
+        #Hindernisse speichern            
+        pickelObstacles=open( "RoboObstacles.p", "wb" )
+        pickle.dump(self.walls,pickelObstacles)
+
+        
         return(self.walls)
             
 class PriorityQueue:
@@ -114,7 +120,7 @@ def draw_tile(graph, id, style, width):
 def draw_grid(graph, width=2, **style):
     for y in range(graph.height):
         for x in range(graph.width):
-            print("%%-%ds" % width % draw_tile(graph, (x, y), style, width), end="")
+            print("%%-%ds" % width % draw_tile(graph, (x, y), style, width))  #end=""
         print()
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ class Karte():
         self.RoboPosX=0
         self.RoboPath=[]
         self.globalObstaclesList=[]
-        self.global_kurs=90
+        self.global_kurs=0
         self.kompassOld=0
         self.timeold=0
 
@@ -27,24 +27,22 @@ class Karte():
             Dy = Obstacle[1]
 
             #Drehmatrix für X, Returns Global Hindernis Position
-            X=(Dx*cos(radians(self.global_kurs))+Dy*(sin(radians(self.global_kurs))))+self.RoboPosX
+            X=(Dx*cos(radians(self.global_kurs))+Dy*(-sin(radians(self.global_kurs))))+self.RoboPosX
             #Drehmatrix für Y, Returns Global Hindernis Position
-            Y=(-Dx*sin(radians(self.global_kurs))+Dy*(cos(radians(self.global_kurs))))+self.RoboPosY
+            Y=(Dx*sin(radians(self.global_kurs))+Dy*(cos(radians(self.global_kurs))))+self.RoboPosY
 
             self.globalObstaclesList.append([X,Y])
     
-    def updateHardObstacles(self,bumperL,bumperR):
+    def updateHardObstacles(self,pumperL,pumperR):
         """Status der Stosstange in Karte eintragen"""
-        self.pumperL = bumperL
-        self.pumperR = bumperR
-        if bumperL:
+        if pumperL:
             self.updateObstacles([(-150, 0)])
-        if bumperR:
+        if pumperR:
             self.updateObstacles([(150, 0)])
 
     def updateRoboPos(self,deltaL,deltaR,KompassCourse):
         """Update Robo Position auf Karte"""
-        print("Counts: "+str(deltaL)+" "+str(deltaR))
+        #print("Counts: "+str(deltaL)+" "+str(deltaR))
         #RoboSchwerpunkt bis Rad cm
         a=14.5 
         c=14.5
@@ -61,7 +59,7 @@ class Karte():
         #deltaHintenDist=deltaDist*((8.5*pi)/20)                    #(RadumfangHinten)/counts
 
 
-        if deltaL == deltaR  and a==20:
+        if deltaL != deltaR:
             da=(deltaR-deltaL)/Radstand     #Drehwinkel in  [rad]
             ds=(deltaL+deltaR)/2            #Mittler Strecke von L und R
 
@@ -69,7 +67,7 @@ class Karte():
             dx=(ds/da)*(cos((pi/2)+global_kurs_radiant-da)+cos(global_kurs_radiant-(pi/2)))
             dy=(ds/da)*(sin((pi/2)+global_kurs_radiant-da)+sin(global_kurs_radiant-(pi/2)))
             
-            print("STEER: "+str(round(dx,2))+"  "+str(round(dy,2))+"  "+str(deltaL)+str(deltaR))
+            #print("STEER: "+str(round(dx,2))+"  "+str(round(dy,2))+"  "+str(deltaL)+str(deltaR))
             
             #Position des Robo auf Karte updaten
             self.Drehmatrix(dx,dy)
@@ -79,7 +77,7 @@ class Karte():
         else:       
             dx=deltaR*cos(global_kurs_radiant)
             dy=deltaL*sin(global_kurs_radiant)
-            print("DIST : "+str(round(dx,2))+"  "+str(round(dy,2))+"  "+str(deltaL)+str(deltaR))
+            #print("DIST : "+str(round(dx,2))+"  "+str(round(dy,2))+"  "+str(deltaL)+str(deltaR))
             
             #Position des Robo auf Karte updaten
             self.Drehmatrix(dx,dy)
@@ -88,7 +86,7 @@ class Karte():
 
         if time.time()-self.timeold > 2:
             #Jede Sec Path speichern            
-            self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1),self.global_kurs])
+            self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1)])
             
             pickelRoboPath=open( "RoboPath.p", "wb" )
             pickle.dump(self.RoboPath, pickelRoboPath)

@@ -39,7 +39,7 @@ class Scanner():
         Messwert,Error=self.Sonar1.GetADC()
         if Messwert<150:
             self.lock.acquire()
-            self.ScanList.append([(90-angle),Messwert])
+            self.ScanList.append([(angle-90),Messwert])
             self.lock.release()
 
     def getNewDistValues(self):
@@ -50,7 +50,8 @@ class Scanner():
         for i in range(len(Obstacles)):
             Dx=(Obstacles[i][1]*cos(radians(Obstacles[i][0])))
             Dy=(Obstacles[i][1]*sin(radians(Obstacles[i][0])))
-            Ausgabe.append((Dx,Dy))
+            print(Obstacles[i][0],Obstacles[i][1])
+            Ausgabe.append((int(Dx),int(Dy)))
         self.ScanList=[]
         return(Ausgabe)
 
