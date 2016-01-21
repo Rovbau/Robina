@@ -46,7 +46,7 @@ class GridWithWeights(SquareGrid):
         #Hindernisse speichern            
         pickelObstacles=open( "RoboObstacles.p", "wb" )
         pickle.dump(self.walls,pickelObstacles)
-
+	pickelObstacles.close()
         
         return(self.walls)
             

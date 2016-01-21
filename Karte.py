@@ -90,7 +90,7 @@ class Karte():
             
             pickelRoboPath=open( "RoboPath.p", "wb" )
             pickle.dump(self.RoboPath, pickelRoboPath)
-            
+            pickelRoboPath.close()
             self.timeold = time.time()
 
     def Drehmatrix(self,dx,dy):
