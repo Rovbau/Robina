@@ -34,7 +34,7 @@ class Scanner():
 
     def readSensorAndUpdateObstacles(self,angle):
         self.setServo(angle)
-        sleep(0.2)
+        sleep(3.2)
         Messwert,Error=self.Sonar1.GetADC()
         Messwert,Error=self.Sonar1.GetADC()
         if Messwert<150:
@@ -50,7 +50,7 @@ class Scanner():
         for i in range(len(Obstacles)):
             Dx=(Obstacles[i][1]*cos(radians(Obstacles[i][0])))
             Dy=(Obstacles[i][1]*sin(radians(Obstacles[i][0])))
-            print(Obstacles[i][0],Obstacles[i][1])
+            print(int(Dx),int(Dy))
             Ausgabe.append((int(Dx),int(Dy)))
         self.ScanList=[]
         return(Ausgabe)

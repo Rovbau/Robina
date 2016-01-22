@@ -9,10 +9,10 @@ Nully=250
 #Tkinter 
 root=Tk()
 root.title ("Hinderniss-Daten")           #Titel de Fensters
-#root.geometry("320x240+0+0")
+root.geometry("500x500+0+0")
 can=Canvas(master=root, width=500, height=580, bg="grey")
 #Karten Nullpunkt
-can.create_oval(Nullx-5,Nully-5,Nullx,Nully, width=1, fill="black")
+
 
 
 def printObstacles():
@@ -21,14 +21,15 @@ def printObstacles():
         X=pos[0]*10
         Y=pos[1]*10
         #Zeichne Hindernisspunkte Global ein 
-        can.create_oval(Nullx+X-5,Nully-Y-5,Nullx+X,Nully-Y, width=1, fill="red")
+        can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill="red")
 
     position_in_grid = pickle.load( open("RoboPath.p" , "rb" ))
+
     for pos in position_in_grid:
         X=pos[0]
         Y=pos[1]
         #Zeichne Hindernisspunkte Global ein 
-        can.create_oval(Nullx+X-7,Nully-Y-7,Nullx+X,Nully-Y, width=1, fill="blue")
+        can.create_oval(Nullx+X-15,Nully-Y+15,Nullx+X+15,Nully-Y-15, width=1, fill="blue")
         
     print(time.time())   
     root.after(1000,printObstacles)
@@ -36,6 +37,9 @@ def printObstacles():
 
 ###MAIN###
 printObstacles()
-
+can.create_oval(Nullx-2,Nully+2,Nullx+2,Nully-2, width=1, fill="black")
+can.create_oval(Nullx-50,Nully+50,Nullx+50,Nully-50, width=1, fill=None)
+can.create_oval(Nullx-100,Nully+100,Nullx+100,Nully-100, width=1, fill=None)
+can.create_oval(Nullx-150,Nully+150,Nullx+150,Nully-150, width=1, fill=None)
 can.pack()
 root.mainloop()

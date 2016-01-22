@@ -30,7 +30,7 @@ def cleaning():
 
 atexit.register(cleaning)
 
-ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(0,))
+ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(1,))
 ThreadScanAllTime.daemon=True
 ThreadScanAllTime.start()
 
@@ -41,7 +41,7 @@ sleep(0.4)
 
 while Robo==True:  
     obstacles=scanner.getNewDistValues()
-    obstacles=[[0,50],[50,0]]
+    #obstacles=[[50,0],[50,50],[0,50]]
     #print(obstacles)
     karte.updateObstacles(obstacles)
 
