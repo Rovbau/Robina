@@ -53,19 +53,25 @@ class Grid():
                 self.walls.append((x,y-1))
                 
             self.gridwithweights.walls=self.walls
-            came_from, cost_so_far = a_star_search(self.gridwithweights, self.startgrid, self.zielgrid)
 
-            path=reconstruct_path(came_from, self.startgrid, self.zielgrid)
-            print(path)               
-        return(self.walls)
+    def getSolvedPath(self):
+        """Calculate path in grid"""        
+        came_from, cost_so_far = a_star_search(self.gridwithweights,
+                                                   self.startgrid, self.zielgrid)
+        path=reconstruct_path(came_from, self.startgrid, self.zielgrid)
+        draw_grid(g.gridwithweights, width=2, point_to=came_from, start=(2,2),goal=(7,2))
+        return(path)
 
 
 if __name__ == "__main__":
 
     g = Grid(10, 10)
-    g.obstaclesInGrid([(50, 50)])
     g.setRoboInGrid(2,2)
-    g.setZielInGrid(7,7)
-    
+    g.setZielInGrid(7,2)
+    g.obstaclesInGrid([(40, 20)])    
     g.addClearance()
+    print(g.walls)
+
+    print(g.getSolvedPath())
+   
 
