@@ -1,39 +1,19 @@
-from __future__ import print_function
-import heapq
+#Erzeugt Grid Basics
+
+#([(0, 50),(10, 50),(20, 50),(30, 50),(40, 50),(90, 90)])
+
+from copy import deepcopy
 import pickle
+from Grid import *
 
-
-
-class SquareGrid(object):
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.walls = []
-    
-    def in_bounds(self, id):
-        (x, y) = id
-        return 0 <= x < self.width and 0 <= y < self.height
-    
-    def passable(self, id):
-        return id not in self.walls
-    
-    def neighbors(self, id):
-        (x, y) = id
-        results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
-        if (x + y) % 2 == 0: results.reverse() # aesthetics
-        results = filter(self.in_bounds, results)
-        results = filter(self.passable, results)
-        return results
-
-
-class GridWithWeights(SquareGrid):
-    def __init__(self, width, height):
-        super(GridWithWeights,self).__init__(width, height)
-        self.weights = {}
-    
-    def cost(self, a, b):
-        return self.weights.get(b, 1)
-
+class Grid():
+    def __init__(self, width, heigh):
+        self.width=width
+        self.heigh=heigh
+        self.walls=[]
+        self.gridwithweights=GridWithWeights(width,heigh)
+        
+        
     def obstaclesInGrid(self, obstacles):
         """GlobaleHinderniss (x[cm],y[cm]) in Grid eintragen (RasterX,RasterY)"""        
         unpaintedObstacles=obstacles
@@ -48,99 +28,50 @@ class GridWithWeights(SquareGrid):
         #Hindernisse speichern            
         pickelObstacles=open( "RoboObstacles.p", "wb" )
         pickle.dump(self.walls,pickelObstacles)
-	pickelObstacles.close()
+
+
+    def setRoboInGrid(self,x,y):
+        self.startgrid=(x,y)
         
-        return(self.walls)
-            
-class PriorityQueue:
-    def __init__(self):
-        self.elements = []
-    
-    def empty(self):
-        return len(self.elements) == 0
-    
-    def put(self, item, priority):
-        heapq.heappush(self.elements, (priority, item))
-    
-    def get(self):
-        return heapq.heappop(self.elements)[1]
-
-def a_star_search(graph, start, goal):
-    frontier = PriorityQueue()
-    frontier.put(start, 0)
-    came_from = {}
-    cost_so_far = {}
-    came_from[start] = None
-    cost_so_far[start] = 0
-    
-    while not frontier.empty():
-        current = frontier.get()
-        #print(current)
-        if current == goal:
-            break
+    def setZielInGrid(self,x,y):
+        self.zielgrid=(x,y)
         
-        for next in graph.neighbors(current):
-            new_cost = cost_so_far[current] + graph.cost(current, next)
-            if next not in cost_so_far or new_cost < cost_so_far[next]:
-                cost_so_far[next] = new_cost
-                priority = new_cost + heuristic(goal, next)
-                frontier.put(next, priority)
-                came_from[next] = current
-    
-    return came_from, cost_so_far
+    def addClearance(self):
+        """Adds clearance for every Wall"""
+        temp_walls=deepcopy(self.walls)
 
-def reconstruct_path(came_from, start, goal):
-    current = goal
-    path = [current]
-    while current != start:
-        current = came_from[current]
-        path.append(current)
-    path.reverse()
-    return path
+        for wall in temp_walls:
+            x=wall[0]
+            y=wall[1]
+            if (x+1,y) not in temp_walls:
+                self.walls.append((x+1,y))
+            if (x-1,y) not in temp_walls:
+                self.walls.append((x-1,y))
+            if (x,y+1) not in temp_walls:
+                self.walls.append((x,y+1))
+            if (x,y-1) not in temp_walls:
+                self.walls.append((x,y-1))
+                
+            self.gridwithweights.walls=self.walls
 
-def heuristic(a, b):
-    (x1, y1) = a
-    (x2, y2) = b
-    return abs(x1 - x2) + abs(y1 - y2)
+    def getSolvedPath(self):
+        """Calculate path in grid"""        
+        came_from, cost_so_far = a_star_search(self.gridwithweights,
+                                                   self.startgrid, self.zielgrid)
+        path=reconstruct_path(came_from, self.startgrid, self.zielgrid)
+        draw_grid(g.gridwithweights, width=2, point_to=came_from, start=(2,2),goal=(7,2))
+        return(path)
 
-def draw_tile(graph, id, style, width):
-    r = "."
-    if 'number' in style and id in style['number']: r = "%d" % style['number'][id]
-    if 'point_to' in style and style['point_to'].get(id, None) is not None:
-        (x1, y1) = id
-        (x2, y2) = style['point_to'][id]
-        if x2 == x1 + 1: r = u"\u2192"
-        if x2 == x1 - 1: r = u"\u2190"
-        if y2 == y1 + 1: r = u"\u2193"
-        if y2 == y1 - 1: r = u"\u2191"
-    if 'start' in style and id == style['start']: r = "A"
-    if 'goal' in style and id == style['goal']: r = "Z"
-    if 'path' in style and id in style['path']: r = "@"
-    if id in graph.walls: r = "#" * width
-    return r
-
-def draw_grid(graph, width=2, **style):
-    for y in range(graph.height):
-        for x in range(graph.width):
-            print("%%-%ds" % width % draw_tile(graph, (x, y), style, width),end="")  #end=""
-        print()
 
 if __name__ == "__main__":
 
-    start=(2,2)
-    goal=(7,7)
-    
-    g = GridWithWeights(10, 10)
-    g.walls = g.obstaclesInGrid([(0, 50),(10, 50),(20, 50),(30, 50),(40, 50),(90, 90)])
+    g = Grid(10, 10)
+    g.setRoboInGrid(2,2)
+    g.setZielInGrid(7,2)
+    g.obstaclesInGrid([(40, 20)])    
+    g.addClearance()
+    print(g.walls)
 
-    came_from, cost_so_far = a_star_search(g, start, goal)
+    print(g.getSolvedPath())
+   
 
-    path=reconstruct_path(came_from, start, goal)
-    print(path)
-    draw_grid(g, width=1, point_to=came_from, start=start,goal=goal)
-
-
-
-
-        
-        

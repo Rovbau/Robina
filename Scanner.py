@@ -34,7 +34,7 @@ class Scanner():
 
     def readSensorAndUpdateObstacles(self,angle):
         self.setServo(angle)
-        sleep(3.2)
+        sleep(0.2)
         Messwert,Error=self.Sonar1.GetADC()
         Messwert,Error=self.Sonar1.GetADC()
         if Messwert<150:
