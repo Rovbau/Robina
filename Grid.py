@@ -4,7 +4,7 @@
 
 from copy import deepcopy
 import pickle
-from Grid import *
+from Astar import *
 
 class Grid():
     def __init__(self, width, heigh):
@@ -25,12 +25,12 @@ class Grid():
             if (obstacle_x_grid,obstacle_y_grid) not in  self.walls:
                 self.walls.append((obstacle_x_grid,obstacle_y_grid))
 
-        #Hindernisse speichern            
+    def saveGridObstacles(self):
+        """Hindernisse speichern pickle"""
         pickelObstacles=open( "RoboObstacles.p", "wb" )
         pickle.dump(self.walls,pickelObstacles)
 
-
-    def setRoboInGrid(self,x,y):
+    def setStartInGrid(self,x,y):
         self.startgrid=(x,y)
         
     def setZielInGrid(self,x,y):
@@ -56,22 +56,33 @@ class Grid():
 
     def getSolvedPath(self):
         """Calculate path in grid"""        
-        came_from, cost_so_far = a_star_search(self.gridwithweights,
+        self.came_from, self.cost_so_far = a_star_search(self.gridwithweights,
                                                    self.startgrid, self.zielgrid)
-        path=reconstruct_path(came_from, self.startgrid, self.zielgrid)
-        draw_grid(g.gridwithweights, width=2, point_to=came_from, start=(2,2),goal=(7,2))
+        path=reconstruct_path(self.came_from, self.startgrid, self.zielgrid)
         return(path)
+
+    def saveGridPath(self,path):
+        """Path speichern pickle"""
+        pickleSolved=open( "RoboSolved.p", "wb" )
+        pickle.dump(path,pickleSolved)
+        pickleSolved.close()
+    
+    def drawSolvedPath(self):
+        draw_grid(g.gridwithweights, width=2, point_to=self.came_from, start=self.startgrid,
+                  goal=self.zielgrid)
 
 
 if __name__ == "__main__":
 
-    g = Grid(10, 10)
-    g.setRoboInGrid(2,2)
-    g.setZielInGrid(7,2)
-    g.obstaclesInGrid([(40, 20)])    
+    g = Grid(10,10)
+    g.setStartInGrid(2,2)
+    g.setZielInGrid(8,8)
+    g.obstaclesInGrid([(40, 50)])    
     g.addClearance()
     print(g.walls)
-
-    print(g.getSolvedPath())
-   
+    print("***")
+    weg=g.getSolvedPath()
+    print(weg)
+    g.drawSolvedPath()
+    g.saveGridPath(weg)
 

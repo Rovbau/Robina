@@ -83,24 +83,24 @@ class Karte():
             self.Drehmatrix(dx,dy)
             #Clear Encoder    
             self.encoder.clearEncoderLR()
-
-        if time.time()-self.timeold > 2:
-            #Jede Sec Path speichern            
-            self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1)])
             
-            pickelRoboPath=open( "RoboPath.p", "wb" )
-            pickle.dump(self.RoboPath, pickelRoboPath)
-            pickelRoboPath.close()
-            self.timeold = time.time()
-
-    def Drehmatrix(self,dx,dy):
-            self.RoboPosX=self.RoboPosX+dx
-            self.RoboPosY=self.RoboPosY+dy
-
             #Drehmatrix für X, Returns Global Hindernis Position
             #self.RoboPosX=(Dx*cos(radians(self.global_kurs))+Dy*(sin(radians(self.global_kurs))))+self.RoboPosX
             #Drehmatrix für Y, Returns Global Hindernis Position
             #self.RoboPosY=(-Dx*sin(radians(self.global_kurs))+Dy*(cos(radians(self.global_kurs))))+self.RoboPosY
+
+    def Drehmatrix(self,dx,dy):
+        self.RoboPosX=self.RoboPosX+dx
+        self.RoboPosY=self.RoboPosY+dy
+        
+    def saveRoboPath(self):
+        """Pickel Robos Path every Xsec."""
+        if time.time()-self.timeold > 2:          
+            self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1)])
+            pickelRoboPath=open( "RoboPath.p", "wb" )
+            pickle.dump(self.RoboPath, pickelRoboPath)
+            pickelRoboPath.close()
+            self.timeold = time.time()
 
     def getRoboPos(self):
         """returns RoboPos X,Y,pose"""

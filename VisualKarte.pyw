@@ -30,6 +30,14 @@ def printObstacles():
         Y=pos[1]
         #Zeichne Hindernisspunkte Global ein 
         can.create_oval(Nullx+X-15,Nully-Y+15,Nullx+X+15,Nully-Y-15, width=1, fill="blue")
+
+    position_solved_path = pickle.load( open("RoboSolved.p" , "rb" ))
+
+    for pos in position_solved_path:
+        X=pos[0]*10
+        Y=pos[1]*10
+        #Zeichne Hindernisspunkte Global ein 
+        can.create_oval(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill="green")
         
     print(time.time())   
     root.after(1000,printObstacles)

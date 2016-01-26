@@ -22,7 +22,10 @@ karte=Karte(encoder)
 plan=Plan(karte,navigation)
 kreis=0
 motor=Motor()
-grid=GridWithWeights(20,20)
+grid=Grid(30,30)
+
+grid.setZielInGrid(25,25)
+grid.setStartInGrid(10,3)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
@@ -37,23 +40,30 @@ ThreadScanAllTime.start()
 ThreadEncoder=Thread(target=encoder.runAllTime,args=())
 ThreadEncoder.daemon=True
 ThreadEncoder.start()
-sleep(0.4)
+sleep(1)
 
-while Robo==True:  
+while Robo==True:
+    #Obstacles eintragen
     obstacles=scanner.getNewDistValues()
     #obstacles=[[50,0],[50,50],[0,50]]
-    #print(obstacles)
     karte.updateObstacles(obstacles)
-
-    walls=grid.obstaclesInGrid(karte.getObstacles())
-    walls.sort()
-    #print(walls)
+    pumperL,pumperR=encoder.getPumper()
+    karte.updateHardObstacles(pumperL,pumperR)
+    
+    #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
-
-    pumperL,pumperR=encoder.getPumper()
-    karte.updateHardObstacles(pumperL,pumperR)
+    karte.saveRoboPath()
+    
+    #Grid mit Astar
+    walls=karte.getObstacles()
+    grid.obstaclesInGrid(walls)
+    #grid.addClearance()
+    grid.saveGridObstacles()
+    #x,y,pose=karte.getRoboPos()
+    path=grid.getSolvedPath()
+    grid.saveGridPath(path)
 
     count += 1
     if count == 10:
