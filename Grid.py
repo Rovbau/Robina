@@ -17,18 +17,20 @@ class Grid():
     def obstaclesInGrid(self, obstacles):
         """GlobaleHinderniss (x[cm],y[cm]) in Grid eintragen (RasterX,RasterY)"""        
         unpaintedObstacles=obstacles
-
+        
         for obstacle in unpaintedObstacles:
             obstacle_x_grid=int(obstacle[0]/10)
             obstacle_y_grid=int(obstacle[1]/10)
             
             if (obstacle_x_grid,obstacle_y_grid) not in  self.walls:
                 self.walls.append((obstacle_x_grid,obstacle_y_grid))
+                self.gridwithweights.walls=self.walls
 
     def saveGridObstacles(self):
         """Hindernisse speichern pickle"""
         pickelObstacles=open( "RoboObstacles.p", "wb" )
         pickle.dump(self.walls,pickelObstacles)
+        pickelObstacles.close()
 
     def setStartInGrid(self,x,y):
         self.startgrid=(x,y)
@@ -68,7 +70,7 @@ class Grid():
         pickleSolved.close()
     
     def drawSolvedPath(self):
-        draw_grid(g.gridwithweights, width=2, point_to=self.came_from, start=self.startgrid,
+        draw_grid(self.gridwithweights, width=2, point_to=self.came_from, start=self.startgrid,
                   goal=self.zielgrid)
 
 
@@ -77,8 +79,8 @@ if __name__ == "__main__":
     g = Grid(10,10)
     g.setStartInGrid(2,2)
     g.setZielInGrid(8,8)
-    g.obstaclesInGrid([(40, 50)])    
-    g.addClearance()
+    g.obstaclesInGrid([[40, 50]])    
+    #g.addClearance()
     print(g.walls)
     print("***")
     weg=g.getSolvedPath()

@@ -16,31 +16,36 @@ can=Canvas(master=root, width=500, height=580, bg="grey")
 
 
 def printObstacles():
-    obstacles_in_grid = pickle.load( open("RoboObstacles.p" , "rb" ))
-    for pos in obstacles_in_grid:
-        X=pos[0]*10
-        Y=pos[1]*10
-        #Zeichne Hindernisspunkte Global ein 
-        can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill="red")
+    try:
+        can.delete("Point")
+        obstacles_in_grid = pickle.load( open("RoboObstacles.p" , "rb" ))
+        for pos in obstacles_in_grid:
+            X=pos[0]*10
+            Y=pos[1]*10
+            #Zeichne Hindernisspunkte Global ein 
+            can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill="red",tag="Point")
 
-    position_in_grid = pickle.load( open("RoboPath.p" , "rb" ))
+        position_in_grid = pickle.load( open("RoboPath.p" , "rb" ))
 
-    for pos in position_in_grid:
-        X=pos[0]
-        Y=pos[1]
-        #Zeichne Hindernisspunkte Global ein 
-        can.create_oval(Nullx+X-15,Nully-Y+15,Nullx+X+15,Nully-Y-15, width=1, fill="blue")
+        for pos in position_in_grid:
+            X=pos[0]
+            Y=pos[1]
+            #Zeichne Hindernisspunkte Global ein 
+            can.create_oval(Nullx+X-15,Nully-Y+15,Nullx+X+15,Nully-Y-15, width=1, fill="blue",tag="Point")
 
-    position_solved_path = pickle.load( open("RoboSolved.p" , "rb" ))
+        position_solved_path = pickle.load( open("RoboSolved.p" , "rb" ))
 
-    for pos in position_solved_path:
-        X=pos[0]*10
-        Y=pos[1]*10
-        #Zeichne Hindernisspunkte Global ein 
-        can.create_oval(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill="green")
-        
-    print(time.time())   
-    root.after(1000,printObstacles)
+        for pos in position_solved_path:
+            X=pos[0]*10
+            Y=pos[1]*10
+            #Zeichne Hindernisspunkte Global ein 
+            can.create_oval(Nullx+X-3,Nully-Y+3,Nullx+X+3,Nully-Y-3, width=1, fill="green",tag="Point")
+            
+        print(time.time())   
+        root.after(1000,printObstacles)
+    except:
+        print("ERROR")
+        printObstacles()
 
 
 ###MAIN###

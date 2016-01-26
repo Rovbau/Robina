@@ -18,7 +18,7 @@ class Karte():
         self.timeold=0
 
     def updateObstacles(self, Obstacles):
-        """Obstacles werden in ScanList eingetragen"""
+        """Obstacles werden in Karte eingetragen"""
         for Obstacle in Obstacles:            
             #Wandeln Winkeldaten für Globalberechnung: -90zu+90 und +90zu-90 0=0
             #ScanList[i][0]=degrees(asin(sin(radians(ScanList[i][0])+radians(180))))
