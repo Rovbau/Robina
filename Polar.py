@@ -40,6 +40,24 @@ def obstacleNear():
     print("Back: "+str(drive_back))
 
 
+def KursDiff(SollRichtung,Kompass):
+    """Diff zwischen zwei Winkel 0-360grad"""
+    if SollRichtung>Kompass:
+        if SollRichtung-Kompass>180:
+            Winkel=(abs(Kompass-SollRichtung)-360)
+        else:
+            Winkel=SollRichtung-Kompass
+    else:     
+        if Kompass-SollRichtung>180:
+            Winkel=360-(Kompass-SollRichtung)
+        else:
+            Winkel=SollRichtung-Kompass
+    return(Winkel)
+
+
+
 newKurs()
 obstacleNear()
+w=KursDiff(350,30)
+print(w)
 

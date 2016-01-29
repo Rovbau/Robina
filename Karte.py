@@ -36,9 +36,13 @@ class Karte():
     def updateHardObstacles(self,pumperL,pumperR):
         """Status der Stosstange in Karte eintragen"""
         if pumperL:
-            self.updateObstacles([(-150, 0)])
+            self.updateObstacles([(10, 20)])
+            self.updateObstacles([(10, 10)])
+            self.updateObstacles([(10, 0)])
         if pumperR:
-            self.updateObstacles([(150, 0)])
+            self.updateObstacles([(10, -20)])
+            self.updateObstacles([(10, -10)])
+            self.updateObstacles([(10, 0)])
 
     def updateRoboPos(self,deltaL,deltaR,KompassCourse):
         """Update Robo Position auf Karte"""
@@ -53,8 +57,14 @@ class Karte():
         deltaL=deltaL*((15.0*pi)/countsRadGross)           #(Radumfang)/counts
         deltaR=deltaR*((15.0*pi)/countsRadGross)           #(Radumfang)/counts
         WinkelDiff=degrees((deltaR-deltaL)/Radstand)      #Raddist/Radstandbreite
+        
         self.global_kurs=self.global_kurs+WinkelDiff        #Global Kurs anhand Weg berechnen
+        if self.global_kurs>360:
+            self.global_kurs=self.global_kurs-360
+        if self.global_kurs<0:
+            self.global_kurs=360-abs(self.global_kurs)            
         global_kurs_radiant=radians(self.global_kurs)
+        
         #self.global_kurs=KompassCourse                           
         #deltaHintenDist=deltaDist*((8.5*pi)/20)                    #(RadumfangHinten)/counts
 

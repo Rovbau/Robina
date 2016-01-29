@@ -24,8 +24,8 @@ kreis=0
 motor=Motor()
 grid=Grid(20,20)
 
-grid.setZielInGrid(18,0)
-grid.setStartInGrid(0,0)
+grid.setZielInGrid(18,10)
+grid.setStartInGrid(10,10)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
@@ -57,14 +57,17 @@ while Robo==True:
     karte.saveRoboPath()
     
     #Grid mit Astar
+    x,y,pose=karte.getRoboPos()
+    grid.setStartInGrid=(x,y)
     walls=karte.getObstacles()
-    #print(walls)
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
     grid.saveGridObstacles()
-    #x,y,pose=karte.getRoboPos()
+
     path=grid.getSolvedPath()
     grid.saveGridPath(path)
+
+    steer,speed=plan.nextStep(path,x,y,pose)
 
 
     count += 1

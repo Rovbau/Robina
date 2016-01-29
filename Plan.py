@@ -3,66 +3,81 @@
 
 from  time import *
 from copy import deepcopy
-import Kompass
+
 import math
 import logging
 
 logging.basicConfig(level=logging.INFO)
 
 class Plan():
-    def __init__(self,karte,navigation):
-        self.karte=karte
-        self.navigation=navigation
-        speed=0
-        steer=None
+    def __init__(self):       
+        pass
 
-    def getCourse(self):
-        #Obstacles aus karte lesen
-        obstacles=self.karte.getObstacles()
-        
-        #Wenn Vorne kein Platz retour
-        steer,speed=self.navigation.MinInFront(obstacles)
-        if speed == -1:
-            print("Da ist was VOR mir")
-            return(steer,speed)
+    def nextStep(self,path,x,y,pose):
+        """Plane next steer,speed commando"""       
+        start=path[0]
+        zwischenziel=path[3]
+        #Diff GridX,GridY von Pos zu Zwischenziel
+        diff = (zwischenziel[0]-start[0], zwischenziel[1]-start[1])
+        #Kartesisch in Polarkoordinaten
+        x,y=diff
+        dist_to_zwischenziel=sqrt(pow(x,2)+pow(y,2))
+        kurs_to_zwischenziel=degrees(atan2(y,x))
 
-        #Wenn Pumper Hinderniss erkannt retour
-        pumpL,pumpR=self.karte.getPumperStatus()
-        if pumpL == True:
-            return(0,-1)
-        if pumpR == True:
-            return(0,-1)
-        
-        #Bei Hinderniss R oder L nicht drehen
-        #obstacles=self.navigation.Querab(obstacles)
-        
-        #Parallele Wand erkennen
-        obstacles=self.navigation.WandParallel(obstacles)
-
-        
-        #Suche Luecke in Dist
-        obstacles=self.navigation.LueckeInX(80,obstacles)
-
-        sollkurs=self.karte.getZielkurs()
-        
-        _,_,istkurs=self.karte.getRoboPos()
-        print("DER KURS: "+str(istkurs))
-        print("Lokal: "+str(obstacles))
-        #Lokale Koordinaten in Globale umwandeln
-        luecke_list=self.navigation.LokalZuGlobal(istkurs,obstacles)
-
-        #Suche beste Luecke um nach Zielkurs zu kommen 
-        #luecke_list=[[-20,199],[-10,200],[0,201],[10,222],[20,233]]      
-        print("Global-Luecken: "+str(luecke_list))
-        to_steer=self.navigation.BesteLueckeKompass(sollkurs,istkurs,luecke_list)      
-        print("To Steer: "+str(to_steer))
-        
-        #Ausgabe der Motor Comands steer und speed
-        steer,speed=self.navigation.SteuerkursInSteerSpeed(to_steer)
-        #print(steer,speed)
-        
+        kurs_korr=KursDiff(kurs_to_zwischenziel,pose)
+        steer,speed=SteuerkursInSteerSpeed((kurs_korr , dist_to_zwischenziel))
         return(steer,speed)
         
+    def obstacleNear(self,position,walls):
+        """Wenn obstacle in range, drive back"""
+        x,y=position
+        range_near=3
+        drive_back=False
+        
+        for nearx in range(x-range_near,x+range_near):
+            for neary in range(y-range_near,y+range_near):
+                if (nearx,neary) in walls:
+                    drive_back=True
+                else:
+                    drive_back=False                    
+        return(drive_back)
+
+    def KursDiff(self,Soll,Ist):
+        """Diff zwischen zwei Winkel 0-360grad"""
+        if Soll>Ist:
+            if Soll-Ist>180:
+                Winkel=(abs(Ist-Soll)-360)
+            else:
+                Winkel=Soll-Ist
+        else:     
+            if Kompass-Soll>180:
+                Winkel=360-(Ist-Soll)
+            else:
+                Winkel=Soll-Ist
+        return(Winkel)
+
+
+    def SteuerkursInSteerSpeed(self,steuerkurs):
+        """Die eingabe steuerkurs=[zielkurs,Dist] wird in (steer, speed) umgewandelt ->returns (steer,speed)"""
+        if steuerkurs[0][0] > 10:
+            steer = 1
+        elif steuerkurs[0][0] < -10:
+            steer = -1
+        else:
+            steer = 0
+                
+        if steuerkurs[0][1] > 0:
+            speed=1
+        else:
+            speed=0
+            
+        return(steer,speed)
+
+
+
+
+
+
 
 class Navigation():
     def __init__(self):
