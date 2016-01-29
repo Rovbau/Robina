@@ -12,6 +12,7 @@ class Grid():
         self.heigh=heigh
         self.walls=[]
         self.gridwithweights=GridWithWeights(width,heigh)
+        self.clearance_add_walls=[]
         
         
     def obstaclesInGrid(self, obstacles):
@@ -46,20 +47,26 @@ class Grid():
             x=wall[0]
             y=wall[1]
             if (x+1,y) not in temp_walls:
-                self.walls.append((x+1,y))
+                self.clearance_add_walls.append((x+1,y))
             if (x-1,y) not in temp_walls:
-                self.walls.append((x-1,y))
+                self.clearance_add_walls.append((x-1,y))
             if (x,y+1) not in temp_walls:
-                self.walls.append((x,y+1))
+                self.clearance_add_walls.append((x,y+1))
             if (x,y-1) not in temp_walls:
-                self.walls.append((x,y-1))
+                self.clearance_add_walls.append((x,y-1))
                 
-            self.gridwithweights.walls=self.walls
+            self.gridwithweights.walls=self.walls + self.clearance_add_walls
 
     def getSolvedPath(self):
-        """Calculate path in grid"""        
+        """Calculate path in grid"""
+
+        #No Wall on Robo-Ist position
+        if self.startgrid in self.gridwithweights.walls:
+            self.gridwithweights.walls.remove(self.startgrid)
+            
         self.came_from, self.cost_so_far = a_star_search(self.gridwithweights,
                                                    self.startgrid, self.zielgrid)
+        
         path=reconstruct_path(self.came_from, self.startgrid, self.zielgrid)
         return(path)
 
@@ -79,7 +86,8 @@ if __name__ == "__main__":
     g = Grid(10,10)
     g.setStartInGrid(2,2)
     g.setZielInGrid(8,8)
-    g.obstaclesInGrid([[40, 50]])    
+
+    g.obstaclesInGrid([[40, 50],[40, 70]])    
     #g.addClearance()
     print(g.walls)
     print("***")
