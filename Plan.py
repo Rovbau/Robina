@@ -4,7 +4,7 @@
 from  time import *
 from copy import deepcopy
 
-import math
+from math import sin,cos,degrees,sqrt,atan2
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -24,8 +24,8 @@ class Plan():
         dist_to_zwischenziel=sqrt(pow(x,2)+pow(y,2))
         kurs_to_zwischenziel=degrees(atan2(y,x))
 
-        kurs_korr=KursDiff(kurs_to_zwischenziel,pose)
-        steer,speed=SteuerkursInSteerSpeed((kurs_korr , dist_to_zwischenziel))
+        kurs_korr=self.KursDiff(kurs_to_zwischenziel,pose)
+        steer,speed=self.SteuerkursInSteerSpeed((kurs_korr , dist_to_zwischenziel))
         return(steer,speed)
         
     def obstacleNear(self,position,walls):
@@ -50,7 +50,7 @@ class Plan():
             else:
                 Winkel=Soll-Ist
         else:     
-            if Kompass-Soll>180:
+            if Ist-Soll>180:
                 Winkel=360-(Ist-Soll)
             else:
                 Winkel=Soll-Ist
@@ -59,14 +59,14 @@ class Plan():
 
     def SteuerkursInSteerSpeed(self,steuerkurs):
         """Die eingabe steuerkurs=[zielkurs,Dist] wird in (steer, speed) umgewandelt ->returns (steer,speed)"""
-        if steuerkurs[0][0] > 10:
+        if steuerkurs[0] > 5:
             steer = 1
-        elif steuerkurs[0][0] < -10:
+        elif steuerkurs[0] < -5:
             steer = -1
         else:
             steer = 0
                 
-        if steuerkurs[0][1] > 0:
+        if steuerkurs[1] > 0:
             speed=1
         else:
             speed=0

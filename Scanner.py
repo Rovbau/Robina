@@ -50,7 +50,7 @@ class Scanner():
         for i in range(len(Obstacles)):
             Dx=(Obstacles[i][1]*cos(radians(Obstacles[i][0])))
             Dy=(Obstacles[i][1]*sin(radians(Obstacles[i][0])))
-            print(int(Dx),int(Dy))
+            #print(int(Dx),int(Dy))
             Ausgabe.append((int(Dx),int(Dy)))
         self.ScanList=[]
         return(Ausgabe)

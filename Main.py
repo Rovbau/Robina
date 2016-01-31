@@ -19,13 +19,13 @@ encoder=Encoder()
 navigation=Navigation()
 scanner=Scanner()
 karte=Karte(encoder)
-plan=Plan(karte,navigation)
+plan=Plan()
 kreis=0
 motor=Motor()
 grid=Grid(20,20)
 
 grid.setZielInGrid(18,10)
-grid.setStartInGrid(10,10)
+grid.setStartInGrid(0,0)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
@@ -58,20 +58,23 @@ while Robo==True:
     
     #Grid mit Astar
     x,y,pose=karte.getRoboPos()
-    grid.setStartInGrid=(x,y)
+    grid.setStartInGrid(int(x/10),int(y/10))
     walls=karte.getObstacles()
     grid.obstaclesInGrid(walls)
-    #grid.addClearance()
+    grid.addClearance()
     grid.saveGridObstacles()
 
     path=grid.getSolvedPath()
     grid.saveGridPath(path)
+    print("Path:"+str(path))
+    
 
     steer,speed=plan.nextStep(path,x,y,pose)
+    steer,speed=0,0
 
 
     count += 1
-    if count == 300:
+    if count == 30:
         speed=0
         steer=0
         count=0

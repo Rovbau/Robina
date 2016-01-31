@@ -59,10 +59,14 @@ class Grid():
 
     def getSolvedPath(self):
         """Calculate path in grid"""
-
+        print(self.startgrid)
         #No Wall on Robo-Ist position
         if self.startgrid in self.gridwithweights.walls:
             self.gridwithweights.walls.remove(self.startgrid)
+            print("Del StartPosi in Grid")
+
+        if self.zielgrid in self.gridwithweights.walls:
+            print("no SPACE IN grid")
             
         self.came_from, self.cost_so_far = a_star_search(self.gridwithweights,
                                                    self.startgrid, self.zielgrid)
@@ -77,6 +81,7 @@ class Grid():
         pickleSolved.close()
     
     def drawSolvedPath(self):
+        print(self.startgrid)
         draw_grid(self.gridwithweights, width=2, point_to=self.came_from, start=self.startgrid,
                   goal=self.zielgrid)
 
@@ -84,10 +89,10 @@ class Grid():
 if __name__ == "__main__":
 
     g = Grid(10,10)
-    g.setStartInGrid(2,2)
+    g.setStartInGrid(20,20)
     g.setZielInGrid(8,8)
 
-    g.obstaclesInGrid([[40, 50],[40, 70]])    
+    g.obstaclesInGrid([[20, 20],[80, 80]])    
     #g.addClearance()
     print(g.walls)
     print("***")
