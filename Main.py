@@ -33,7 +33,7 @@ def cleaning():
 
 atexit.register(cleaning)
 
-ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(1,))
+ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(0,))
 ThreadScanAllTime.daemon=True
 ThreadScanAllTime.start()
 
@@ -45,7 +45,7 @@ sleep(1)
 while Robo==True:
     #Obstacles eintragen
     obstacles=scanner.getNewDistValues()
-    #obstacles=[[0,50],[10,50],[20,50],[30,50],[40,50],[50,50]]
+    obstacles=[[0,50],[10,50],[20,50],[30,50],[40,50],[50,50]]
     karte.updateObstacles(obstacles)
     pumperL,pumperR=encoder.getPumper()
     karte.updateHardObstacles(pumperL,pumperR)
@@ -61,12 +61,12 @@ while Robo==True:
     grid.setStartInGrid(int(x/10),int(y/10))
     walls=karte.getObstacles()
     grid.obstaclesInGrid(walls)
-    grid.addClearance()
+    #grid.addClearance()
     grid.saveGridObstacles()
 
     path=grid.getSolvedPath()
     grid.saveGridPath(path)
-    print("Path:"+str(path))
+    #print("Path:"+str(path))
     
 
     steer,speed=plan.nextStep(path,x,y,pose)
@@ -74,7 +74,7 @@ while Robo==True:
 
 
     count += 1
-    if count == 30:
+    if count == 10:
         speed=0
         steer=0
         count=0
