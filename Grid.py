@@ -13,6 +13,7 @@ class Grid():
         self.walls=[]
         self.gridwithweights=GridWithWeights(width,heigh)
         self.clearance_add_walls=[]
+        self.last_start_pos=(width,heigh)
         
         
     def obstaclesInGrid(self, obstacles):
@@ -25,7 +26,8 @@ class Grid():
             
             if (obstacle_x_grid,obstacle_y_grid) not in  self.walls:
                 self.walls.append((obstacle_x_grid,obstacle_y_grid))
-                self.gridwithweights.walls=self.walls
+                self.gridwithweights.walls=deepcopy(self.walls)
+
 
     def saveGridObstacles(self):
         """Hindernisse speichern pickle"""
@@ -55,22 +57,27 @@ class Grid():
             if (x,y-1) not in temp_walls:
                 self.clearance_add_walls.append((x,y-1))
                 
-            self.gridwithweights.walls=self.walls + self.clearance_add_walls
+            self.gridwithweights.walls=deepcopy(temp_walls)
 
     def getSolvedPath(self):
         """Calculate path in grid"""
-        #print(self.startgrid)
+        #Calc only when Grid-Pos changed
+        if self.startgrid == self.last_start_pos:
+            return()
+        self.last_start_pos=self.startgrid
+        
         #No Wall on Robo-Ist position
         if self.startgrid in self.gridwithweights.walls:
             self.gridwithweights.walls.remove(self.startgrid)
             print("Del StartPosi in Grid")
-
+            
+        #No Wall on Robo-Ziel position
         if self.zielgrid in self.gridwithweights.walls:
             print("no SPACE IN grid")
             
         self.came_from, self.cost_so_far = a_star_search(self.gridwithweights,
                                                    self.startgrid, self.zielgrid)
-        print(self.came_from)
+
         try:
             path=reconstruct_path(self.came_from, self.startgrid, self.zielgrid)
             return(path)

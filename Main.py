@@ -22,10 +22,10 @@ karte=Karte(encoder)
 plan=Plan()
 kreis=0
 motor=Motor()
-grid=Grid(20,20)
+grid=Grid(30,30)
 
 grid.setZielInGrid(18,10)
-grid.setStartInGrid(0,0)
+grid.setStartInGrid(15,15)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
