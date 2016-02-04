@@ -17,7 +17,7 @@ class Plan():
         """Plane next steer,speed commando"""
 
         start=path[0]
-        zwischenziel=path[3]
+        zwischenziel=path[7]
 
         #Diff GridX,GridY von Pos zu Zwischenziel
         diff = (zwischenziel[0]-start[0], zwischenziel[1]-start[1])

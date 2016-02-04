@@ -27,9 +27,9 @@ class Scanner():
         self.ScanList=[]
         
         while RunScan==1:
-            for angle in range(160, 0, -10):
+            for angle in range(160, 0, -5):
                 self.readSensorAndUpdateObstacles(angle)
-            for angle in range(10, 170, 10):
+            for angle in range(10, 170, 5):
                 self.readSensorAndUpdateObstacles(angle)
 
     def readSensorAndUpdateObstacles(self,angle):
@@ -37,7 +37,7 @@ class Scanner():
         sleep(0.2)
         Messwert,Error=self.Sonar1.GetADC()
         Messwert,Error=self.Sonar1.GetADC()
-        if Messwert<150:
+        if Messwert<120:
             self.lock.acquire()
             self.ScanList.append([(angle-90),Messwert])
             self.lock.release()

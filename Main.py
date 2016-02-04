@@ -24,8 +24,8 @@ kreis=0
 motor=Motor()
 grid=Grid(40,40)
 
-grid.setZielInGrid(39,0)
-grid.setStartInGrid(15,15)
+grid.setZielInGrid(15,39)
+grid.setStartInGrid(15,1)
 karte.setRoboPosZero(150,150)
 
 def cleaning():
@@ -62,22 +62,22 @@ while Robo==True:
     grid.setStartInGrid(int(x/10),int(y/10))
     walls=karte.getObstacles()
     grid.obstaclesInGrid(walls)
-    #grid.addClearance()
+    grid.addClearance()
     grid.saveGridObstacles()
 
-    
+    motor.setCommand(0,0)
     path=grid.getSolvedPath()
 
     grid.saveGridPath(path)
     #print("Path:"+str(path))
     
 
-    steer1,speed1=plan.nextStep(path,x,y,pose)
-    motor.setCommand(0,0)
+    steer,speed=plan.nextStep(path,x,y,pose)
+    #motor.setCommand(0,0)
 
 
     count += 1
-    if count == 10:
+    if count < 1:
         speed=0
         steer=0
         count=0

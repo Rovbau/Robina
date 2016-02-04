@@ -3,7 +3,7 @@ from tkinter import *
 import pickle
 import time
 #Kartennull für TK
-Nullx=10
+Nullx=100
 Nully=580
 
 #Tkinter 

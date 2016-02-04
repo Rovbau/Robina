@@ -43,7 +43,7 @@ class Grid():
         
     def addClearance(self):
         """Adds clearance for every Wall"""
-        temp_walls=deepcopy(self.walls)
+        temp_walls=self.walls
 
         for wall in temp_walls:
             x=wall[0]
@@ -57,7 +57,7 @@ class Grid():
             if (x,y-1) not in temp_walls:
                 self.clearance_add_walls.append((x,y-1))
                 
-        self.gridwithweights.walls=deepcopy(temp_walls+self.clearance_add_walls)
+        self.gridwithweights.walls=temp_walls+self.clearance_add_walls
         self.clearance_add_walls=[]
 
     def getSolvedPath(self):
