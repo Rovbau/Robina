@@ -116,9 +116,10 @@ class Karte():
         """returns RoboPos X,Y,pose"""
         return(round(self.RoboPosX,1),round(self.RoboPosY,1),self.global_kurs)
 
-    def setRoboPosZero(self):
-        self.RoboPosX=0
-        self.RoboPosY=0
+    def setRoboPosZero(self,x,y):
+        """Set Robo Position zb bei Start"""
+        self.RoboPosX=x
+        self.RoboPosY=y
     
     def getRoboPath(self):
         """returns RoboPath X,Y"""

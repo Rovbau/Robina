@@ -63,8 +63,10 @@ class Grid():
         """Calculate path in grid"""
         #Calc only when Grid-Pos changed
         if self.startgrid == self.last_start_pos:
-            return()
+            return(self.path)
         self.last_start_pos=self.startgrid
+
+        print("SUCHE...Weg")
         
         #No Wall on Robo-Ist position
         if self.startgrid in self.gridwithweights.walls:
@@ -79,8 +81,8 @@ class Grid():
                                                    self.startgrid, self.zielgrid)
 
         try:
-            path=reconstruct_path(self.came_from, self.startgrid, self.zielgrid)
-            return(path)
+            self.path=reconstruct_path(self.came_from, self.startgrid, self.zielgrid)
+            return(self.path)
         except:
             print("ERROR")
             print(self.startgrid)

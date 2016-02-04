@@ -14,18 +14,26 @@ class Plan():
         pass
 
     def nextStep(self,path,x,y,pose):
-        """Plane next steer,speed commando"""       
+        """Plane next steer,speed commando"""
+
         start=path[0]
         zwischenziel=path[3]
+
         #Diff GridX,GridY von Pos zu Zwischenziel
         diff = (zwischenziel[0]-start[0], zwischenziel[1]-start[1])
         #Kartesisch in Polarkoordinaten
         x,y=diff
         dist_to_zwischenziel=sqrt(pow(x,2)+pow(y,2))
         kurs_to_zwischenziel=degrees(atan2(y,x))
+        print("Ist: "+str(start))
+        print("Soll: "+str(zwischenziel))
+        
 
         kurs_korr=self.KursDiff(kurs_to_zwischenziel,pose)
         steer,speed=self.SteuerkursInSteerSpeed((kurs_korr , dist_to_zwischenziel))
+        print("steer/speed: "+str(steer)+" "+str(speed))
+        print(kurs_to_zwischenziel,kurs_korr,pose)
+        print("----")
         return(steer,speed)
         
     def obstacleNear(self,position,walls):
@@ -59,6 +67,8 @@ class Plan():
 
     def SteuerkursInSteerSpeed(self,steuerkurs):
         """Die eingabe steuerkurs=[zielkurs,Dist] wird in (steer, speed) umgewandelt ->returns (steer,speed)"""
+        print("IN SteerTOSpeed")
+        print(steuerkurs)
         if steuerkurs[0] > 5:
             steer = 1
         elif steuerkurs[0] < -5:

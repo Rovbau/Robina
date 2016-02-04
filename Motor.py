@@ -66,25 +66,25 @@ class Motor():
             GPIO.output(self.PortLRueck,1)
             GPIO.output(self.PortRRueck,1)
         elif steer == 1 and speed >= 0:
-            GPIO.output(self.PortRVor,0)
-            GPIO.output(self.PortLVor,1)            
+            GPIO.output(self.PortRVor,1)
+            GPIO.output(self.PortLVor,0)            
             GPIO.output(self.PortLRueck,0)
             GPIO.output(self.PortRRueck,0)
         elif steer == -1 and speed >= 0:
-            GPIO.output(self.PortRVor,1)
-            GPIO.output(self.PortLVor,0)            
+            GPIO.output(self.PortRVor,0)
+            GPIO.output(self.PortLVor,1)            
             GPIO.output(self.PortLRueck,0)
             GPIO.output(self.PortRRueck,0)
         elif steer == 1 and speed == -1:
             GPIO.output(self.PortRVor,0)
             GPIO.output(self.PortLVor,0)            
-            GPIO.output(self.PortLRueck,0)
-            GPIO.output(self.PortRRueck,1)
+            GPIO.output(self.PortLRueck,1)
+            GPIO.output(self.PortRRueck,0)
         elif steer == -1 and speed == -1:
             GPIO.output(self.PortRVor,0)
             GPIO.output(self.PortLVor,0)            
-            GPIO.output(self.PortLRueck,1)
-            GPIO.output(self.PortRRueck,0)
+            GPIO.output(self.PortLRueck,0)
+            GPIO.output(self.PortRRueck,1)
         else:
             return(False)
 
