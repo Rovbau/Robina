@@ -3,8 +3,8 @@ from tkinter import *
 import pickle
 import time
 #Kartennull für TK
-Nullx=300
-Nully=300
+Nullx=10
+Nully=580
 
 #Tkinter 
 root=Tk()
@@ -31,7 +31,7 @@ def printObstacles():
             X=pos[0]
             Y=pos[1]
             #Zeichne Hindernisspunkte Global ein 
-            can.create_oval(Nullx+X-15,Nully-Y+15,Nullx+X+15,Nully-Y-15, width=1, fill="blue",tag="Point")
+            can.create_oval(Nullx+X-15,Nully-Y+15,Nullx+X+15,Nully-Y-15, width=1, fill=None,tag="Point")
 
         position_solved_path = pickle.load( open("RoboSolved.p" , "rb" ))
 
@@ -42,9 +42,10 @@ def printObstacles():
             can.create_oval(Nullx+X-3,Nully-Y+3,Nullx+X+3,Nully-Y-3, width=1, fill="green",tag="Point")
             
         print(time.time())   
-        root.after(1000,printObstacles)
+        root.after(1500,printObstacles)
     except:
         print("ERROR")
+        time.sleep(0.5)
         printObstacles()
 
 

@@ -32,7 +32,7 @@ class Grid():
     def saveGridObstacles(self):
         """Hindernisse speichern pickle"""
         pickelObstacles=open( "RoboObstacles.p", "wb" )
-        pickle.dump(self.walls,pickelObstacles)
+        pickle.dump(self.gridwithweights.walls,pickelObstacles)
         pickelObstacles.close()
 
     def setStartInGrid(self,x,y):
@@ -57,7 +57,8 @@ class Grid():
             if (x,y-1) not in temp_walls:
                 self.clearance_add_walls.append((x,y-1))
                 
-            self.gridwithweights.walls=deepcopy(temp_walls)
+        self.gridwithweights.walls=deepcopy(temp_walls+self.clearance_add_walls)
+        self.clearance_add_walls=[]
 
     def getSolvedPath(self):
         """Calculate path in grid"""
