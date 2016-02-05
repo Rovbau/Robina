@@ -22,9 +22,9 @@ karte=Karte(encoder)
 plan=Plan()
 kreis=0
 motor=Motor()
-grid=Grid(40,40)
+grid=Grid(50,50)
 
-grid.setZielInGrid(15,39)
+grid.setZielInGrid(15,49)
 grid.setStartInGrid(15,1)
 karte.setRoboPosZero(150,150)
 
@@ -65,8 +65,8 @@ while Robo==True:
     grid.addClearance()
     grid.saveGridObstacles()
 
-    motor.setCommand(0,0)
-    path=grid.getSolvedPath()
+    #motor.setCommand(0,0)
+    path=grid.getSolvedPath(motor)
 
     grid.saveGridPath(path)
     #print("Path:"+str(path))

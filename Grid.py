@@ -60,7 +60,7 @@ class Grid():
         self.gridwithweights.walls=temp_walls+self.clearance_add_walls
         self.clearance_add_walls=[]
 
-    def getSolvedPath(self):
+    def getSolvedPath(self,motor):
         """Calculate path in grid"""
         #Calc only when Grid-Pos changed
         if self.startgrid == self.last_start_pos:
@@ -68,6 +68,8 @@ class Grid():
         self.last_start_pos=self.startgrid
 
         print("SUCHE...Weg")
+
+        motor.setCommand(0,0)
         
         #No Wall on Robo-Ist position
         if self.startgrid in self.gridwithweights.walls:
