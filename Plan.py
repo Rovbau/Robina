@@ -31,25 +31,19 @@ class Plan():
 
         kurs_korr=self.KursDiff(kurs_to_zwischenziel,pose)
         steer,speed=self.SteuerkursInSteerSpeed((kurs_korr , dist_to_zwischenziel))
-        print("steer/speed: "+str(steer)+" "+str(speed))
-        print(kurs_to_zwischenziel,kurs_korr,pose)
+
+        print("Kurs: "+str(int(kurs_to_zwischenziel))+
+                           " KursKorr: "+str(int(kurs_korr))+" Pose: "+str(int(pose)))
         print("----")
         return(steer,speed)
-        
-    def obstacleNear(self,position,walls):
-        """Wenn obstacle in range, drive back"""
-        x,y=position
-        range_near=3
-        drive_back=False
-        
-        for nearx in range(x-range_near,x+range_near):
-            for neary in range(y-range_near,y+range_near):
-                if (nearx,neary) in walls:
-                    drive_back=True
-                else:
-                    drive_back=False                    
-        return(drive_back)
 
+    def ZuNahe(self,steer,speed,wall_near):
+        if wall_near == True:
+            steer=0
+            speed=-1
+            print("ZU NAHE RETOUR")
+        return(steer,speed)
+            
     def KursDiff(self,Soll,Ist):
         """Diff zwischen zwei Winkel 0-360grad"""
         if Soll>Ist:
@@ -67,8 +61,6 @@ class Plan():
 
     def SteuerkursInSteerSpeed(self,steuerkurs):
         """Die eingabe steuerkurs=[zielkurs,Dist] wird in (steer, speed) umgewandelt ->returns (steer,speed)"""
-        print("IN SteerTOSpeed")
-        print(steuerkurs)
         if steuerkurs[0] > 5:
             steer = 1
         elif steuerkurs[0] < -5:

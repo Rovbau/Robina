@@ -73,6 +73,10 @@ while Robo==True:
     
 
     steer,speed=plan.nextStep(path,x,y,pose)
+    wall_near=grid.obstacleNear()
+    steer,speed=plan.ZuNahe(steer,speed,wall_near)
+
+    
     #motor.setCommand(0,0)
 
 

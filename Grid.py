@@ -29,6 +29,21 @@ class Grid():
                 self.gridwithweights.walls=deepcopy(self.walls)
 
 
+    def obstacleNear(self):
+        """Wenn obstacle in range, drive back"""
+        x,y=self.startgrid
+        range_near=3
+        drive_back=False
+        
+        for nearx in range(x-range_near,x+range_near):
+            for neary in range(y-range_near,y+range_near):
+                if (nearx,neary) in self.gridwithweights.walls:
+                    drive_back=True
+                else:
+                    drive_back=False                    
+        return(drive_back)
+
+
     def saveGridObstacles(self):
         """Hindernisse speichern pickle"""
         pickelObstacles=open( "RoboObstacles.p", "wb" )
