@@ -62,7 +62,7 @@ while Robo==True:
     grid.setStartInGrid(int(x/10),int(y/10))
     walls=karte.getObstacles()
     grid.obstaclesInGrid(walls)
-    grid.addClearance()
+    #grid.addClearance()
     grid.saveGridObstacles()
 
     #motor.setCommand(0,0)
@@ -72,16 +72,16 @@ while Robo==True:
     #print("Path:"+str(path))
     
 
-    steer,speed=plan.nextStep(path,x,y,pose)
-    wall_near=grid.obstacleNear()
-    steer,speed=plan.ZuNahe(steer,speed,wall_near)
+    #steer,speed=plan.nextStep(path,x,y,pose)
+    #wall_near=grid.obstacleNear()
+    #steer,speed=plan.ZuNahe(steer,speed,wall_near)
 
     
     #motor.setCommand(0,0)
 
 
     count += 1
-    if count < 1:
+    if count > 10:
         speed=0
         steer=0
         count=0
