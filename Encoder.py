@@ -39,8 +39,8 @@ class Encoder():
         GPIO.setup(self.PortRRueck,GPIO.OUT)
 
         #Motorern EIN/AUS
-        #GPIO.output(self.PortRRueck,0)
-        #GPIO.output(self.PortLRueck,0)
+        GPIO.output(self.PortRRueck,0)
+        GPIO.output(self.PortLRueck,0)
         
         print("Init Encoder")    
 
@@ -54,14 +54,19 @@ class Encoder():
         self.CountH=0
         self.DistRad=0
   
-        while True:
-            
+        while True:            
             if GPIO.input(self.PortEncoderL) != EncoderLOld:
-                self.CountL +=1
+                if GPIO.input(self.PortLRueck)==1:
+                    self.CountL -=1
+                else:
+                    self.CountL +=1
                 EncoderLOld= GPIO.input(self.PortEncoderL)
     
             if GPIO.input(self.PortEncoderR) != EncoderROld:
-                self.CountR +=1
+                if GPIO.input(self.PortRRueck)==1:
+                    self.CountR -=1
+                else:
+                    self.CountR +=1
                 EncoderROld= GPIO.input(self.PortEncoderR)
     
             if GPIO.input(self.PortEncoderH) != EncoderHOld:

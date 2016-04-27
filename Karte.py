@@ -151,16 +151,18 @@ if __name__ == "__main__":
     deltaDist=0
     SteerDiff=0
     deltaDistRad=10
+    deltaL=-20
+    deltaR=-30
     KompassCourse=0
-    K.updateRoboPos(deltaDist,SteerDiff,deltaDistRad,KompassCourse)
+    K.updateRoboPos(deltaL,deltaR,KompassCourse)
     print(K.getRoboPos())
     
-    deltaDist=5
-    SteerDiff=0
-    KompassCourse=90
-    K.updateRoboPos(deltaDist,SteerDiff,deltaDistRad,KompassCourse)
-    
+    deltaL=-20
+    deltaR=-30
+    KompassCourse=0
+    K.updateRoboPos(deltaL,deltaR,KompassCourse)  
     print(K.getRoboPos())
+    
     print(K.getRoboPath())
 
 

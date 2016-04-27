@@ -53,6 +53,8 @@ while Robo==True:
     
     #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
+    deltaL=-5
+    deltaR=-5
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
@@ -72,16 +74,12 @@ while Robo==True:
     #print("Path:"+str(path))
     
 
-    #steer,speed=plan.nextStep(path,x,y,pose)
-    #wall_near=grid.obstacleNear()
-    #steer,speed=plan.ZuNahe(steer,speed,wall_near)
-
-    
-    #motor.setCommand(0,0)
-
+    steer,speed=plan.nextStep(path,x,y,pose)
+    wall_near=grid.obstacleNear()
+    steer,speed=plan.ZuNahe(steer,speed,wall_near)
 
     count += 1
-    if count > 10:
+    if count = 0:
         speed=0
         steer=0
         count=0
@@ -98,6 +96,12 @@ while Robo==True:
             speed=0
             steer=-1
         elif comm == 0:
+            speed=0
+            steer=0
+        elif comm == 2:
+            speed=-1
+            steer=0
+        else:
             speed=0
             steer=0
 

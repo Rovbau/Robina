@@ -10,6 +10,8 @@ bus = smbus.SMBus(1)
 
 
 def getKompass():
+    #Kompass AUS fehlt
+    return(0)
     """Returns KompassKurs"""
     Kurs=0
     KompassAdress=0x60
