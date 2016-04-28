@@ -44,6 +44,10 @@ ThreadEncoder.start()
 sleep(1)
 
 while Robo==True:
+
+    motor.setCommand(0,0)
+    sleep(4)
+        
     #Obstacles eintragen
     obstacles=scanner.getNewDistValues()
     #obstacles=[[0,50],[10,50],[20,50],[30,50],[40,50],[50,50]]
@@ -53,8 +57,6 @@ while Robo==True:
     
     #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
-    deltaL=-5
-    deltaR=-5
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
@@ -75,11 +77,11 @@ while Robo==True:
     
 
     steer,speed=plan.nextStep(path,x,y,pose)
-    wall_near=grid.obstacleNear()
-    steer,speed=plan.ZuNahe(steer,speed,wall_near)
+    #wall_near=grid.obstacleNear()
+    #steer,speed=plan.ZuNahe(steer,speed,wall_near)
 
     count += 1
-    if count = 0:
+    if count == 0:
         speed=0
         steer=0
         count=0
@@ -115,6 +117,6 @@ while Robo==True:
         print("By By goto Sleep")
         sys.exit()
     print("************")
-    sleep(0.2)
+    sleep(1.2)
 
 
