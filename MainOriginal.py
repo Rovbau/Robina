@@ -46,7 +46,7 @@ sleep(1)
 while Robo==True:
 
     motor.setCommand(0,0)
-    sleep(4)
+    sleep(1)
         
     #Obstacles eintragen
     obstacles=scanner.getNewDistValues()

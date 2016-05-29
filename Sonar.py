@@ -98,4 +98,5 @@ if __name__ == "__main__":
 
     s=Sonar()
     print(s.GetADC())
+    print(s.GetScanDist())
     

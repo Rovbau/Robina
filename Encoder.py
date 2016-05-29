@@ -3,7 +3,7 @@
 #Programm fragt Radencoder L/R und DistGeber an Robo ab.
 #Ausgabe von Distanz und Abweichung der Räder
 
-from time import sleep
+from time import sleep , time
 import RPi.GPIO as GPIO
 GPIO.setwarnings(False)
 
@@ -26,6 +26,11 @@ class Encoder():
 
         self.AlarmL=False
         self.AlarmR=False
+
+        self.speedL=0
+        self.speedR=0
+        self.newSpeedL=0
+        self.newSpeedR=0
     
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.PortEncoderL,GPIO.IN)
@@ -53,9 +58,12 @@ class Encoder():
         self.CountR=0
         self.CountH=0
         self.DistRad=0
+
   
         while True:            
             if GPIO.input(self.PortEncoderL) != EncoderLOld:
+                self.newSpeedL=time()
+                
                 if GPIO.input(self.PortLRueck)==1:
                     self.CountL -=1
                 else:
@@ -63,6 +71,8 @@ class Encoder():
                 EncoderLOld= GPIO.input(self.PortEncoderL)
     
             if GPIO.input(self.PortEncoderR) != EncoderROld:
+                self.newSpeedR=time()
+                
                 if GPIO.input(self.PortRRueck)==1:
                     self.CountR -=1
                 else:
@@ -76,8 +86,12 @@ class Encoder():
                     self.CountH +=1                
                 EncoderHOld= GPIO.input(self.PortEncoderH)
 
+            ###Booster###
             self.DiffCount=self.CountR-self.CountL
-            self.WegCount=self.CountH    
+            self.WegCount=self.CountH
+
+            self.speedL=time()-self.newSpeedL
+            self.speedR=time()-self.newSpeedR
     
             ###Alarme### 
             if GPIO.input(self.TasteL)==1:
@@ -100,6 +114,9 @@ class Encoder():
         self.CountR=0
         self.CountL=0
         return
+    
+    def getSpeedLR(self):
+        return(self.speedL,self.speedR)
     
     def getPulseLR(self):
         """Pulse an  L und R Rad"""
@@ -136,7 +153,8 @@ if __name__ == "__main__":
     sleep(0.3)
     while True:
         print(Encoder.getPulseLR())
-        sleep(1)
+        print(Encoder.getSpeedLR())
+        sleep(5)
 
 
     

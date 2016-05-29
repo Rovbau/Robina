@@ -17,6 +17,7 @@ class Motor():
         self.PortLRueck=29
         self.PortRVor=31
         self.PortRRueck=33
+        self.PortBooster=16
 
         self.steerOld=0
         self.speedOld=0
@@ -34,6 +35,9 @@ class Motor():
         
         GPIO.setup(self.PortRRueck,GPIO.OUT)
         GPIO.output(self.PortRRueck,0)
+        
+        GPIO.setup(self.PortBooster,GPIO.OUT)
+        GPIO.output(self.PortBooster,0)
         
         print("Init Motoren")
     
@@ -89,6 +93,14 @@ class Motor():
             return(False)
 
         return(steer,speed)
+
+    def booster(self,speedL,speedR):
+        if speedL > 0.4 or speedR > 0.4:
+            GPIO.output(self.PortBooster,1)
+            print("Booster")
+        else:
+            GPIO.output(self.PortBooster,0)
+        
         
 
 if __name__ == "__main__":

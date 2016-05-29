@@ -20,6 +20,7 @@ class Scanner():
         self.lock=Lock()
         self.RunScan=0
         self.ScanList=[]
+	self.setServo(90)
         print("Init Scanner")
 
     def runAllTime(self,RunScan):
