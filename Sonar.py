@@ -18,7 +18,7 @@ class Sonar():
         GPIO.setup(self.PortEcho,GPIO.IN)
         print("Init Sonar")
 
-    def GetScanDist(self):
+    def getScanDist(self):
         """Distanz von Ultraschall-Sensor (cm)"""
         Distance=0
         Durchschnitt=0

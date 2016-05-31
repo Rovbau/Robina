@@ -15,6 +15,7 @@ import atexit
 count=1
 speed=0
 steer=0
+timer=0
 encoder=Encoder()
 navigation=Navigation()
 scanner=Scanner()
@@ -44,51 +45,80 @@ ThreadEncoder.start()
 sleep(1)
 
 def turn(richtung, winkel):
-    encoder.clearEncoderLR()
     L,R=encoder.getPulseLR()
     
-    if richtung == "left":
+    if richtung == "right":
         motor.setCommand(-1,0)
 
-        while L<20:
+        while L<winkel:
             speedL,speedR=encoder.getSpeedLR()
             motor.booster(speedL,0)
 
             L,R=encoder.getPulseLR()
-            sleep(0.1)
+            #sleep(0.1)
             
-    if richtung == "right":
+    if richtung == "left":
         motor.setCommand(1,0)
-        
-        while R<20:
+
+        while R<winkel:
+            speedL,speedR=encoder.getSpeedLR()
+            motor.booster(0,speedR)
+
             L,R=encoder.getPulseLR()
-            sleep(0.1)
-    encoder.clearEncoderLR()    
+            #sleep(0.1)   
 
 
 while Robo==True:
 
-    Dist, _ =scanner.Sonar1.GetADC()
-    print(Dist)
-    if Dist<60:
-        turn("left",45)
+    dist_front, _ = scanner.Sonar1.GetADC()
+    dist_left, _ = scanner.Sonar1.getScanDist()
+    print(dist_front,dist_left)
     
-    L,R=encoder.getPulseLR()
-    print(L,R)
-    if (R-L)>1:
-        motor.setCommand(-1,0)
-        print("Korr L")
-    if (L-R)>1:
-        motor.setCommand(1,0)
-        print("Korr R")
-    if abs(R-L)<1:
+    #Position updaten
+    deltaL,deltaR=encoder.getPulseLR()
+    kompassCourse=Kompass.getKompass()
+    karte.updateRoboPos(deltaL,deltaR,kompassCourse)
+    karte.saveRoboPath()
+    encoder.clearEncoderLR()
+
+    pumperL,pumperR=encoder.getPumper()
+    if pumperL == True or pumperR == True:
+        timer=10
+    
+    if dist_front<60:
+        turn("right",2)
+    elif dist_left<40:
+        turn("right",2)
+    elif dist_left>60 and dist_left<90:
+        turn("left",2)        
+    else:
         motor.setCommand(0,1)
-        print("Gerade")
+        
+    if pumperL == True or pumperR == True or timer>1:
+        timer=timer-1
+        motor.setCommand(0,-1)
+
+        
+##    
+##    L,R=encoder.getPulseLR()
+##    print(L,R)
+##    if (R-L)>1:
+##        motor.setCommand(-1,0)
+##        print("Korr L")
+##    if (L-R)>1:
+##        motor.setCommand(1,0)
+##        print("Korr R")
+##    if abs(R-L)<1:
+##        motor.setCommand(0,1)
+##        print("Gerade")
 
     speedL,speedR=encoder.getSpeedLR()
-    motor.booster(speedL,speedR,)
+    motor.booster(1,1)
 
-    encoder.clearEncoderLR()
+
+
+
+    
 
     if encoder.getTaste() == 1:
         motor.setCommand(0,0)
