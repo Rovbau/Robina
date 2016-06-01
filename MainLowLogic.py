@@ -71,7 +71,7 @@ def turn(richtung, winkel):
 while Robo==True:
 
     dist_front, _ = scanner.Sonar1.GetADC()
-    dist_left, _ = scanner.Sonar1.getScanDist()
+    dist_left, _ = scanner.Sonar1.getScanDist("left")
     print(dist_front,dist_left)
     
     #Position updaten

@@ -8,22 +8,32 @@ bus = smbus.SMBus(1)
 class Sonar():
     def __init__ (self):
         self.PortTrig=38
-        self.PortEcho=40
+        self.PortEchoL=40
+        self.PortEchoR=8
         OnTime=0
         OffTime=0
 
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.PortTrig,GPIO.OUT)
         GPIO.output(self.PortTrig,0)
-        GPIO.setup(self.PortEcho,GPIO.IN)
+        GPIO.setup(self.PortEchoL,GPIO.IN)
+        GPIO.setup(self.PortEchoR,GPIO.IN)
         print("Init Sonar")
 
-    def getScanDist(self):
-        """Distanz von Ultraschall-Sensor (cm)"""
+    def getScanDist(self,sensor):
+        """Distanz von Ultraschall-Sensor (cm) Links oder Rechts"""
+
+        if sensor == "left":
+            self.PortEcho=self.PortEchoL
+        elif sensor == "right":
+            self.PortEcho=self.PortEchoR
+        else:
+            print("No Sensor on Port"+str(sensor))
         Distance=0
         Durchschnitt=0
-        ErrScan=0
-        for i in range(3):
+        ErrScan=False
+        dist_old=0
+        for i in range(5):
             OnTime=0
             OffTime=0
             
@@ -38,28 +48,35 @@ class Sonar():
             while GPIO.input(self.PortEcho)==0:
                 if OnTime-PulsStart>1:
                     print("Fehler Sonar RE-Init")
+                    ErrScan=True
                     break
                 OnTime=time.time()    
             while GPIO.input(self.PortEcho)==1:
                 if OffTime-PulsStart>1:
                     print("Fehler Sonar RE-Init")
+                    ErrScan=True
                     break
                 OffTime=time.time()
 
             PulsDauer=OffTime-OnTime
             Distance=PulsDauer*17000
             Distance=round(Distance,1)
+
+            #Sleeptime for Sonar
+            time.sleep(0.03)
             
             #Fehlerkontrolle
-            if Distance<600 and Distance>1:
-                Durchschnitt=Distance+Durchschnitt
+            if Distance > 600 or Distance < 1:
+                continue
+            
+            if abs(Distance - dist_old)<4:
+                Durchschnitt=(Distance+dist_old)/2
+                break
             else:
+                dist_old=Distance
                 continue
 
-            time.sleep(0.0300)
-            
-        Durchschnitt=int(round(Durchschnitt/3,1))
-        return(Durchschnitt,ErrScan)
+        return(int(Durchschnitt),ErrScan)
 
 
     def GetADC(self):
@@ -98,5 +115,5 @@ if __name__ == "__main__":
 
     s=Sonar()
     print(s.GetADC())
-    print(s.GetScanDist())
-    
+    print(s.getScanDist("left"))
+    print(s.getScanDist("left"))   
