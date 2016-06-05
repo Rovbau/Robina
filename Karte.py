@@ -54,8 +54,8 @@ class Karte():
         countsRadGross=72
 
         #Werte Uebernehmen: Counts in (cm) umrechnen
-        deltaL=deltaL*((15.0*pi)/countsRadGross)           #(Radumfang)/counts
-        deltaR=deltaR*((15.0*pi)/countsRadGross)           #(Radumfang)/counts
+        deltaL=deltaL*((15.5*pi)/countsRadGross)           #(Radumfang)/counts
+        deltaR=deltaR*((15.5*pi)/countsRadGross)           #(Radumfang)/counts
         WinkelDiff=degrees((deltaR-deltaL)/Radstand)      #Raddist/Radstandbreite
         
         self.global_kurs=self.global_kurs+WinkelDiff        #Global Kurs anhand Weg berechnen

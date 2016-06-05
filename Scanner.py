@@ -36,8 +36,8 @@ class Scanner():
     def readSensorAndUpdateObstacles(self,angle):
         self.setServo(angle)
         sleep(0.2)
-        Messwert,Error=self.Sonar1.GetADC()
-        Messwert,Error=self.Sonar1.GetADC()
+        Messwert,Error=self.Sonar1.GetADC(0)
+        Messwert,Error=self.Sonar1.GetADC(0)
         if Messwert<120:
             self.lock.acquire()
             self.ScanList.append([(angle-90),Messwert])
@@ -55,6 +55,28 @@ class Scanner():
             Ausgabe.append((int(Dx),int(Dy)))
         self.ScanList=[]
         return(Ausgabe)
+
+
+    def getFixData(self):
+        """Lese 3 Sensorwerte und returns Dist"""
+        dist_list=[]
+
+        front,_ = self.Sonar1.GetADC(0)
+        dist_list.append(self.distInPolar(front,0))
+        
+        left,_ = self.Sonar1.GetADC(2)
+        dist_list.append(self.distInPolar(left,45))
+        
+        right,_ = self.Sonar1.GetADC(3)
+        dist_list.append(self.distInPolar(right,-45))
+        return(front,left,right,dist_list)
+           
+    def distInPolar(self,dist,winkel):
+        """returns aus Dist und Winkel Dx,Dy ab RoboPosition"""
+        
+        Dx=int((dist*cos(radians(winkel))))
+        Dy=int((dist*sin(radians(winkel))))
+        return(Dx,Dy)
 
     def setServoConfig(self):
         self.setPwmPropertyset("delayed", "0")
@@ -86,5 +108,6 @@ if __name__ == "__main__":
 
     sleep(1)
     while True:
-        print(Scanner1.getNewDistValues())
+        #print(Scanner1.getNewDistValues())
+        print(Scanner1.getFixData())
         sleep(0.6)

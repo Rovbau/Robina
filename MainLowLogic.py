@@ -9,6 +9,7 @@ from Karte import *
 from Plan import *
 from Motor import *
 from Grid import *
+from Logic import *
 import sys
 import atexit
 
@@ -24,6 +25,7 @@ plan=Plan()
 kreis=0
 motor=Motor()
 grid=Grid(50,50)
+logic=Logic()
 
 grid.setZielInGrid(15,49)
 grid.setStartInGrid(15,1)
@@ -32,7 +34,6 @@ karte.setRoboPosZero(150,150)
 def cleaning():
     """Do cleanup at end, command are visVersa"""
     motor.setCommand(0,0)
-
 atexit.register(cleaning)
 
 ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(0,))
@@ -44,45 +45,26 @@ ThreadEncoder.daemon=True
 ThreadEncoder.start()
 sleep(1)
 
-def turn(richtung, winkel):
-    L,R=encoder.getPulseLR()
-    
-    if richtung == "right":
-        motor.setCommand(-1,0)
-
-        while L<winkel:
-            speedL,speedR=encoder.getSpeedLR()
-            motor.booster(speedL,0)
-
-            if speedL > 2 and speedR > 2 :
-                motor.setCommand(0,-1)
-            else:
-                motor.setCommand(-1,0)
-
-            L,R=encoder.getPulseLR()
-            #sleep(0.1)
-            
-    if richtung == "left":
-        motor.setCommand(1,0)
-
-        while R<winkel:
-            speedL,speedR=encoder.getSpeedLR()
-            motor.booster(0,speedR)
-
-            if speedL > 2 and speedR > 2 :
-                motor.setCommand(0,-1)
-            else:
-                motor.setCommand(1,0)
-                
-            L,R=encoder.getPulseLR()
-            #sleep(0.1)   
-
-
 while Robo==True:
 
-    dist_front, _ = scanner.Sonar1.GetADC(0)
-    dist_left, _ = scanner.Sonar1.GetADC(2)
-    print(dist_front,dist_left)
+    #get Distances from IR-Sensors
+    dist_front, dist_left , dist_right, obstacles = scanner.getFixData()
+    print(dist_front,dist_left, dist_right)
+
+    #Obstacles eintragen
+    karte.updateObstacles(obstacles)
+
+    #Obstacles von Pumper eintragen
+    pumperL,pumperR=encoder.getPumper()
+    karte.updateHardObstacles(pumperL,pumperR)
+
+    #Grid
+    x,y,pose=karte.getRoboPos()
+    grid.setStartInGrid(int(x/10),int(y/10))
+    walls=karte.getObstacles()
+    grid.obstaclesInGrid(walls)
+    #grid.addClearance()
+    grid.saveGridObstacles()
     
     #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
@@ -91,47 +73,10 @@ while Robo==True:
     karte.saveRoboPath()
     encoder.clearEncoderLR()
 
-    pumperL,pumperR=encoder.getPumper()
-    if pumperL == True or pumperR == True:
-        timer=10
-    
-    if dist_front<60:
-        turn("right",2)
-    elif dist_left<40:
-        turn("right",2)
-    elif dist_left>60 and dist_left<90:
-        turn("left",2)        
-    else:
-        motor.setCommand(0,1)
-        
-    if pumperL == True or pumperR == True or timer>1:
-        timer=timer-1
-        motor.setCommand(0,-1)
 
-
-
-        
-##    
-##    L,R=encoder.getPulseLR()
-##    print(L,R)
-##    if (R-L)>1:
-##        motor.setCommand(-1,0)
-##        print("Korr L")
-##    if (L-R)>1:
-##        motor.setCommand(1,0)
-##        print("Korr R")
-##    if abs(R-L)<1:
-##        motor.setCommand(0,1)
-##        print("Gerade")
-
-    speedL,speedR=encoder.getSpeedLR()
-    #print("Booster"+str(round(speedL,3))+str("  ")+str(round(speedR,3)))
-    motor.booster(speedL,speedR)
-
-
-
-
-    
+    #Plan next Steps
+    steer,speed=logic.nextStep(dist_front,dist_left,dist_right,pumperL,pumperR)
+    motor.setCommand(steer,speed)
 
     if encoder.getTaste() == 1:
         motor.setCommand(0,0)
