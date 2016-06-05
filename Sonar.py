@@ -79,13 +79,12 @@ class Sonar():
         return(int(Durchschnitt),ErrScan)
 
 
-    def GetADC(self):
+    def GetADC(self,ADC_cannel):
             """Returns A/D Wert an Port 0. Distanz Infrarot (cm)"""
             Ref=3.3
             Adress=0x48
-            ADCCannel=0
             
-            bus.write_byte(0x48,0x40+ADCCannel)         #PCF8591, Adress 0x48,Commando=1000000
+            bus.write_byte(0x48,0x40+ADC_cannel)         #PCF8591, Adress 0x48,Commando=1000000
             
             Rohdaten=bus.read_byte(0x48)                #Old Data Adresse,
             Rohdaten=bus.read_byte(0x48)
@@ -114,6 +113,20 @@ class Sonar():
 if __name__ == "__main__":
 
     s=Sonar()
-    print(s.GetADC())
-    print(s.getScanDist("left"))
-    print(s.getScanDist("left"))   
+    while True:
+        print("Front")
+        print(s.GetADC(0))
+
+        print("Left")
+        print(s.GetADC(2))
+
+        print("Right")
+        print(s.GetADC(3))
+
+        print("Left-Sonar")
+        print(s.getScanDist("left"))
+
+        print("Batt.-Spannung")
+        print(s.GetBatSpann())
+        print("***********")
+        time.sleep(2.0)

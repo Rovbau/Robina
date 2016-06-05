@@ -86,10 +86,10 @@ class Encoder():
                     self.CountH +=1                
                 EncoderHOld= GPIO.input(self.PortEncoderH)
 
-            ###Booster###
             self.DiffCount=self.CountR-self.CountL
             self.WegCount=self.CountH
-
+            
+            ###Booster###
             self.speedL=time()-self.newSpeedL
             self.speedR=time()-self.newSpeedR
     

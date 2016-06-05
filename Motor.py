@@ -95,10 +95,10 @@ class Motor():
         return(steer,speed)
 
     def booster(self,speedL,speedR):
-        if speedL > 0.4 or speedR > 0.4:
+        if speedL > 0.6 or speedR > 0.6:
             GPIO.output(self.PortBooster,1)
             print("Booster")
-        else:
+        elif speedL < 0.1 or speedR < 0.1:
             GPIO.output(self.PortBooster,0)
         
         

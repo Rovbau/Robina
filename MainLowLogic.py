@@ -54,6 +54,11 @@ def turn(richtung, winkel):
             speedL,speedR=encoder.getSpeedLR()
             motor.booster(speedL,0)
 
+            if speedL > 2 and speedR > 2 :
+                motor.setCommand(0,-1)
+            else:
+                motor.setCommand(-1,0)
+
             L,R=encoder.getPulseLR()
             #sleep(0.1)
             
@@ -64,14 +69,19 @@ def turn(richtung, winkel):
             speedL,speedR=encoder.getSpeedLR()
             motor.booster(0,speedR)
 
+            if speedL > 2 and speedR > 2 :
+                motor.setCommand(0,-1)
+            else:
+                motor.setCommand(1,0)
+                
             L,R=encoder.getPulseLR()
             #sleep(0.1)   
 
 
 while Robo==True:
 
-    dist_front, _ = scanner.Sonar1.GetADC()
-    dist_left, _ = scanner.Sonar1.getScanDist("left")
+    dist_front, _ = scanner.Sonar1.GetADC(0)
+    dist_left, _ = scanner.Sonar1.GetADC(2)
     print(dist_front,dist_left)
     
     #Position updaten
@@ -98,6 +108,8 @@ while Robo==True:
         timer=timer-1
         motor.setCommand(0,-1)
 
+
+
         
 ##    
 ##    L,R=encoder.getPulseLR()
@@ -113,7 +125,8 @@ while Robo==True:
 ##        print("Gerade")
 
     speedL,speedR=encoder.getSpeedLR()
-    motor.booster(1,1)
+    #print("Booster"+str(round(speedL,3))+str("  ")+str(round(speedR,3)))
+    motor.booster(speedL,speedR)
 
 
 
