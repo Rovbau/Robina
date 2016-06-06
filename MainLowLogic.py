@@ -87,6 +87,6 @@ while Robo==True:
         print("By By goto Sleep")
         sys.exit()
     print("************")
-    sleep(1.2)
+    sleep(0.2)
 
 

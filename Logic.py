@@ -70,19 +70,19 @@ class Logic():
         self.flag_leftWall = True
         winkel=self.getKursDiff(self.zielkurs,self.pose)
         
-        if self.dist_front < 50:
+        if self.dist_front < 70:
             self.steer = -1
             
         if self.dist_left < 30:
             self.steer = -1
             
-        if self.dist_front > 50 and self.dist_left > 40:
+        if self.dist_front > 70 and self.dist_left > 40:
             self.steer = 1
 
         if self.dist_left > 30 and self.dist_left < 40:
             self.steer = 0
             
-        if abs(winkel)< 10 and self.dist_front > 50 and self.dist_left > 70:
+        if abs(winkel)< 10 and self.dist_front > 70 and self.dist_left > 70:
             self.flag_leftWall = False
             self.steer = 0
             
