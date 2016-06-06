@@ -75,14 +75,18 @@ while Robo==True:
 
 
     #Plan next Steps
-    steer,speed=logic.nextStep(dist_front,dist_left,dist_right,pumperL,pumperR)
+    logic.setRoboPos(x,y,pose)
+    steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
+    print(steer,speed)
     motor.setCommand(steer,speed)
+
+    motor.booster(1,1)
 
     if encoder.getTaste() == 1:
         motor.setCommand(0,0)
         print("By By goto Sleep")
         sys.exit()
     print("************")
-    sleep(0.2)
+    sleep(1.2)
 
 
