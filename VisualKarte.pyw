@@ -3,13 +3,13 @@ from tkinter import *
 import pickle
 import time
 #Kartennull für TK
-Nullx=100
-Nully=580
+Nullx=0
+Nully=280
 
 #Tkinter 
 root=Tk()
 root.title ("Hinderniss-Daten")           #Titel de Fensters
-root.geometry("600x600+0+0")
+root.geometry("700x700+0+0")
 can=Canvas(master=root, width=600, height=600, bg="grey")
 #Karten Nullpunkt
 

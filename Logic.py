@@ -110,7 +110,6 @@ class Logic():
         self.x = x
         self.y = y
         self.pose = pose
-        self.pose=1
 
 
 if __name__ == "__main__":
