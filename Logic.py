@@ -8,38 +8,15 @@ class Logic():
         self.steer=0
         self.speed=0
         self.flag_leftWall=False
+        self.flag_rightWall=False
         self.zielkurs=0
         self.x=0
         self.y=0
         self.pose=50
         print("Init Logic")
-
-    def nextStep(self,dist_front,dist_left,dist_right,pumperL,pumperR):
-        """Die amoeben Logic des Robos"""
-        steer=0
-        speed=0
-        if pumperL == True or pumperR == True:
-            self.timer=10
-        
-        if dist_front<60:
-            steer=1
-        elif dist_left<40:
-            steer=-1
-        elif dist_left>60 and dist_left<90:
-            steer=-1       
-        else:
-            steer=0
-            speed=1
-            
-        if pumperL == True or pumperR == True or self.timer>1:
-            self.timer=self.timer-1
-            steer=0
-            speed=-1
-        return(steer,speed)
-
-
             
     def wsa(self,dist_front,dist_left,dist_right,pumperL,pumperR):
+        """Wandering Standpoint Algorithm"""
         print("WSA")
         self.dist_front=dist_front
         self.dist_left=dist_left
@@ -54,6 +31,7 @@ class Logic():
         return(self.steer,self.speed)
 
     def turnToGoal(self):
+        """Wenn kein Obstacle nahe, Drehe zu Zielkurs"""
 
         print("GOAL")
         winkel=self.getKursDiff(self.zielkurs,self.pose)
@@ -66,30 +44,45 @@ class Logic():
             self.steer=0
         
     def wallMode(self):
+        """Wall-Modus Robo folgt Links oder Recht"""
         print("WALL")
-        self.flag_leftWall = True
+
+        #Deside Wall L oder R
+        if self.getKursDiff(self.zielkurs,self.pose) >= 0:
+            self.flag_leftWall = True
+            aktiv_sensorLR = self.dist_left
+        else:
+            self.flag_rightWall = True
+            aktiv_sensorLR = self.dist_right
+            
         winkel=self.getKursDiff(self.zielkurs,self.pose)
         
         if self.dist_front < 70:
             self.steer = -1
             
-        if self.dist_left < 30:
+        if aktiv_sensorLR < 30:
             self.steer = -1
             
-        if self.dist_front > 70 and self.dist_left > 40:
+        if self.dist_front > 70 and aktiv_sensorLR > 40:
             self.steer = 1
 
-        if self.dist_left > 30 and self.dist_left < 40:
+        if aktiv_sensorLR > 30 and aktiv_sensorLR < 40:
             self.steer = 0
             
-        if abs(winkel)< 10 and self.dist_front > 70 and self.dist_left > 70:
+        if abs(winkel)< 10 and self.dist_front > 70 and aktiv_sensorLR > 70:
             self.flag_leftWall = False
+            self.flag_rightWall = False
             self.steer = 0
             
-        print(self.flag_leftWall)
+        #Invert Kurvenkommando wenn Right Wall
+        if self.flag_rightWall == True:
+            self.steer = self.steer * (-1)
+            
+        print(self.flag_leftWall,self.flag_rightWall)
         
     def getKursDiff(self,soll,ist):
         """Diff zwischen zwei Winkel 0-360grad"""
+
         if soll>ist:
             if soll-ist>180:
                 Winkel=(abs(ist-soll)-360)
@@ -104,25 +97,30 @@ class Logic():
         return(Winkel)
 
     def getCommand(self):
+        """Return Kurs Empfehlung (steer,speed) von WSA-Algorithm"""
         return(self.steer,self.speed)
 
     def setRoboPos(self,x,y,pose):
+        """Set Robo position (GlobX, GlobY, GlobPose) for WSA-Algorithm"""
         self.x = x
         self.y = y
         self.pose = pose
 
 
 if __name__ == "__main__":
-
+    
     log=Logic()
-    log.wsa(50,100,100)
+
+    log.setRoboPos(0,0,10)
+    
+    log.wsa(50,100,100,1,1)
     steer,speed=log.getCommand()
     print(steer,speed)
     
-    log.wsa(100,70,100)
+    log.wsa(100,70,100,1,1)
     steer,speed=log.getCommand()
     print(steer,speed)
     
-    log.wsa(100,100,100)
+    log.wsa(100,100,100,1,1)
     steer,speed=log.getCommand()
     print(steer,speed)
