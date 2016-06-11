@@ -1,5 +1,8 @@
 #Logic
 
+import time
+import math
+
 
 class Logic():
     def __init__(self):
@@ -12,7 +15,14 @@ class Logic():
         self.zielkurs=0
         self.x=0
         self.y=0
+        self.oldx=0
+        self.oldy=0
         self.pose=50
+        self.generatorL = self.ret_flow_L()
+        self.generatorR = self.ret_flow_R()
+        self.generatorLR = self.ret_flow_LR()
+        self.command=[]
+        
         print("Init Logic")
             
     def wsa(self,dist_front,dist_left,dist_right,pumperL,pumperR):
@@ -21,8 +31,9 @@ class Logic():
         self.dist_front=dist_front
         self.dist_left=dist_left
         self.dist_right=dist_right
-        
-        if self.dist_front > 60 and self.flag_leftWall == False:
+
+        #Wall-Mode oder GeradeFahrt
+        if self.dist_front > 60 and self.flag_leftWall == False and self.flag_rightWall == False:
             self.turnToGoal()
             self.speed=1
         else:
@@ -107,20 +118,131 @@ class Logic():
         self.pose = pose
 
 
+        
+    def ret_flow_L(self):
+        """Ablauf fuer Retour wenn PumperL"""
+        yield ([1,0,20])
+        yield([-1,0,30])
+        yield (0,0,40)
+        yield (999,0,0)
+
+    def ret_flow_R(self):
+        """Ablauf fuer Retour wenn PumperR"""
+        yield ([0,1,20])
+        yield([0,-1,30])
+        yield (0,0,40)
+        yield (999,0,0)
+
+    def ret_flow_LR(self):
+        """Ablauf fuer Retour wenn Pumper L+R"""
+        yield ([1,1,20])
+        yield([-1,-1,30])
+        yield (0,0,40)
+        yield (999,0,0)
+
+        
+    def checkDistDrive(self,dist,t):
+        """returns True if RetourDistance (dist) is Done"""
+
+        actual_dist= math.sqrt(pow(self.x-self.oldx,2)+pow(self.y-self.oldy,2))
+
+        print(actual_dist)
+        drive_time= time.time() - self.t
+        
+        if actual_dist > dist or drive_time > 1:
+            dist_done=True
+        else:
+            dist_done=False
+            
+        return(dist_done)
+
+    def pumperUmfahren(self):
+        """Umfahre HardObstacle"""
+
+        if self.retour_done == True:
+            return()
+
+        if self.command == []:
+            self.command = next(self.generator)
+            self.t = time.time()
+ 
+             
+        dist_to_drive = self.command[2]
+        step_done= self.checkDistDrive(dist_to_drive,self.t)
+        print(step_done)
+        
+        if step_done == True:
+            self.command = next(self.generator)
+            self.t=time.time()
+            self.oldx = self.x
+            self.oldy = self.y
+
+        steer = self.command[0]
+        speed = self.command[1]
+
+        #reset generator flow 
+        if steer == 999:
+            print("Done")
+            retour_done = True
+            self.generatorL = self.ret_flow_L()
+            self.generatorR = self.ret_flow_R()
+            self.generatorLR = self.ret_flow_LR()
+            
+        return(steer,speed)
+
+    def checkPumperStatus(self,pumperL,pumperR):
+
+        if pumperL == True and pumperR == True:
+            self.retour_done = False
+            self.command = []
+            self.generator = self.generatorLR
+        elif pumperL == True:
+            self.retour_done = False
+            self.command = []
+            self.generator = self.generatorL
+        elif pumperR == True:
+            self.retour_done = False
+            self.command = []
+            self.generator = self.generatorR
+
+
+        steer,speed=self.pumperUmfahren()
+        return(steer,speed)
+        
+
+######################################
 if __name__ == "__main__":
     
     log=Logic()
 
-    log.setRoboPos(0,0,10)
-    
-    log.wsa(50,100,100,1,1)
-    steer,speed=log.getCommand()
+    steer,speed=log.checkPumperStatus(False,True)
     print(steer,speed)
     
-    log.wsa(100,70,100,1,1)
-    steer,speed=log.getCommand()
+
+    log.setRoboPos(10,100,10)
+    time.sleep(0.2)
+
+    steer,speed=log.checkPumperStatus(False,False)
+    print(steer,speed)   
+
+    log.setRoboPos(10,100,10)
+    time.sleep(0.2)
+
+    steer,speed=log.checkPumperStatus(False,False)
     print(steer,speed)
-    
-    log.wsa(100,100,100,1,1)
-    steer,speed=log.getCommand()
-    print(steer,speed)
+
+
+
+##    log.setRoboPos(0,0,10)
+##    
+##    log.wsa(50,100,100,1,1)
+##    steer,speed=log.getCommand()
+##    print(steer,speed)
+##    
+##    log.wsa(100,70,100,1,1)
+##    steer,speed=log.getCommand()
+##    print(steer,speed)
+##    
+##    log.wsa(100,100,100,1,1)
+##    steer,speed=log.getCommand()
+##    print(steer,speed)
