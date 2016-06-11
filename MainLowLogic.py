@@ -77,6 +77,8 @@ while Robo==True:
     #Plan next Steps
     logic.setRoboPos(x,y,pose)
     steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
+
+    steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
     print(steer,speed)
     motor.setCommand(steer,speed)
 

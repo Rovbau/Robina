@@ -22,6 +22,7 @@ class Logic():
         self.generatorR = self.ret_flow_R()
         self.generatorLR = self.ret_flow_LR()
         self.command=[]
+        self.retour_done = True
         
         print("Init Logic")
             
@@ -121,23 +122,23 @@ class Logic():
         
     def ret_flow_L(self):
         """Ablauf fuer Retour wenn PumperL"""
-        yield ([1,0,20])
-        yield([-1,0,30])
-        yield (0,0,40)
+        yield ([0,-1,50])
+        yield([-1,-1,25])
+        yield (0,-1,20)
         yield (999,0,0)
 
     def ret_flow_R(self):
         """Ablauf fuer Retour wenn PumperR"""
-        yield ([0,1,20])
-        yield([0,-1,30])
-        yield (0,0,40)
+        yield (0,-1,50])
+        yield([1,-1,25])
+        yield (0,-1,20)
         yield (999,0,0)
 
     def ret_flow_LR(self):
         """Ablauf fuer Retour wenn Pumper L+R"""
-        yield ([1,1,20])
-        yield([-1,-1,30])
-        yield (0,0,40)
+        yield ([0,-1,50])
+        yield([0,-1,50])
+        yield (0,-1,40)
         yield (999,0,0)
 
         
@@ -149,18 +150,18 @@ class Logic():
         print(actual_dist)
         drive_time= time.time() - self.t
         
-        if actual_dist > dist or drive_time > 1:
+        if abs(actual_dist) > dist or drive_time > 4:
             dist_done=True
         else:
             dist_done=False
             
         return(dist_done)
 
-    def pumperUmfahren(self):
+    def pumperUmfahren(self,steer,speed):
         """Umfahre HardObstacle"""
 
         if self.retour_done == True:
-            return()
+            return(steer,speed)
 
         if self.command == []:
             self.command = next(self.generator)
@@ -183,14 +184,14 @@ class Logic():
         #reset generator flow 
         if steer == 999:
             print("Done")
-            retour_done = True
+            self.retour_done = True
             self.generatorL = self.ret_flow_L()
             self.generatorR = self.ret_flow_R()
             self.generatorLR = self.ret_flow_LR()
             
         return(steer,speed)
 
-    def checkPumperStatus(self,pumperL,pumperR):
+    def checkPumperStatus(self,pumperL,pumperR,steer,speed):
 
         if pumperL == True and pumperR == True:
             self.retour_done = False
@@ -206,7 +207,7 @@ class Logic():
             self.generator = self.generatorR
 
 
-        steer,speed=self.pumperUmfahren()
+        steer,speed=self.pumperUmfahren(steer,speed)
         return(steer,speed)
         
 
