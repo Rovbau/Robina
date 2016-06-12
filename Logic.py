@@ -205,14 +205,17 @@ class Logic():
         if pumperL == True and pumperR == True:
             self.retour_done = False
             self.command = []
+            self.generatorLR = self.ret_flow_LR()
             self.generator = self.generatorLR
         elif pumperL == True:
             self.retour_done = False
             self.command = []
+            self.generatorL = self.ret_flow_L()
             self.generator = self.generatorL
         elif pumperR == True:
             self.retour_done = False
             self.command = []
+            self.generatorR = self.ret_flow_R()
             self.generator = self.generatorR
 
 
