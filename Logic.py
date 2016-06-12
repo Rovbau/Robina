@@ -60,28 +60,36 @@ class Logic():
         print("WALL")
 
         #Deside Wall L oder R
-        if self.getKursDiff(self.zielkurs,self.pose) >= 0:
-            self.flag_leftWall = True
-            aktiv_sensorLR = self.dist_left
+        if self.flag_leftWall == False and self.flag_rightWall == False:         
+            if self.getKursDiff(self.zielkurs,self.pose) >= 0:
+                self.flag_leftWall = True
+                self.aktiv_sensorLR = self.dist_left
+            else:
+                self.flag_rightWall = True
+                self.aktiv_sensorLR = self.dist_right
+                
+        #set activ Sensor L oder R
+        if self.flag_leftWall == True:
+            self.aktiv_sensorLR = self.dist_left
         else:
-            self.flag_rightWall = True
-            aktiv_sensorLR = self.dist_right
+            self.aktiv_sensorLR = self.dist_right
             
         winkel=self.getKursDiff(self.zielkurs,self.pose)
+        print("Winkel:" +str(int(winkel)))
         
         if self.dist_front < 70:
             self.steer = -1
-            
-        if aktiv_sensorLR < 30:
+
+        if self.aktiv_sensorLR < 30:
             self.steer = -1
             
-        if self.dist_front > 70 and aktiv_sensorLR > 40:
+        if self.dist_front > 70 and self.aktiv_sensorLR > 40:
             self.steer = 1
 
-        if aktiv_sensorLR > 30 and aktiv_sensorLR < 40:
+        if self.aktiv_sensorLR > 30 and self.aktiv_sensorLR < 40:
             self.steer = 0
             
-        if abs(winkel)< 10 and self.dist_front > 70 and aktiv_sensorLR > 70:
+        if abs(winkel)< 10 and self.dist_front > 70 and self.aktiv_sensorLR > 70:
             self.flag_leftWall = False
             self.flag_rightWall = False
             self.steer = 0
@@ -89,8 +97,8 @@ class Logic():
         #Invert Kurvenkommando wenn Right Wall
         if self.flag_rightWall == True:
             self.steer = self.steer * (-1)
+            print("RIGHT WALL")
             
-        print(self.flag_leftWall,self.flag_rightWall)
         
     def getKursDiff(self,soll,ist):
         """Diff zwischen zwei Winkel 0-360grad"""
@@ -105,7 +113,7 @@ class Logic():
                 Winkel=360-(ist-soll)
             else:
                 Winkel=soll-ist
-        print("Winkel: "+str(Winkel))
+
         return(Winkel)
 
     def getCommand(self):
@@ -122,24 +130,24 @@ class Logic():
         
     def ret_flow_L(self):
         """Ablauf fuer Retour wenn PumperL"""
-        yield ([0,-1,50])
-        yield([-1,-1,25])
-        yield (0,-1,20)
-        yield (999,0,0)
+        yield ([0,-1,40])
+        yield([-1,-1,15])
+        yield ([0,1,30])
+        yield ([999,0,10])
 
     def ret_flow_R(self):
         """Ablauf fuer Retour wenn PumperR"""
-        yield (0,-1,50])
-        yield([1,-1,25])
-        yield (0,-1,20)
-        yield (999,0,0)
+        yield ([0,-1,40])
+        yield([1,-1,15])
+        yield ([0,1,30])
+        yield ([999,0,0])
 
     def ret_flow_LR(self):
         """Ablauf fuer Retour wenn Pumper L+R"""
-        yield ([0,-1,50])
-        yield([0,-1,50])
-        yield (0,-1,40)
-        yield (999,0,0)
+        yield ([0,-1,40])
+        yield([-1,-1,10])
+        yield ([0,1,30])
+        yield ([999,0,10])
 
         
     def checkDistDrive(self,dist,t):
@@ -170,7 +178,6 @@ class Logic():
              
         dist_to_drive = self.command[2]
         step_done= self.checkDistDrive(dist_to_drive,self.t)
-        print(step_done)
         
         if step_done == True:
             self.command = next(self.generator)
@@ -188,6 +195,8 @@ class Logic():
             self.generatorL = self.ret_flow_L()
             self.generatorR = self.ret_flow_R()
             self.generatorLR = self.ret_flow_LR()
+            steer=0
+            speed=0
             
         return(steer,speed)
 
