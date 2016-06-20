@@ -10,6 +10,7 @@ from Plan import *
 from Motor import *
 from Grid import *
 from Logic import *
+from Manuell import *
 import sys
 import atexit
 
@@ -26,10 +27,11 @@ kreis=0
 motor=Motor()
 grid=Grid(50,50)
 logic=Logic()
+manuell=Manuell()
 
 grid.setZielInGrid(15,49)
 grid.setStartInGrid(15,1)
-karte.setRoboPosZero(150,150)
+karte.setRoboPosZero(0,0)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
@@ -77,15 +79,20 @@ while Robo==True:
 
     #Plan next Steps
     logic.setRoboPos(x,y,pose)
-    steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
+    #steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
 
-    steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
+    #steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
     print(steer,speed)
-    motor.setCommand(steer,speed)
+
 
     motor.booster(1,1)
     #sleep(0.3)
     #motor.setCommand(0,0)
+
+    steer,speed=manuell.getTastenInput(steer,speed)
+    motor.setCommand(steer,speed)
+    print(karte.getRoboPos())
+    
     if encoder.getTaste() == 1:
         motor.setCommand(0,0)
         print("By By goto Sleep")

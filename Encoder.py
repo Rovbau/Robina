@@ -17,8 +17,8 @@ class Encoder():
         self.TasteR=15
         self.portRoteTaste=37
 
-        self.PortLRueck=29
-        self.PortRRueck=33
+        self.PortLRueck=33
+        self.PortRRueck=29
 
         self.WegCount=0
         self.DiffCount=0
@@ -60,7 +60,7 @@ class Encoder():
         self.DistRad=0
 
   
-        while True:            
+        while True:
             if GPIO.input(self.PortEncoderL) != EncoderLOld:
                 self.newSpeedL=time()
                 

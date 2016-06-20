@@ -82,13 +82,13 @@ class Motor():
         elif steer == 1 and speed == -1:
             GPIO.output(self.PortRVor,0)
             GPIO.output(self.PortLVor,0)            
-            GPIO.output(self.PortLRueck,1)
-            GPIO.output(self.PortRRueck,0)
+            GPIO.output(self.PortLRueck,0)
+            GPIO.output(self.PortRRueck,1)
         elif steer == -1 and speed == -1:
             GPIO.output(self.PortRVor,0)
             GPIO.output(self.PortLVor,0)            
-            GPIO.output(self.PortLRueck,0)
-            GPIO.output(self.PortRRueck,1)
+            GPIO.output(self.PortLRueck,1)
+            GPIO.output(self.PortRRueck,0)
         else:
             return(False)
 
@@ -113,8 +113,9 @@ if __name__ == "__main__":
     x=m.setCommand(1,0)
     print(x)
     sleep(2)
-    x=m.setCommand(0,-1)
+    x=m.setCommand(-1,-1)
     print(x)
+
     sleep(2)
     x=m.setCommand(0,0)
     print(x)
