@@ -4,7 +4,7 @@ import pickle
 import time
 #Kartennull für TK
 Nullx=0
-Nully=280
+Nully=380
 
 #Tkinter 
 root=Tk()

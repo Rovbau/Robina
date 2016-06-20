@@ -34,7 +34,7 @@ class Logic():
         self.dist_right=dist_right
 
         #Wall-Mode oder GeradeFahrt
-        if self.dist_front > 60 and self.flag_leftWall == False and self.flag_rightWall == False:
+        if self.dist_front > 70 and self.flag_leftWall == False and self.flag_rightWall == False:
             self.turnToGoal()
             self.speed=1
         else:
@@ -57,7 +57,6 @@ class Logic():
         
     def wallMode(self):
         """Wall-Modus Robo folgt Links oder Recht"""
-        print("WALL")
 
         #Deside Wall L oder R
         if self.flag_leftWall == False and self.flag_rightWall == False:         
@@ -89,7 +88,7 @@ class Logic():
         if self.aktiv_sensorLR > 30 and self.aktiv_sensorLR < 40:
             self.steer = 0
             
-        if abs(winkel)< 10 and self.dist_front > 70 and self.aktiv_sensorLR > 70:
+        if abs(winkel)< 15 and self.dist_front > 70 and self.aktiv_sensorLR > 30:
             self.flag_leftWall = False
             self.flag_rightWall = False
             self.steer = 0
@@ -98,6 +97,8 @@ class Logic():
         if self.flag_rightWall == True:
             self.steer = self.steer * (-1)
             print("RIGHT WALL")
+        else:
+            print("LEFT WALL")
             
         
     def getKursDiff(self,soll,ist):
@@ -130,16 +131,16 @@ class Logic():
         
     def ret_flow_L(self):
         """Ablauf fuer Retour wenn PumperL"""
-        yield ([0,-1,40])
+        yield ([0,-1,5])
         yield([-1,-1,15])
-        yield ([0,1,30])
+        yield ([0,1,20])
         yield ([999,0,10])
 
     def ret_flow_R(self):
         """Ablauf fuer Retour wenn PumperR"""
-        yield ([0,-1,40])
+        yield ([0,-1,5])
         yield([1,-1,15])
-        yield ([0,1,30])
+        yield ([0,1,20])
         yield ([999,0,0])
 
     def ret_flow_LR(self):
@@ -153,12 +154,14 @@ class Logic():
     def checkDistDrive(self,dist,t):
         """returns True if RetourDistance (dist) is Done"""
 
-        actual_dist= math.sqrt(pow(self.x-self.oldx,2)+pow(self.y-self.oldy,2))
-
+        deltaX = self.x-self.oldx
+        deltaY = self.y-self.oldy
+        actual_dist= math.sqrt(pow(abs(deltaX),2)+pow(abs(deltaY),2))
         print(actual_dist)
+
         drive_time= time.time() - self.t
         
-        if abs(actual_dist) > dist or drive_time > 4:
+        if abs(actual_dist) > dist or drive_time > 10:
             dist_done=True
         else:
             dist_done=False
@@ -171,10 +174,13 @@ class Logic():
         if self.retour_done == True:
             return(steer,speed)
 
+        print("RETOUR MODUS")
+
         if self.command == []:
             self.command = next(self.generator)
             self.t = time.time()
- 
+            self.oldx = self.x
+            self.oldy = self.y 
              
         dist_to_drive = self.command[2]
         step_done= self.checkDistDrive(dist_to_drive,self.t)
@@ -184,6 +190,8 @@ class Logic():
             self.t=time.time()
             self.oldx = self.x
             self.oldy = self.y
+
+        print(self.command,self.generator)
 
         steer = self.command[0]
         speed = self.command[1]

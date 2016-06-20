@@ -139,8 +139,8 @@ class Karte():
 
 if __name__ == "__main__":
 
-
-    enc=1
+    from Encoder import *
+    enc=Encoder()
     K=Karte(enc)
     
     Obstacles=[[60,60],[50,50],[0,130],[0,140]]
@@ -151,14 +151,14 @@ if __name__ == "__main__":
     deltaDist=0
     SteerDiff=0
     deltaDistRad=10
-    deltaL=-20
-    deltaR=-30
+    deltaL=-100
+    deltaR=0
     KompassCourse=0
     K.updateRoboPos(deltaL,deltaR,KompassCourse)
     print(K.getRoboPos())
     
-    deltaL=-20
-    deltaR=-30
+    deltaL=-60
+    deltaR=0
     KompassCourse=0
     K.updateRoboPos(deltaL,deltaR,KompassCourse)  
     print(K.getRoboPos())

@@ -60,6 +60,7 @@ while Robo==True:
 
     #Grid
     x,y,pose=karte.getRoboPos()
+    print("Pose:"+str(int(pose)))
     grid.setStartInGrid(int(x/10),int(y/10))
     walls=karte.getObstacles()
     grid.obstaclesInGrid(walls)
@@ -83,12 +84,13 @@ while Robo==True:
     motor.setCommand(steer,speed)
 
     motor.booster(1,1)
-
+    #sleep(0.3)
+    #motor.setCommand(0,0)
     if encoder.getTaste() == 1:
         motor.setCommand(0,0)
         print("By By goto Sleep")
         sys.exit()
     print("************")
-    sleep(0.2)
+    sleep(0.5)
 
 
