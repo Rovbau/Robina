@@ -5,13 +5,12 @@
 #GPIO.setwarnings(False)
 
 import smbus
+from time import *
 bus = smbus.SMBus(1)
 
 
 
 def getKompass():
-    #Kompass AUS fehlt
-    return(0)
     """Returns KompassKurs"""
     Kurs=0
     KompassAdress=0x60
@@ -24,5 +23,7 @@ def getKompass():
 
 if __name__ == "__main__":
 
-    print("Starte")
-    print(getKompass())
+    while True:
+        print("Starte")
+        print(getKompass())
+        sleep(1)

@@ -13,6 +13,7 @@ from Logic import *
 from Manuell import *
 import sys
 import atexit
+import os
 
 count=1
 speed=0
@@ -79,9 +80,9 @@ while Robo==True:
 
     #Plan next Steps
     logic.setRoboPos(x,y,pose)
-    #steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
+    steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
 
-    #steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
+    steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
     print(steer,speed)
 
 
@@ -89,15 +90,26 @@ while Robo==True:
     #sleep(0.3)
     #motor.setCommand(0,0)
 
-    steer,speed=manuell.getTastenInput(steer,speed)
+    #steer,speed=manuell.getTastenInput(steer,speed)
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
+
+    if encoder.getTastenPress() > 0.1:
+        motor.setCommand(0,0)
+        sleep(5)
+        
     
-    if encoder.getTaste() == 1:
+    if encoder.getTastenPress() > 2:
         motor.setCommand(0,0)
         print("By By goto Sleep")
-        sys.exit()
+        sleep(4)
+        if encoder.getTastenPress() > 4:
+            os.system("sudo shutdown -h 1")
+        else:
+            sys.exit()
+
+    
     print("************")
-    sleep(0.5)
+    sleep(0.2)
 
 

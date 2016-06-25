@@ -31,7 +31,8 @@ class Encoder():
         self.speedR=0
         self.newSpeedL=0
         self.newSpeedR=0
-    
+        self.keypress_rot=0.00
+        
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.PortEncoderL,GPIO.IN)
         GPIO.setup(self.PortEncoderR,GPIO.IN)
@@ -100,6 +101,12 @@ class Encoder():
             if GPIO.input(self.TasteR)==1:
                 self.AlarmR=True
 
+            ###RoteTaste###
+            if GPIO.input(self.portRoteTaste)==1:
+                self.keypress_rot += 1.00
+            else:
+                self.keypress_rot = 0.00
+
             sleep(0.02)
 
     def clearEncoderDist(self):
@@ -136,9 +143,9 @@ class Encoder():
         self.AlarmR=False
         return (AlarmL,AlarmR)
 
-    def getTaste(self):
-        """Status der Roten Taste ausgeben"""
-        return(GPIO.input(self.portRoteTaste))
+    def getTastenPress(self):
+        """Time Sec. Keypress der Roten Taste ausgeben"""
+        return(float(self.keypress_rot/50))
 
 
 if __name__ == "__main__":
