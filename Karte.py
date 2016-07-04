@@ -65,7 +65,7 @@ class Karte():
             self.global_kurs=360-abs(self.global_kurs)            
         global_kurs_radiant=radians(self.global_kurs)
         
-        #self.global_kurs=KompassCourse                           
+        self.global_kurs=KompassCourse                           
         #deltaHintenDist=deltaDist*((8.5*pi)/20)                    #(RadumfangHinten)/counts
 
 

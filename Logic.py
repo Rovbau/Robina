@@ -145,9 +145,9 @@ class Logic():
 
     def ret_flow_LR(self):
         """Ablauf fuer Retour wenn Pumper L+R"""
-        yield ([0,-1,40])
-        yield([-1,-1,10])
-        yield ([0,1,30])
+        yield ([0,-1,5])
+        yield([-1,-1,15])
+        yield ([0,1,20])
         yield ([999,0,10])
 
         

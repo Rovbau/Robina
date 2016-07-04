@@ -93,6 +93,8 @@ while Robo==True:
     #steer,speed=manuell.getTastenInput(steer,speed)
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
+    #sleep(0.3)
+    #motor.setCommand(0,0)
 
     if encoder.getTastenPress() > 0.1:
         motor.setCommand(0,0)
@@ -103,8 +105,9 @@ while Robo==True:
         motor.setCommand(0,0)
         print("By By goto Sleep")
         sleep(4)
-        if encoder.getTastenPress() > 4:
+        if encoder.getTastenPress() > 6:
             os.system("sudo shutdown -h 1")
+            sys.exit()
         else:
             sys.exit()
 

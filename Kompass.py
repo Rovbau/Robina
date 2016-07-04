@@ -19,6 +19,7 @@ def getKompass():
 
     Kurs=(daten1<<8)+daten2
     Kurs=Kurs/10
+    Kurs= 360 - Kurs
     return(Kurs)
 
 if __name__ == "__main__":
