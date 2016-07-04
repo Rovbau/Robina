@@ -48,8 +48,8 @@ class Karte():
         """Update Robo Position auf Karte"""
         #print("Counts: "+str(deltaL)+" "+str(deltaR))
         #RoboSchwerpunkt bis Rad cm
-        a=14.5 
-        c=14.5
+        a=13.5 
+        c=13.5
         Radstand=a+c
         countsRadGross=72
 
@@ -65,7 +65,7 @@ class Karte():
             self.global_kurs=360-abs(self.global_kurs)            
         global_kurs_radiant=radians(self.global_kurs)
         
-        self.global_kurs=KompassCourse                           
+        #self.global_kurs=KompassCourse                           
         #deltaHintenDist=deltaDist*((8.5*pi)/20)                    #(RadumfangHinten)/counts
 
 
@@ -114,7 +114,7 @@ class Karte():
 
     def getRoboPos(self):
         """returns RoboPos X,Y,pose"""
-        return(round(self.RoboPosX,1),round(self.RoboPosY,1),self.global_kurs)
+        return(round(self.RoboPosX,1),round(self.RoboPosY,1),round(self.global_kurs,2))
 
     def setRoboPosZero(self,x,y):
         """Set Robo Position zb bei Start"""

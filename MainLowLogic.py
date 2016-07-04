@@ -10,7 +10,7 @@ from Plan import *
 from Motor import *
 from Grid import *
 from Logic import *
-from Manuell import *
+from ManuellKey import *
 import sys
 import atexit
 import os
@@ -46,6 +46,11 @@ ThreadScanAllTime.start()
 ThreadEncoder=Thread(target=encoder.runAllTime,args=())
 ThreadEncoder.daemon=True
 ThreadEncoder.start()
+
+ThreadEncoder=Thread(target=manuell.runManuell,args=())
+ThreadEncoder.daemon=True
+ThreadEncoder.start()
+    
 sleep(1)
 
 while Robo==True:
@@ -72,11 +77,11 @@ while Robo==True:
     
     #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
+    print(deltaL,deltaR,2111)
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
     encoder.clearEncoderLR()
-
 
     #Plan next Steps
     logic.setRoboPos(x,y,pose)
@@ -85,12 +90,11 @@ while Robo==True:
     steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
     print(steer,speed)
 
-
     motor.booster(1,1)
     #sleep(0.3)
     #motor.setCommand(0,0)
 
-    #steer,speed=manuell.getTastenInput(steer,speed)
+    #steer,speed=manuell.getManuellCommand()
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
     #sleep(0.3)
@@ -110,6 +114,10 @@ while Robo==True:
             sys.exit()
         else:
             sys.exit()
+
+    Spann, _ = scanner.Sonar1.GetBatSpann()
+    if Spann < 7:
+        print("ACHTUNG BATTERIE LEER")
 
     
     print("************")

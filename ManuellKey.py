@@ -1,7 +1,8 @@
 from threading import Thread
 from time import *
 import sys
-import msvcrt
+#import msvcrt
+#import getch
 
 class Manuell():
     def __init__(self):
@@ -12,10 +13,12 @@ class Manuell():
     def runManuell(self):
         
         while True:
-            comm = msvcrt.getch()
-            #comm = sys.stdin.read(1)
+            #comm = msvcrt.getch()
+            comm = sys.stdin.read(2)
+            #comm = getch.getch()
+            comm = comm[0]
             #comm = input()
-            print("Taste:" +str(comm))
+            print("Taste: "+str(comm))
 
             if comm == "8":
                 speed=1

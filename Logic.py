@@ -22,8 +22,7 @@ class Logic():
         self.generatorR = self.ret_flow_R()
         self.generatorLR = self.ret_flow_LR()
         self.command=[]
-        self.retour_done = True
-        
+        self.retour_done = True        
         print("Init Logic")
             
     def wsa(self,dist_front,dist_left,dist_right,pumperL,pumperR):
@@ -99,8 +98,7 @@ class Logic():
             print("RIGHT WALL")
         else:
             print("LEFT WALL")
-            
-        
+                 
     def getKursDiff(self,soll,ist):
         """Diff zwischen zwei Winkel 0-360grad"""
 
@@ -126,8 +124,6 @@ class Logic():
         self.x = x
         self.y = y
         self.pose = pose
-
-
         
     def ret_flow_L(self):
         """Ablauf fuer Retour wenn PumperL"""
@@ -149,7 +145,6 @@ class Logic():
         yield([-1,-1,15])
         yield ([0,1,20])
         yield ([999,0,10])
-
         
     def checkDistDrive(self,dist,t):
         """returns True if RetourDistance (dist) is Done"""
@@ -191,8 +186,6 @@ class Logic():
             self.oldx = self.x
             self.oldy = self.y
 
-        print(self.command,self.generator)
-
         steer = self.command[0]
         speed = self.command[1]
 
@@ -209,6 +202,7 @@ class Logic():
         return(steer,speed)
 
     def checkPumperStatus(self,pumperL,pumperR,steer,speed):
+        """Starte Ausweichmanoever bei Pumper == True"""
 
         if pumperL == True and pumperR == True:
             self.retour_done = False
@@ -226,7 +220,6 @@ class Logic():
             self.generatorR = self.ret_flow_R()
             self.generator = self.generatorR
 
-
         steer,speed=self.pumperUmfahren(steer,speed)
         return(steer,speed)
         
@@ -239,7 +232,6 @@ if __name__ == "__main__":
     steer,speed=log.checkPumperStatus(False,True)
     print(steer,speed)
     
-
     log.setRoboPos(10,100,10)
     time.sleep(0.2)
 
