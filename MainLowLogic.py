@@ -94,7 +94,7 @@ while Robo==True:
     #sleep(0.3)
     #motor.setCommand(0,0)
 
-    #steer,speed=manuell.getManuellCommand()
+    steer,speed=manuell.getManuellCommand()
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
     #sleep(0.3)

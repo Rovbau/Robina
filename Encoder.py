@@ -106,8 +106,7 @@ class Encoder():
                 self.keypress_rot += 1.00
             else:
                 self.keypress_rot = 0.00
-
-            sleep(0.02)
+            sleep(0.01)
 
     def clearEncoderDist(self):
         """clears Dist-Counst"""

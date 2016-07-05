@@ -48,13 +48,14 @@ class Karte():
         """Update Robo Position auf Karte"""
         #print("Counts: "+str(deltaL)+" "+str(deltaR))
         #RoboSchwerpunkt bis Rad cm
-        a=13.5 
-        c=13.5
+        a=14.0 
+        c=14.0
         Radstand=a+c
         countsRadGross=72
 
         #Werte Uebernehmen: Counts in (cm) umrechnen
         deltaL=deltaL*((15.5*pi)/countsRadGross)           #(Radumfang)/counts
+        print(deltaL)
         deltaR=deltaR*((15.5*pi)/countsRadGross)           #(Radumfang)/counts
         WinkelDiff=degrees((deltaR-deltaL)/Radstand)      #Raddist/Radstandbreite
         
@@ -64,7 +65,7 @@ class Karte():
         if self.global_kurs<0:
             self.global_kurs=360-abs(self.global_kurs)            
         global_kurs_radiant=radians(self.global_kurs)
-        
+        #global_kurs_radiant=0
         #self.global_kurs=KompassCourse                           
         #deltaHintenDist=deltaDist*((8.5*pi)/20)                    #(RadumfangHinten)/counts
 
@@ -77,7 +78,7 @@ class Karte():
             dx=(ds/da)*(cos((pi/2)+global_kurs_radiant-da)+cos(global_kurs_radiant-(pi/2)))
             dy=(ds/da)*(sin((pi/2)+global_kurs_radiant-da)+sin(global_kurs_radiant-(pi/2)))
             
-            #print("STEER: "+str(round(dx,2))+"  "+str(round(dy,2))+"  "+str(deltaL)+str(deltaR))
+            print("STEER: "+str(round(dx,3))+"  "+str(round(dy,3))+"  "+str(deltaL)+str(deltaR))
             
             #Position des Robo auf Karte updaten
             self.Drehmatrix(dx,dy)
