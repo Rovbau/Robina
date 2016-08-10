@@ -1,0 +1,15 @@
+************************
+LOGFILE DES ROBOS
+*************************
+
+9.8.2016 
+    Motor rechts oelen
+
+*************************
+IDEEN
+*************************
+Pyhton Leistung Verbrauch ?
+Senden mit Jason Progrm für Visualisierung
+Sensor rechts Diff zu Front-Sensor (Ev Abgleich routine)
+Rad hinten schmaler oder ohne Noppen
+Routine bei Blockade
