@@ -55,7 +55,6 @@ class Karte():
 
         #Werte Uebernehmen: Counts in (cm) umrechnen
         deltaL=deltaL*((15.5*pi)/countsRadGross)           #(Radumfang)/counts
-        print(deltaL)
         deltaR=deltaR*((15.5*pi)/countsRadGross)           #(Radumfang)/counts
         WinkelDiff=degrees((deltaR-deltaL)/Radstand)      #Raddist/Radstandbreite
         
@@ -78,7 +77,7 @@ class Karte():
             dx=(ds/da)*(cos((pi/2)+global_kurs_radiant-da)+cos(global_kurs_radiant-(pi/2)))
             dy=(ds/da)*(sin((pi/2)+global_kurs_radiant-da)+sin(global_kurs_radiant-(pi/2)))
             
-            print("STEER: "+str(round(dx,3))+"  "+str(round(dy,3))+"  "+str(deltaL)+str(deltaR))
+            #print("STEER: "+str(round(dx,3))+"  "+str(round(dy,3))+"  "+str(deltaL)+str(deltaR))
             
             #Position des Robo auf Karte updaten
             self.Drehmatrix(dx,dy)

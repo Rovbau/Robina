@@ -73,7 +73,7 @@ class Logic():
             self.aktiv_sensorLR = self.dist_right
             
         winkel=self.getKursDiff(self.zielkurs,self.pose)
-        print("Winkel:" +str(int(winkel)))
+        #print("Winkel:" +str(int(winkel)))
         
         if self.dist_front < 70:
             self.steer = -1
@@ -152,7 +152,7 @@ class Logic():
         deltaX = self.x-self.oldx
         deltaY = self.y-self.oldy
         actual_dist= math.sqrt(pow(abs(deltaX),2)+pow(abs(deltaY),2))
-        print(actual_dist)
+        #print(actual_dist)
 
         drive_time= time.time() - self.t
         

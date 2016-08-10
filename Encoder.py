@@ -43,7 +43,7 @@ class Encoder():
 
         GPIO.setup(self.PortLRueck,GPIO.OUT)
         GPIO.setup(self.PortRRueck,GPIO.OUT)
-
+        #GPIO.setup(16,GPIO.OUT)
         #Motorern EIN/AUS
         GPIO.output(self.PortRRueck,0)
         GPIO.output(self.PortLRueck,0)
@@ -62,6 +62,7 @@ class Encoder():
 
   
         while True:
+            #GPIO.output(16,1)
             if GPIO.input(self.PortEncoderL) != EncoderLOld:
                 self.newSpeedL=time()
                 
@@ -106,6 +107,7 @@ class Encoder():
                 self.keypress_rot += 1.00
             else:
                 self.keypress_rot = 0.00
+            #GPIO.output(16,0)
             sleep(0.01)
 
     def clearEncoderDist(self):

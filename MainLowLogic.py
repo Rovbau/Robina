@@ -77,7 +77,7 @@ while Robo==True:
     
     #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
-    print(deltaL,deltaR,2111)
+    
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
@@ -89,12 +89,12 @@ while Robo==True:
 
     steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
     print(steer,speed)
-
+    l,r = encoder.getSpeedLR()
     motor.booster(1,1)
     #sleep(0.3)
     #motor.setCommand(0,0)
 
-    steer,speed=manuell.getManuellCommand()
+    #steer,speed=manuell.getManuellCommand()
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
     #sleep(0.3)
@@ -121,6 +121,6 @@ while Robo==True:
 
     
     print("************")
-    sleep(0.2)
+    sleep(0.1)
 
 
