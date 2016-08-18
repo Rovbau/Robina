@@ -1,6 +1,5 @@
 #Programm Zeigt in Tkinter die RoboPos und die Hindernisse an.
 #Daten via Socket und Json
-#Inklusive Karten Verschiebung
 
 import json
 import socket
@@ -43,9 +42,9 @@ class Server():
 
     def getNewValues(self):
         """Returns the data fromm the socket"""            
-        self.xx = self.xx +10
-        self.obs = [[1,1],[2,7],[2,8]]
-        self.path = [[0,0],[40,40],[50,self.xx]]        
+        #self.xx = self.xx +10
+        #self.obs = [[1,1],[2,7],[2,8]]
+        #self.path = [[0,0],[40,40],[50,self.xx]]        
         return(self.obs, self.path)
 
     def clearValues(self):
@@ -99,8 +98,8 @@ class Visual():
         print("DataPoints: "+str(len(self.obstacles_in_grid))+" "+str(len( self.position_in_grid)))
         
         for pos in self.obstacles_in_grid:
-            X=pos[0]*10
-            Y=pos[1]*10
+            X=pos[0]
+            Y=pos[1]
             #Zeichne Hindernisspunkte Global ein 
             can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill="red",tag="Point")
 
@@ -126,6 +125,7 @@ serv = Server()
 sichern = Sichern()
 visual = Visual(sichern)
 
+print("Init")
 #Server lauscher
 ThreadScanAllTime=Thread(target=serv.getJsonOby, args=())
 ThreadScanAllTime.daemon=True
