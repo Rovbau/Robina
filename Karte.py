@@ -127,7 +127,11 @@ class Karte():
 
     def getObstacles(self):
         """return latest Obstacles"""
-        return(self.globalObstaclesList)
+        ausgabeObstacle = self.globalObstaclesList
+        print(len(self.globalObstaclesList))
+        self.globalObstaclesList = []
+        print(len(ausgabeObstacle))
+        return(ausgabeObstacle)
 
     def getZielkurs(self):
         """return Zielkurs 0-360"""

@@ -21,12 +21,15 @@ class Grid():
         unpaintedObstacles=obstacles
         
         for obstacle in unpaintedObstacles:
-            obstacle_x_grid=(obstacle[0]/10)
-            obstacle_y_grid=(obstacle[1]/10)
+            obstacle_x_grid=int(obstacle[0]/10)
+            obstacle_y_grid=int(obstacle[1]/10)
             
             if (obstacle_x_grid,obstacle_y_grid) not in  self.walls:
                 self.walls.append((obstacle_x_grid,obstacle_y_grid))
                 self.gridwithweights.walls=deepcopy(self.walls)
+
+        print("LEN of Walls")
+        print(len(self.walls))
 
 
     def obstacleNear(self):

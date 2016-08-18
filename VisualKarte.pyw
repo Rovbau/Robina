@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from math import cos,sin,radians,asin,degrees
 from tkinter import *
 import pickle

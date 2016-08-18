@@ -11,6 +11,7 @@ from Motor import *
 from Grid import *
 from Logic import *
 from ManuellKey import *
+from SendJson import *
 import sys
 import atexit
 import os
@@ -29,6 +30,7 @@ motor=Motor()
 grid=Grid(50,50)
 logic=Logic()
 manuell=Manuell()
+json=Json()
 
 grid.setZielInGrid(15,49)
 grid.setStartInGrid(15,1)
@@ -74,6 +76,8 @@ while Robo==True:
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
     grid.saveGridObstacles()
+
+          
     
     #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
@@ -82,6 +86,10 @@ while Robo==True:
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
     encoder.clearEncoderLR()
+
+    #Send Data via NET
+    json.sendVisual(obstacles, [[x,y]])
+    
 
     #Plan next Steps
     logic.setRoboPos(x,y,pose)
