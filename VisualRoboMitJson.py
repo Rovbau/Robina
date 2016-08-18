@@ -1,5 +1,6 @@
 #Programm Zeigt in Tkinter die RoboPos und die Hindernisse an.
 #Daten via Socket und Json
+#Inklusive Karten Verschiebung
 
 import json
 import socket
