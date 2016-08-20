@@ -11,3 +11,5 @@ global_var_name
 instance_var_name
 function_parameter_name
 local_var_name
+
+Vor und nach = ein " "

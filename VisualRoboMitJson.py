@@ -6,10 +6,11 @@ import socket
 from threading import Thread
 from Tkinter import *
 import time
+import pickle
 
 #Kartennull fuer TK
-Nullx=200
-Nully=380
+Nullx=300
+Nully=300
 
 #Tkinter 
 root=Tk()
@@ -21,9 +22,10 @@ class Server():
     def __init__(self):
         self.obs = []
         self.path = []
+        self.xx = 0
 
     def getJsonOby(self):
-        """load a new Json Objekt"""   
+        """load a new Json Objekt"""
         try:
             while True:
                 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -39,21 +41,42 @@ class Server():
         return()
 
     def getNewValues(self):
-        print(self.obs)
+        """Returns the data fromm the socket"""            
+        #self.xx = self.xx +10
+        #self.obs = [[1,1],[2,7],[2,8]]
+        #self.path = [[0,0],[40,40],[50,self.xx]]        
         return(self.obs, self.path)
 
     def clearValues(self):
         self.obs =[]
         self.path = []
 
-class Visual():
+
+class Sichern():
     def __init__(self):
-        self.Nullx = 100
-        self.Nully = 100
-        self.obstacles_in_grid = [[24,16],[15,5],[20,20]]
+        self.timeold = 0
+
+    def storeFile(self, obst, path):
+        """Pickel Daten"""
+        filename = "Stube"        
+        last_save = time.time()-self.timeold
+        
+        if filename != "" and last_save > 4:           
+            pickelPath=open( "LogRoboWeg-"+filename, "wb" )
+            pickle.dump(path+obst, pickelPath)
+            pickelPath.close()
+            self.timeold = time.time()
+
+ 
+
+class Visual():
+    def __init__(self, sichern):
+        self.Nullx = 300
+        self.Nully = 300
+        self.obstacles_in_grid = []
         self.position_in_grid = []
-        
-        
+        self.sichern = sichern
+       
     def printObstacles(self):
         """Zeichne die Hindernisse und RoboPath"""
 
@@ -61,20 +84,22 @@ class Visual():
         Nully = self.Nully 
         obstacles, path = serv.getNewValues()
         print(obstacles)
+        print(path)
 
-
-        self.obstacles_in_grid.append(obstacles)
-        self.position_in_grid.append(path)
+        if len(obstacles) != 0:
+            self.obstacles_in_grid.extend(obstacles)
+            self.position_in_grid.extend(path)
         serv.clearValues()
-       
-        #obstacles_in_grid = [[2,10],[5,5],[20,20]]
-        #position_in_grid = [[3,13],[18,18],[22,22]]
-        print(self.obstacles_in_grid)
+        can.delete("Point")
+
+        #Save neu Points
+        self.sichern.storeFile(self.obstacles_in_grid, self.position_in_grid)
+
+        print("DataPoints: "+str(len(self.obstacles_in_grid))+" "+str(len( self.position_in_grid)))
         
         for pos in self.obstacles_in_grid:
-            print(pos)
-            X=pos[0]*10
-            Y=pos[1]*10
+            X=pos[0]
+            Y=pos[1]
             #Zeichne Hindernisspunkte Global ein 
             can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill="red",tag="Point")
 
@@ -86,43 +111,46 @@ class Visual():
 
         root.after(1500,visual.printObstacles)
 
+
     def setZoom(self,x,y):
         """Kartenausschnitt Verschieben"""
-        print("Verschiebe Karte")
-        self.Nullx = x
-        self.Nully = y
+        self.Nullx = self.Nullx + x
+        self.Nully = self.Nully + y
         can.delete("Point")
         return
     
 ###MAIN###
 
 serv = Server()
-visual = Visual()
+sichern = Sichern()
+visual = Visual(sichern)
 
+print("Init")
+#Server lauscher
 ThreadScanAllTime=Thread(target=serv.getJsonOby, args=())
 ThreadScanAllTime.daemon=True
 ThreadScanAllTime.start()
 
-
 visual.printObstacles()
 
-
-buttonL = Button(root, text="Links", fg="blue",command=lambda: visual.setZoom(200,200))
-buttonR = Button(root, text="Rechts", fg="blue",command=lambda: visual.setZoom(200,600))
-buttonU = Button(root, text="Unten", fg="blue",command=lambda: visual.setZoom(100,400))
-buttonO = Button(root, text="Oben", fg="blue",command=lambda: visual.setZoom(400,400))
-buttonL.pack(side=TOP)
-buttonR.pack(side=BOTTOM)
-buttonU.pack(side=RIGHT)
-buttonO.pack(side=LEFT)
+#Zeichne Karte und Massstab, Button
+buttonL = Button(root, text="Links", fg="blue",command=lambda: visual.setZoom(-100,0))
+buttonR = Button(root, text="Rechts", fg="blue",command=lambda: visual.setZoom(100,0))
+buttonU = Button(root, text="Unten", fg="blue",command=lambda: visual.setZoom(0,100))
+buttonO = Button(root, text="Oben", fg="blue",command=lambda: visual.setZoom(0,-100))
+buttonO.pack(side=TOP)
+buttonU.pack(side=BOTTOM)
+buttonR.pack(side=RIGHT)
+buttonL.pack(side=LEFT)
 
 entryIP = Entry(root)
 entryIP.pack()
-can.create_oval(Nullx-2,Nully+2,Nullx+2,Nully-2, width=1, fill="black")
-can.create_oval(Nullx-50,Nully+50,Nullx+50,Nully-50, width=1, fill=None)
-can.create_oval(Nullx-100,Nully+100,Nullx+100,Nully-100, width=1, fill=None)
-can.create_oval(Nullx-150,Nully+150,Nullx+150,Nully-150, width=1, fill=None)
-
+entryIP.insert(10,"Ring entspricht 50 cm")
+can.create_oval(Nullx-2,Nully+2,Nullx+2,Nully-2, width=1, fill=None)
+can.create_oval(Nullx-50,Nully+50,Nullx+50,Nully-50, width=1, fill=None, outline="gray78")
+can.create_oval(Nullx-100,Nully+100,Nullx+100,Nully-100, width=1, fill=None, outline="gray78")
+can.create_oval(Nullx-150,Nully+150,Nullx+150,Nully-150, width=1, fill=None, outline="gray78")
+filename = entryIP.get()
 can.pack()
 
 root.mainloop()
