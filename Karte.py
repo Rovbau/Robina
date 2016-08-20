@@ -31,7 +31,7 @@ class Karte():
             #Drehmatrix für Y, Returns Global Hindernis Position
             Y=(Dx*sin(radians(self.global_kurs))+Dy*(cos(radians(self.global_kurs))))+self.RoboPosY
 
-            self.globalObstaclesList.append([X,Y])
+            self.globalObstaclesList.append([int(X),int(Y)])
     
     def updateHardObstacles(self,pumperL,pumperR):
         """Status der Stosstange in Karte eintragen"""
@@ -128,9 +128,7 @@ class Karte():
     def getObstacles(self):
         """return latest Obstacles"""
         ausgabeObstacle = self.globalObstaclesList
-        print(len(self.globalObstaclesList))
         self.globalObstaclesList = []
-        print(len(ausgabeObstacle))
         return(ausgabeObstacle)
 
     def getZielkurs(self):

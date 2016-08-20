@@ -62,7 +62,7 @@ class Scanner():
         dist_list=[]
 
         front,_ = self.Sonar1.GetADC(0)
-        if front < 500:
+        if front < 100:
             dx,dy = self.distInPolar(front,0)
             dist_list.append([dx,dy])
         
@@ -116,5 +116,6 @@ if __name__ == "__main__":
     sleep(1)
     while True:
         #print(Scanner1.getNewDistValues())
+        
         print(Scanner1.getFixData())
         sleep(0.6)

@@ -16,7 +16,7 @@ class Json():
 
         send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         
-        ip = "192.168.1.40"
+        ip = "192.168.1.108"
 
         msg = json.dumps({'Obstacles': obstacles, 'Path': path})
         send.sendto(msg, (ip, 50000)) 
