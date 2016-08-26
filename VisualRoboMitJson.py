@@ -22,6 +22,7 @@ class Server():
     def __init__(self):
         self.obs = []
         self.path = []
+        self.solved_path1 = []
         self.xx = 0
 
     def getJsonOby(self):
@@ -34,8 +35,9 @@ class Server():
                 daten, addr = s.recvfrom(1024)
                 nachricht = json.loads(daten)
                 
-                self.obs = nachricht["Obstacles"]
+                self.obs.extend( nachricht["Obstacles"])
                 self.path = nachricht["Path"]
+                self.solved_path1 = nachricht["Solved_path"]
         finally: 
             s.close()
         return()
@@ -45,11 +47,12 @@ class Server():
         #self.xx = self.xx +10
         #self.obs = [[1,1],[2,7],[2,8]]
         #self.path = [[0,0],[40,40],[50,self.xx]]        
-        return(self.obs, self.path)
+        return(self.obs, self.path, self.solved_path1)
 
     def clearValues(self):
         self.obs =[]
         self.path = []
+        self.solved_path1 = []
 
 
 class Sichern():
@@ -62,12 +65,21 @@ class Sichern():
         last_save = time.time()-self.timeold
         
         if filename != "" and last_save > 4:           
-            pickelPath=open( "LogRoboWeg-"+filename, "wb" )
-            pickle.dump(path+obst, pickelPath)
+            pickelPath=open( "LogRoboWeg-"+filename+".p", "wb" )
+            pickle.dump({'Obstacle':obst, 'Path':path}, pickelPath)
             pickelPath.close()
             self.timeold = time.time()
 
- 
+    def loadFile(self):
+        filename = "Stube"
+        pickeln = open("LogRoboWeg-"+filename+".p", "rb")
+        data= pickle.load(pickeln)
+        pickeln.close()
+
+        obs = data["Obstacle"]
+        path = data["Path"]
+        solved_path1 = []
+        return(obs, path, solved_path1)
 
 class Visual():
     def __init__(self, sichern):
@@ -75,20 +87,26 @@ class Visual():
         self.Nully = 300
         self.obstacles_in_grid = []
         self.position_in_grid = []
+        self.solved_path = []
         self.sichern = sichern
        
     def printObstacles(self):
         """Zeichne die Hindernisse und RoboPath"""
 
         Nullx = self.Nullx
-        Nully = self.Nully 
-        obstacles, path = serv.getNewValues()
-        print(obstacles)
-        print(path)
+        Nully = self.Nully
+        
+        obstacles, path, solved_path = serv.getNewValues()
+        #obstacles, path, solved_path = self.sichern.loadFile()
+        
+        print(obstacles[:10])
+        print(path[:10])
+        print(solved_path[:10])
 
         if len(obstacles) != 0:
             self.obstacles_in_grid.extend(obstacles)
             self.position_in_grid.extend(path)
+            self.solved_path = solved_path
         serv.clearValues()
         can.delete("Point")
 
@@ -109,6 +127,15 @@ class Visual():
             #Zeichne Path Global ein 
             can.create_oval(Nullx+X-15,Nully-Y+15,Nullx+X+15,Nully-Y-15, width=1, fill=None,tag="Point")
 
+        try:
+            for pos in self.solved_path:
+                X=pos[0]*10
+                Y=pos[1]*10
+                #Zeichne Hindernisspunkte Global ein 
+                can.create_oval(Nullx+X-3,Nully-Y+3,Nullx+X+3,Nully-Y-3, width=1, fill="green",tag="Point")
+        except:
+            can.create_oval(Nullx-3,Nully+3,Nullx+3,Nully-3, width=1, fill="blue",tag="Point")
+
         root.after(1500,visual.printObstacles)
 
 
@@ -118,6 +145,12 @@ class Visual():
         self.Nully = self.Nully + y
         can.delete("Point")
         return
+
+    def clearPoints(self):
+        can.delete("Point")
+        print("clear")
+        self.obstacles_in_grid=[]
+        self.position_in_grid=[]
     
 ###MAIN###
 
@@ -138,7 +171,9 @@ buttonL = Button(root, text="Links", fg="blue",command=lambda: visual.setZoom(-1
 buttonR = Button(root, text="Rechts", fg="blue",command=lambda: visual.setZoom(100,0))
 buttonU = Button(root, text="Unten", fg="blue",command=lambda: visual.setZoom(0,100))
 buttonO = Button(root, text="Oben", fg="blue",command=lambda: visual.setZoom(0,-100))
+buttonClear = Button(root, text="Clear", fg="blue",command=visual.clearPoints)
 buttonO.pack(side=TOP)
+buttonClear.pack(side=TOP)
 buttonU.pack(side=BOTTOM)
 buttonR.pack(side=RIGHT)
 buttonL.pack(side=LEFT)
