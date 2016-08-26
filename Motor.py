@@ -102,7 +102,6 @@ class Motor():
             GPIO.output(self.PortBooster,0)
         
         
-
 if __name__ == "__main__":
 
     m=Motor()

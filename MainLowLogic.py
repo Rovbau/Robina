@@ -32,8 +32,8 @@ logic=Logic()
 manuell=Manuell()
 json=Json()
 
-grid.setZielInGrid(15,49)
-grid.setStartInGrid(15,1)
+grid.setZielInGrid(35,20)
+grid.setStartInGrid(1,1)
 karte.setRoboPosZero(0,0)
 
 def cleaning():
@@ -76,19 +76,21 @@ while Robo==True:
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
     grid.saveGridObstacles()
-
+    #solved_path = grid.getSolvedPath(motor)
           
     
     #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
-    
+    deltaH = encoder.getDistCounts()
+    pumperL, pumperR  = logic.blocked(steer,speed,deltaH) 
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
     encoder.clearEncoderLR()
-
+    encoder.clearEncoderDist()
     #Send Data via NET
-    json.sendVisual(walls, [[x,y]])
+    solved_path = []
+    json.sendVisual(walls, [[x,y]],solved_path)
     
 
     #Plan next Steps
@@ -97,12 +99,13 @@ while Robo==True:
 
     steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
     print(steer,speed)
-    l,r = encoder.getSpeedLR()
+    speed_L,speed_R = encoder.getSpeedLR()
     motor.booster(1,1)
     #sleep(0.3)
     #motor.setCommand(0,0)
 
-    steer,speed=manuell.getManuellCommand()
+    #Manuell Control
+    #steer,speed=manuell.getManuellCommand()
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
     #sleep(0.3)

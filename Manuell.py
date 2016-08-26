@@ -4,6 +4,7 @@
 class Manuell():
     def __init__(self):
         self.count=0
+        print("Manuell Mode ACTIV")
 
     def getTastenInput(self,steer, speed):
         """Warte auf Taste und steuere Robo gemaess Taste"""

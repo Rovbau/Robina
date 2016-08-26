@@ -4,14 +4,21 @@ LOGFILE DES ROBOS
 
 9.8.2016 
     Motor rechts oelen
+22.8.2016 
+    Antenne anbringen weniger Kabelsalat
 
 *************************
 IDEEN
 *************************
-Pyhton Leistung Verbrauch ?
-Senden mit Jason Progrm für Visualisierung
-Sensor rechts Diff zu Front-Sensor (Ev Abgleich routine)
-Rad hinten schmaler oder ohne Noppen
-Routine bei Blockade
-Werte aendern in Funktion?
-
+OK Pyhton Leistung Verbrauch ?
+OK Senden mit Jason Progrm für Visualisierung
+OK Sensor rechts Diff zu Front-Sensor ABweich<2cm Soll/Ist<3cm in Range (20-120)
+OK Rad hinten schmaler oder ohne Noppen, obwohl nicht noetig
+   Routine bei Blockade. Erkenne wenn RadLR nicht dreht
+OK Werte aendern in Funktion?
+   A* wieder einfügen um seine Tauglichkeit zu pruefen
+   Retour Funk kürzen
+   Schutzhaube um Roberto Outdoor tauglich   
+   Funktion intergrieren FTP-Manuell Conntroll via Netz
+   Dist-Scan bei schwierigen Situationen
+   KartenVisualisierung mit Plausibilitaetspruefng der Hindernisse

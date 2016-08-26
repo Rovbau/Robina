@@ -62,17 +62,17 @@ class Scanner():
         dist_list=[]
 
         front,_ = self.Sonar1.GetADC(0)
-        if front < 100:
+        if front < 90:
             dx,dy = self.distInPolar(front,0)
             dist_list.append([dx,dy])
         
         left,_ = self.Sonar1.GetADC(2)
-        if left < 100:
+        if left < 90:
             dx,dy = self.distInPolar(left,65)
             dist_list.append([dx,dy+10])
             
         right,_ = self.Sonar1.GetADC(3)
-        if right < 100:
+        if right < 90:
             dx,dy = self.distInPolar(right,-65)
             dist_list.append([dx,dy-10])
             

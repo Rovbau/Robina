@@ -4,7 +4,7 @@ import socket
 
 
 #ip = raw_input("IP-Adresse: ")
-ip = "127.0.0.1"
+
 
 
 class Json():
@@ -12,13 +12,13 @@ class Json():
         print("Init Json")
         
 
-    def sendVisual(self, obstacles, path):
+    def sendVisual(self, obstacles, path, solved_path):
 
         send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         
-        ip = "192.168.1.108"
+        ip = "192.168.4.233"
 
-        msg = json.dumps({'Obstacles': obstacles, 'Path': path})
+        msg = json.dumps({'Obstacles': obstacles, 'Path': path, 'Solved_path': solved_path})
         send.sendto(msg, (ip, 50000)) 
         send.close()
         

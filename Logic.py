@@ -22,7 +22,8 @@ class Logic():
         self.generatorR = self.ret_flow_R()
         self.generatorLR = self.ret_flow_LR()
         self.command=[]
-        self.retour_done = True        
+        self.retour_done = True
+        self.stop_time = time.time()        
         print("Init Logic")
             
     def wsa(self,dist_front,dist_left,dist_right,pumperL,pumperR):
@@ -158,7 +159,7 @@ class Logic():
 
         drive_time= time.time() - self.t
         
-        if abs(actual_dist) > dist or drive_time > 10:
+        if abs(actual_dist) > dist or drive_time > 5:
             dist_done=True
         else:
             dist_done=False
@@ -225,7 +226,17 @@ class Logic():
         steer,speed=self.pumperUmfahren(steer,speed)
         return(steer,speed)
         
+    def blocked(self,speed, steer, countsH):
+        print("BLOCKED" +str(countsH))
 
+        if (time.time()-self.stop_time) > 2:
+            self.stop_time = time.time()
+            return(True,True)
+
+        if (speed != 0 or steer  != 0) and countsH != 0:
+            self.stop_time = time.time() 
+        return(False, False)       
+     
 ######################################
 if __name__ == "__main__":
     
