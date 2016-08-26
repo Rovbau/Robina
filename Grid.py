@@ -28,10 +28,6 @@ class Grid():
                 self.walls.append((obstacle_x_grid,obstacle_y_grid))
                 self.gridwithweights.walls=deepcopy(self.walls)
 
-        print("LEN of Walls")
-        print(len(self.walls))
-
-
     def obstacleNear(self):
         """Wenn obstacle in range, drive back"""
         x,y=self.startgrid

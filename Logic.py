@@ -27,7 +27,6 @@ class Logic():
             
     def wsa(self,dist_front,dist_left,dist_right,pumperL,pumperR):
         """Wandering Standpoint Algorithm"""
-        print("WSA")
         self.dist_front=dist_front
         self.dist_left=dist_left
         self.dist_right=dist_right
@@ -38,6 +37,9 @@ class Logic():
             self.speed=1
         else:
             self.wallMode()
+
+        #if self.dist_left < 30 or self.dist_right < 30 or ( self.flag_leftWall == False and self.flag_rightWall == False):
+        #    self.wallMode() 
             
         return(self.steer,self.speed)
 

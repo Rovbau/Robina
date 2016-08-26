@@ -70,7 +70,7 @@ while Robo==True:
 
     #Grid
     x,y,pose=karte.getRoboPos()
-    print("Pose:"+str(int(pose)))
+    #print("Pose:"+str(int(pose)))
     grid.setStartInGrid(int(x/10),int(y/10))
     walls=karte.getObstacles()
     grid.obstaclesInGrid(walls)
@@ -88,7 +88,7 @@ while Robo==True:
     encoder.clearEncoderLR()
 
     #Send Data via NET
-    json.sendVisual(obstacles, [[x,y]])
+    json.sendVisual(walls, [[x,y]])
     
 
     #Plan next Steps
@@ -102,7 +102,7 @@ while Robo==True:
     #sleep(0.3)
     #motor.setCommand(0,0)
 
-    #steer,speed=manuell.getManuellCommand()
+    steer,speed=manuell.getManuellCommand()
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
     #sleep(0.3)

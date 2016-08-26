@@ -116,5 +116,6 @@ if __name__ == "__main__":
     sleep(1)
     while True:
         #print(Scanner1.getNewDistValues())
+        
         print(Scanner1.getFixData())
         sleep(0.6)
