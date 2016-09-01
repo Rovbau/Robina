@@ -90,7 +90,7 @@ class Logic():
         if self.aktiv_sensorLR > 30 and self.aktiv_sensorLR < 40:
             self.steer = 0
             
-        if abs(winkel)< 15 and self.dist_front > 70 and self.aktiv_sensorLR > 30:
+        if abs(winkel)< 25 and self.dist_front > 70: #and self.aktiv_sensorLR > 30:
             self.flag_leftWall = False
             self.flag_rightWall = False
             self.steer = 0
@@ -226,17 +226,26 @@ class Logic():
         steer,speed=self.pumperUmfahren(steer,speed)
         return(steer,speed)
         
-    def blocked(self,speed, steer, countsH):
-        print("BLOCKED" +str(countsH))
-
+    def blocked(self,steer, speed, countsH, pumperL, pumperR):
+        """Wenn Robo stillsteht starte Pumper Routine"""    
+        print(steer,speed,countsH, pumperL, pumperR)
+        if pumperL == True or pumperR == True:
+            return(pumperL, pumperR)
+        #Wenn 2Sec keine Bewegung simuliere PumperLR=TRUE
         if (time.time()-self.stop_time) > 2:
             self.stop_time = time.time()
             return(True,True)
-
+        #Solange CountHinten zaehlt  normal weiter
         if (speed != 0 or steer  != 0) and countsH != 0:
             self.stop_time = time.time() 
-        return(False, False)       
-     
+            return(False, False)
+        #Bei retour nicht nochmals Retour
+        if  speed == -1 :
+            self.stop_time = time.time()
+            return(False, False)       
+        return(False,False)
+
+
 ######################################
 if __name__ == "__main__":
     

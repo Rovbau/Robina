@@ -56,6 +56,7 @@ ThreadEncoder.start()
 sleep(1)
 
 while Robo==True:
+    os.system("clear")
 
     #get Distances from IR-Sensors
     dist_front, dist_left , dist_right, obstacles = scanner.getFixData()
@@ -66,6 +67,8 @@ while Robo==True:
 
     #Obstacles von Pumper eintragen
     pumperL,pumperR=encoder.getPumper()
+    deltaH = encoder.getDistCounts()
+    pumperL, pumperR  = logic.blocked(steer,speed,deltaH, pumperL, pumperR) 
     karte.updateHardObstacles(pumperL,pumperR)
 
     #Grid
@@ -78,11 +81,10 @@ while Robo==True:
     grid.saveGridObstacles()
     #solved_path = grid.getSolvedPath(motor)
           
-    
+   
     #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
-    deltaH = encoder.getDistCounts()
-    pumperL, pumperR  = logic.blocked(steer,speed,deltaH) 
+
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
