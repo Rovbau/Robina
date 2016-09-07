@@ -1,4 +1,4 @@
-************************
+﻿************************
 LOGFILE DES ROBOS
 *************************
 
@@ -6,6 +6,11 @@ LOGFILE DES ROBOS
     Motor rechts oelen
 22.8.2016 
     Antenne anbringen weniger Kabelsalat
+1.9.2016
+    Mast fuer Kamera erstellt
+4.9.2016
+    Motor links Revision
+
 
 *************************
 IDEEN
