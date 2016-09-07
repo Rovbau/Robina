@@ -4,7 +4,7 @@
 from math import sin,cos,radians,degrees,sqrt,pi
 from copy import deepcopy
 import time
-import pickle
+import cPickle as pickle
 
 class Karte():
     def __init__(self,encoder):

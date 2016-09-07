@@ -97,10 +97,13 @@ class Motor():
     def booster(self,speedL,speedR):
         if speedL > 0.6 or speedR > 0.6:
             GPIO.output(self.PortBooster,1)
+            booster_time = 20
             print("Booster")
         elif speedL < 0.1 or speedR < 0.1:
-            GPIO.output(self.PortBooster,0)
-        
+            booster_time -= 1
+            if booster_time < 1:
+                GPIO.output(self.PortBooster,0)
+                booster_time = 0
         
 if __name__ == "__main__":
 
@@ -109,7 +112,10 @@ if __name__ == "__main__":
     x=m.setCommand(-1,0)
     print(x)
     sleep(2)
+    
+    m.booster(1,1)
     x=m.setCommand(1,0)
+    
     print(x)
     sleep(2)
     x=m.setCommand(-1,-1)

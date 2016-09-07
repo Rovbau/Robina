@@ -3,7 +3,7 @@
 #([(0, 50),(10, 50),(20, 50),(30, 50),(40, 50),(90, 90)])
 
 from copy import deepcopy
-import pickle
+import cPickle as pickle
 from Astar import *
 
 class Grid():
@@ -19,14 +19,20 @@ class Grid():
     def obstaclesInGrid(self, obstacles):
         """GlobaleHinderniss (x[cm],y[cm]) in Grid eintragen (RasterX,RasterY)"""        
         unpaintedObstacles=obstacles
+        self.roundet_walls=[]
         
         for obstacle in unpaintedObstacles:
-            obstacle_x_grid=int(obstacle[0]/10)
-            obstacle_y_grid=int(obstacle[1]/10)
+            #round to _5
+            obstacle_x_grid=int(round(obstacle[0]/5.0)*5.0)
+            obstacle_y_grid=int(round(obstacle[0]/5.0)*5.0)
             
             if (obstacle_x_grid,obstacle_y_grid) not in  self.walls:
                 self.walls.append((obstacle_x_grid,obstacle_y_grid))
                 self.gridwithweights.walls=deepcopy(self.walls)
+                self.roundet_walls.append((obstacle_x_grid,obstacle_y_grid))
+
+    def getRoundetWalls(self):
+        return(self.roundet_walls)
 
     def obstacleNear(self):
         """Wenn obstacle in range, drive back"""

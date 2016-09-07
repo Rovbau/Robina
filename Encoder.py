@@ -59,10 +59,10 @@ class Encoder():
         self.CountR=0
         self.CountH=0
         self.DistRad=0
+        start_t = 5473278887
 
-  
         while True:
-            #GPIO.output(16,1)
+            #GPIO.output(16,1)            
             if GPIO.input(self.PortEncoderL) != EncoderLOld:
                 self.newSpeedL=time()
                 

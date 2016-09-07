@@ -15,6 +15,7 @@ from SendJson import *
 import sys
 import atexit
 import os
+import profile
 
 count=1
 speed=0
@@ -41,9 +42,10 @@ def cleaning():
     motor.setCommand(0,0)
 atexit.register(cleaning)
 
+#SCAN OFF 
 ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(0,))
 ThreadScanAllTime.daemon=True
-ThreadScanAllTime.start()
+#ThreadScanAllTime.start()
 
 ThreadEncoder=Thread(target=encoder.runAllTime,args=())
 ThreadEncoder.daemon=True
@@ -76,11 +78,12 @@ while Robo==True:
     #print("Pose:"+str(int(pose)))
     grid.setStartInGrid(int(x/10),int(y/10))
     walls=karte.getObstacles()
+
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
     grid.saveGridObstacles()
+
     #solved_path = grid.getSolvedPath(motor)
-          
    
     #Position updaten
     deltaL,deltaR=encoder.getPulseLR()
@@ -92,7 +95,9 @@ while Robo==True:
     encoder.clearEncoderDist()
     #Send Data via NET
     solved_path = []
-    json.sendVisual(walls, [[x,y]],solved_path)
+    roundet_walls=grid.getRoundetWalls()
+    print(roundet_walls)
+    json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
 
     #Plan next Steps
