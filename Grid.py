@@ -24,7 +24,7 @@ class Grid():
         for obstacle in unpaintedObstacles:
             #round to _5
             obstacle_x_grid=int(round(obstacle[0]/5.0)*5.0)
-            obstacle_y_grid=int(round(obstacle[0]/5.0)*5.0)
+            obstacle_y_grid=int(round(obstacle[1]/5.0)*5.0)
             
             if (obstacle_x_grid,obstacle_y_grid) not in  self.walls:
                 self.walls.append((obstacle_x_grid,obstacle_y_grid))
