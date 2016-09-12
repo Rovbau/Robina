@@ -21,6 +21,8 @@ count=1
 speed=0
 steer=0
 timer=0
+deltaL=0
+deltaR=0
 encoder=Encoder()
 navigation=Navigation()
 scanner=Scanner()
@@ -57,6 +59,7 @@ ThreadEncoder.start()
     
 sleep(1)
 
+
 while Robo==True:
     os.system("clear")
 
@@ -70,7 +73,8 @@ while Robo==True:
     #Obstacles von Pumper eintragen
     pumperL,pumperR=encoder.getPumper()
     deltaH = encoder.getDistCounts()
-    pumperL, pumperR  = logic.blocked(steer,speed,deltaH, pumperL, pumperR) 
+    pumperL, pumperR  = logic.blocked(steer,speed,deltaH, pumperL, pumperR)
+
     karte.updateHardObstacles(pumperL,pumperR)
 
     #Grid
@@ -81,7 +85,7 @@ while Robo==True:
 
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
-    grid.saveGridObstacles()
+    #grid.saveGridObstacles()
 
     #solved_path = grid.getSolvedPath(motor)
    
@@ -97,7 +101,7 @@ while Robo==True:
     solved_path = []
     roundet_walls=grid.getRoundetWalls()
     print(roundet_walls)
-    json.sendVisual(roundet_walls, [[x,y]],solved_path)
+    #json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
 
     #Plan next Steps
@@ -107,7 +111,7 @@ while Robo==True:
     steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
     print(steer,speed)
     speed_L,speed_R = encoder.getSpeedLR()
-    motor.booster(1,1)
+    motor.booster(speed_L,speed_R)
     #sleep(0.3)
     #motor.setCommand(0,0)
 

@@ -7,6 +7,7 @@ from time import sleep , time
 import RPi.GPIO as GPIO
 GPIO.setwarnings(False)
 
+
 class Encoder():
     def __init__(self):
         """init aller Ports, clears all counts"""
@@ -59,7 +60,6 @@ class Encoder():
         self.CountR=0
         self.CountH=0
         self.DistRad=0
-        start_t = 5473278887
 
         while True:
             #GPIO.output(16,1)            
@@ -160,9 +160,9 @@ if __name__ == "__main__":
 
     sleep(0.3)
     while True:
-        print(Encoder.getPulseLR())
+        print(str(Encoder.getPulseLR())+"Hinten: "+str(Encoder.getDistCounts()))
         print(Encoder.getSpeedLR())
-        sleep(5)
+        sleep(1)
 
 
     

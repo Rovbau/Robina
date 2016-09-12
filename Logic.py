@@ -145,7 +145,10 @@ class Logic():
     def ret_flow_LR(self):
         """Ablauf fuer Retour wenn Pumper L+R"""
         yield ([0,-1,5])
-        yield([-1,-1,15])
+        if  self.flag_rightWall == True:
+            yield([1,-1,15])
+        else:
+            yield([-1,-1,15])
         yield ([0,1,20])
         yield ([999,0,10])
         
@@ -227,12 +230,12 @@ class Logic():
         return(steer,speed)
         
     def blocked(self,steer, speed, countsH, pumperL, pumperR):
-        """Wenn Robo stillsteht starte Pumper Routine"""    
-        print(steer,speed,countsH, pumperL, pumperR)
+        """Wenn Robo stillsteht starte Pumper Routine"""
+        
         if pumperL == True or pumperR == True:
             return(pumperL, pumperR)
-        #Wenn 2Sec keine Bewegung simuliere PumperLR=TRUE
-        if (time.time()-self.stop_time) > 2:
+        #Wenn 3Sec keine Bewegung simuliere PumperLR=TRUE
+        if (time.time()-self.stop_time) > 3:
             self.stop_time = time.time()
             return(True,True)
         #Solange CountHinten zaehlt  normal weiter
@@ -245,7 +248,7 @@ class Logic():
             return(False, False)       
         return(False,False)
 
-
+            
 ######################################
 if __name__ == "__main__":
     
