@@ -47,9 +47,9 @@ class Server():
 
     def getNewValues(self):
         """Returns the data from the socket"""            
-        self.xx = self.xx +10
-        self.obs = [[1,1],[2,7],[2,8]]
-        self.path = [[0,0],[40,40],[50,self.xx]]        
+        #self.xx = self.xx +10
+        #self.obs = [[1,1],[2,7],[2,8]]
+        #self.path = [[0,0],[40,40],[50,self.xx]]        
         return(self.obs, self.path, self.solved_path1)
 
     def clearValues(self):
