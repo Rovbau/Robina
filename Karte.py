@@ -48,14 +48,14 @@ class Karte():
         """Update Robo Position auf Karte"""
         #print("Counts: "+str(deltaL)+" "+str(deltaR))
         #RoboSchwerpunkt bis Rad cm
-        a=14.0 
-        c=14.0
+        a=13.0 
+        c=13.0
         Radstand=a+c
-        countsRadGross=72
+        countsRadGross=32
 
         #Werte Uebernehmen: Counts in (cm) umrechnen
-        deltaL=deltaL*((15.5*pi)/countsRadGross)           #(Radumfang)/counts
-        deltaR=deltaR*((15.5*pi)/countsRadGross)           #(Radumfang)/counts
+        deltaL=deltaL*((5.5*pi)/countsRadGross)           #(Radumfang)/counts
+        deltaR=deltaR*((5.5*pi)/countsRadGross)           #(Radumfang)/counts
         WinkelDiff=degrees((deltaR-deltaL)/Radstand)      #Raddist/Radstandbreite
         
         self.global_kurs=self.global_kurs+WinkelDiff        #Global Kurs anhand Weg berechnen

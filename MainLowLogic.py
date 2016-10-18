@@ -12,10 +12,12 @@ from Grid import *
 from Logic import *
 from ManuellKey import *
 from SendJson import *
+from Weggeber import *
 import sys
 import atexit
 import os
 import profile
+
 
 count=1
 speed=0
@@ -34,6 +36,7 @@ grid=Grid(50,50)
 logic=Logic()
 manuell=Manuell()
 json=Json()
+weggeber=Weggeber()
 
 grid.setZielInGrid(35,20)
 grid.setStartInGrid(1,1)
@@ -56,12 +59,16 @@ ThreadEncoder.start()
 ThreadEncoder=Thread(target=manuell.runManuell,args=())
 ThreadEncoder.daemon=True
 ThreadEncoder.start()
+
+##ThreadEncoder=Thread(target=weggeber.runAllTime,args=())
+##ThreadEncoder.daemon=True
+##ThreadEncoder.start()
     
 sleep(1)
 
 
 while Robo==True:
-    os.system("clear")
+    #os.system("clear")
 
     #get Distances from IR-Sensors
     dist_front, dist_left , dist_right, obstacles = scanner.getFixData()
@@ -90,18 +97,20 @@ while Robo==True:
     #solved_path = grid.getSolvedPath(motor)
    
     #Position updaten
-    deltaL,deltaR=encoder.getPulseLR()
-
+    weggeber.runAllTime()
+    deltaL,deltaR=weggeber.getPulseLR()
+    print(deltaL,deltaR)
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
     encoder.clearEncoderLR()
     encoder.clearEncoderDist()
+    weggeber.clearWeggeberLR()
     #Send Data via NET
     solved_path = []
     roundet_walls=grid.getRoundetWalls()
     print(roundet_walls)
-    #json.sendVisual(roundet_walls, [[x,y]],solved_path)
+    json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
 
     #Plan next Steps
@@ -116,7 +125,7 @@ while Robo==True:
     #motor.setCommand(0,0)
 
     #Manuell Control
-    #steer,speed=manuell.getManuellCommand()
+    steer,speed=manuell.getManuellCommand()
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
     #sleep(0.3)
@@ -143,6 +152,6 @@ while Robo==True:
 
     
     print("************")
-    sleep(0.1)
+    sleep(0.5)
 
 
