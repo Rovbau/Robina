@@ -64,15 +64,17 @@ class Weggeber():
 
 
         #Count minus wenn Robo retour                       
-        if GPIO.input(self.PortLRueck)==1:
+        if GPIO.input(self.PortLRueck)==1 or GPIO.input(self.PortRRueck)==1:
             self.CountL = self.CountL + aktualL_counts * (-1)
-        else:
-            self.CountL = self.CountL + aktualL_counts
-        
-        if GPIO.input(self.PortRRueck)==1:
             self.CountR = self.CountR + aktualR_counts * (-1)
         else:
+            self.CountL = self.CountL + aktualL_counts
             self.CountR = self.CountR + aktualR_counts
+        
+        #if GPIO.input(self.PortRRueck)==1:
+        #    self.CountR = self.CountR + aktualR_counts * (-1)
+        #else:
+        #    self.CountR = self.CountR + aktualR_counts
 
         self.DiffCount=self.CountR-self.CountL
 

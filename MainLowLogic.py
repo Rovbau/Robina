@@ -110,7 +110,7 @@ while Robo==True:
     solved_path = []
     roundet_walls=grid.getRoundetWalls()
     print(roundet_walls)
-    json.sendVisual(roundet_walls, [[x,y]],solved_path)
+    #json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
 
     #Plan next Steps
@@ -125,7 +125,7 @@ while Robo==True:
     #motor.setCommand(0,0)
 
     #Manuell Control
-    steer,speed=manuell.getManuellCommand()
+    #steer,speed=manuell.getManuellCommand()
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
     #sleep(0.3)

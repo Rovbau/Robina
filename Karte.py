@@ -48,8 +48,8 @@ class Karte():
         """Update Robo Position auf Karte"""
         #print("Counts: "+str(deltaL)+" "+str(deltaR))
         #RoboSchwerpunkt bis Rad cm
-        a=13.0 
-        c=13.0
+        a=13.3 
+        c=13.3
         Radstand=a+c
         countsRadGross=32
 
