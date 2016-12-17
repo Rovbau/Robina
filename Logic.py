@@ -127,6 +127,10 @@ class Logic():
         self.x = x
         self.y = y
         self.pose = pose
+
+    def setZielkurs(self,kurs):
+        self.zielkurs = kurs
+    
         
     def ret_flow_L(self):
         """Ablauf fuer Retour wenn PumperL"""

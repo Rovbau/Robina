@@ -13,6 +13,30 @@ class Plan():
     def __init__(self):       
         pass
 
+    def calcGlobalZielkurs(self,x,y,pose):
+        """Berechne Zielkurs anhand aktueller Pos"""
+
+        #Diff EndzielX/Y von Pos 
+        diff = (self.endziel_x - x, self.endziel_y - y)
+        #Kartesisch in Polarkoordinaten
+        x,y=diff
+        dist_to_globalziel=sqrt(pow(x,2)+pow(y,2))
+        kurs_to_globalziel=degrees(atan2(y,x))
+        kurs_korr=self.KursDiff(kurs_to_globalziel,pose)
+        return(int(kurs_korr),int(dist_to_globalziel))
+
+    def zielErreicht(self,dist_to_ziel,motor):
+        """Wenn nahe am Ziel stoppe Robo"""
+        if dist_to_ziel < 20:
+            print("DIST zum ZIEL: "+str(dist_to_ziel))
+            motor.setCommand(0,0)
+            sleep(10)
+
+    def setGlobalZiel(self, endziel_x, endziel_y):
+        self.endziel_x, self.endziel_y = endziel_x, endziel_y
+
+
+
     def nextStep(self,path,x,y,pose):
         """Plane next steer,speed commando"""
 

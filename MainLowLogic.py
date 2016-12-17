@@ -41,6 +41,7 @@ weggeber=Weggeber()
 grid.setZielInGrid(35,20)
 grid.setStartInGrid(1,1)
 karte.setRoboPosZero(0,0)
+plan.setGlobalZiel(150,50)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
@@ -112,11 +113,15 @@ while Robo==True:
     print(roundet_walls)
     #json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
-
-    #Plan next Steps
+    #Ziel erreicht?
     logic.setRoboPos(x,y,pose)
+    kurs_to_ziel,dist_to_ziel=plan.calcGlobalZielkurs(x,y,pose)
+    print(kurs_to_ziel)
+    logic.setZielkurs(kurs_to_ziel)
+    plan.zielErreicht(dist_to_ziel,motor)
+    
+    #Plan next Steps    
     steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
-
     steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
     print(steer,speed)
     speed_L,speed_R = encoder.getSpeedLR()
@@ -134,8 +139,7 @@ while Robo==True:
     if encoder.getTastenPress() > 0.1:
         motor.setCommand(0,0)
         sleep(5)
-        
-    
+            
     if encoder.getTastenPress() > 2:
         motor.setCommand(0,0)
         print("By By goto Sleep")
@@ -152,6 +156,6 @@ while Robo==True:
 
     
     print("************")
-    sleep(0.5)
+    sleep(0.4)
 
 
