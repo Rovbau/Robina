@@ -17,7 +17,7 @@ class Logic():
         self.y=0
         self.oldx=0
         self.oldy=0
-        self.pose=50
+        self.pose=0
         self.generatorL = self.ret_flow_L()
         self.generatorR = self.ret_flow_R()
         self.generatorLR = self.ret_flow_LR()
@@ -48,7 +48,9 @@ class Logic():
         """Wenn kein Obstacle nahe, Drehe zu Zielkurs"""
 
         print("GOAL")
-        winkel=self.getKursDiff(self.zielkurs,self.pose)
+        #winkel=self.getKursDiff(self.zielkurs,self.pose)
+        winkel = self.zielkurs
+        print("LogicDrehwinkel: "+str(winkel))
         
         if winkel > 10:
             self.steer=1
@@ -258,19 +260,19 @@ if __name__ == "__main__":
     
     log=Logic()
 
-    steer,speed=log.checkPumperStatus(False,True)
+    steer,speed=log.checkPumperStatus(False,True,0,0)
     print(steer,speed)
     
     log.setRoboPos(10,100,10)
     time.sleep(0.2)
 
-    steer,speed=log.checkPumperStatus(False,False)
+    steer,speed=log.checkPumperStatus(False,False,0,0)
     print(steer,speed)   
 
     log.setRoboPos(10,100,10)
     time.sleep(0.2)
 
-    steer,speed=log.checkPumperStatus(False,False)
+    steer,speed=log.checkPumperStatus(False,False,0,0)
     print(steer,speed)
 
 

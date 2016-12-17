@@ -41,7 +41,7 @@ weggeber=Weggeber()
 grid.setZielInGrid(35,20)
 grid.setStartInGrid(1,1)
 karte.setRoboPosZero(0,0)
-plan.setGlobalZiel(150,50)
+plan.setGlobalZiel(150,0)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
@@ -72,7 +72,7 @@ while Robo==True:
     #os.system("clear")
 
     #get Distances from IR-Sensors
-    dist_front, dist_left , dist_right, obstacles = scanner.getFixData()
+    dist_front, dist_left , dist_right, obstacles = 100,100,100,[[10,10],[20,20]]#scanner.getFixData()
     print(dist_front,dist_left, dist_right)
 
     #Obstacles eintragen
@@ -100,7 +100,7 @@ while Robo==True:
     #Position updaten
     weggeber.runAllTime()
     deltaL,deltaR=weggeber.getPulseLR()
-    print(deltaL,deltaR)
+    #print(deltaL,deltaR)
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
@@ -110,13 +110,14 @@ while Robo==True:
     #Send Data via NET
     solved_path = []
     roundet_walls=grid.getRoundetWalls()
-    print(roundet_walls)
+    #print(roundet_walls)
     #json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
     #Ziel erreicht?
     logic.setRoboPos(x,y,pose)
     kurs_to_ziel,dist_to_ziel=plan.calcGlobalZielkurs(x,y,pose)
-    print(kurs_to_ziel)
+    print("KursZuZiel: "+str(kurs_to_ziel))
+    print("DistZuZiel: "+str(dist_to_ziel))
     logic.setZielkurs(kurs_to_ziel)
     plan.zielErreicht(dist_to_ziel,motor)
     
