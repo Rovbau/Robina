@@ -27,7 +27,7 @@ class Plan():
 
     def zielErreicht(self,dist_to_ziel,motor):
         """Wenn nahe am Ziel stoppe Robo"""
-        if dist_to_ziel < 20:
+        if dist_to_ziel < 10:
             print("DIST zum ZIEL: "+str(dist_to_ziel))
             motor.setCommand(0,0)
             sleep(10)

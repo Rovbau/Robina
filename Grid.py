@@ -80,7 +80,7 @@ class Grid():
         self.gridwithweights.walls=temp_walls+self.clearance_add_walls
         self.clearance_add_walls=[]
 
-    def getSolvedPath(self,motor):
+    def getSolvedPath(self,steer,speed,motor):
         """Calculate path in grid"""
         #Calc only when Grid-Pos changed
         if self.startgrid == self.last_start_pos:
@@ -105,6 +105,7 @@ class Grid():
 
         try:
             self.path=reconstruct_path(self.came_from, self.startgrid, self.zielgrid)
+            motor.setCommand(steer,speed)
             return(self.path)
         except:
             print("ERROR")
@@ -112,7 +113,7 @@ class Grid():
             print(self.zielgrid)
             print(self.came_from)
             print(self.gridwithweights.walls)
-        
+            motor.setCommand(steer,speed)
 
     def saveGridPath(self,path):
         """Path speichern pickle"""

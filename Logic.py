@@ -64,7 +64,8 @@ class Logic():
 
         #Deside Wall L oder R
         if self.flag_leftWall == False and self.flag_rightWall == False:         
-            if self.getKursDiff(self.zielkurs,self.pose) >= 0:
+            #if self.getKursDiff(self.zielkurs,self.pose) >= 0:
+            if self.dist_left < self.dist_right:            
                 self.flag_leftWall = True
                 self.aktiv_sensorLR = self.dist_left
             else:
@@ -77,7 +78,8 @@ class Logic():
         else:
             self.aktiv_sensorLR = self.dist_right
             
-        winkel=self.getKursDiff(self.zielkurs,self.pose)
+        #winkel=self.getKursDiff(self.zielkurs,self.pose)
+        winkel = self.zielkurs
         #print("Winkel:" +str(int(winkel)))
         
         if self.dist_front < 70:

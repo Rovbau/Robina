@@ -38,10 +38,10 @@ manuell=Manuell()
 json=Json()
 weggeber=Weggeber()
 
-grid.setZielInGrid(35,20)
+grid.setZielInGrid(20,10)
 grid.setStartInGrid(1,1)
 karte.setRoboPosZero(0,0)
-plan.setGlobalZiel(150,0)
+plan.setGlobalZiel(2000,0)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
@@ -69,10 +69,10 @@ sleep(1)
 
 
 while Robo==True:
-    #os.system("clear")
+    os.system("clear")
 
     #get Distances from IR-Sensors
-    dist_front, dist_left , dist_right, obstacles = 100,100,100,[[10,10],[20,20]]#scanner.getFixData()
+    dist_front, dist_left , dist_right, obstacles = scanner.getFixData()
     print(dist_front,dist_left, dist_right)
 
     #Obstacles eintragen
@@ -93,9 +93,9 @@ while Robo==True:
 
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
-    #grid.saveGridObstacles()
+    grid.saveGridObstacles()
 
-    #solved_path = grid.getSolvedPath(motor)
+    #solved_path = grid.getSolvedPath(steer,speed,motor)
    
     #Position updaten
     weggeber.runAllTime()
