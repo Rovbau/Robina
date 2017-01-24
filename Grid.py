@@ -8,8 +8,9 @@ from Astar import *
 
 class Grid():
     def __init__(self, width, heigh):
-        self.width=width
-        self.heigh=heigh
+        self.gridsize= 5
+        self.width=width/self.gridsize
+        self.heigh=heigh/self.gridsize
         self.walls=[]
         self.gridwithweights=GridWithWeights(width,heigh)
         self.clearance_add_walls=[]
@@ -56,9 +57,14 @@ class Grid():
         pickelObstacles.close()
 
     def setStartInGrid(self,x,y):
+        """Aktuelle GridPosition uebernehmen cm -> 5cmGrid"""
+        x=int(x/self.gridsize)
+        y=int(y/self.gridsize)
         self.startgrid=(x,y)
         
     def setZielInGrid(self,x,y):
+        x=int(x/self.gridsize)
+        y=int(y/self.gridsize)
         self.zielgrid=(x,y)
         
     def addClearance(self):
