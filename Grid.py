@@ -12,9 +12,9 @@ class Grid():
         self.width=width/self.gridsize
         self.heigh=heigh/self.gridsize
         self.walls=[]
-        self.gridwithweights=GridWithWeights(width,heigh)
+        self.gridwithweights=GridWithWeights(width/self.gridsize,heigh/self.gridsize)
         self.clearance_add_walls=[]
-        self.last_start_pos=(width,heigh)
+        self.last_start_pos=(width/self.gridsize,heigh/self.gridsize)
         
         
     def obstaclesInGrid(self, obstacles):
@@ -135,15 +135,15 @@ class Grid():
 
 if __name__ == "__main__":
 
-    g = Grid(10,10)
-    g.setStartInGrid(2,2)
-    g.setZielInGrid(8,8)
+    g = Grid(100,100)
+    g.setStartInGrid(20,20)
+    g.setZielInGrid(80,80)
 
     g.obstaclesInGrid([[70, 80],[90, 80],[80, 70],[80, 90]])    
     #g.addClearance()
     print(g.walls)
     print("***")
-    weg=g.getSolvedPath()
+    weg=g.getSolvedPath(1,1,1)
     print(weg)
     g.drawSolvedPath()
     g.saveGridPath(weg)
