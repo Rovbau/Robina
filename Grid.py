@@ -23,9 +23,10 @@ class Grid():
         
         for obstacle in unpaintedObstacles:
             #round to _5
-            obstacle_x_grid=int(round(obstacle[0]/5.0)*5.0)
-            obstacle_y_grid=int(round(obstacle[1]/5.0)*5.0)
-            
+            #obstacle_x_grid=int(round(obstacle[0]/5.0)*5.0)
+            #obstacle_y_grid=int(round(obstacle[1]/5.0)*5.0)
+            obstacle_x_grid=int(obstacle[0]/10)
+            obstacle_y_grid=int(obstacle[1]/10)            
             if (obstacle_x_grid,obstacle_y_grid) not in  self.walls:
                 self.walls.append((obstacle_x_grid,obstacle_y_grid))
                 self.gridwithweights.walls=deepcopy(self.walls)
@@ -90,7 +91,7 @@ class Grid():
         print("SUCHE...Weg")
 
         motor.setCommand(0,0)
-        
+        print(self.gridwithweights.walls)
         #No Wall on Robo-Ist position
         if self.startgrid in self.gridwithweights.walls:
             self.gridwithweights.walls.remove(self.startgrid)
@@ -105,6 +106,7 @@ class Grid():
 
         try:
             self.path=reconstruct_path(self.came_from, self.startgrid, self.zielgrid)
+            print("path: "+str(self.path))
             motor.setCommand(steer,speed)
             return(self.path)
         except:
@@ -123,7 +125,7 @@ class Grid():
     
     def drawSolvedPath(self):
         print(self.startgrid)
-        draw_grid(self.gridwithweights, width=2, point_to=self.came_from, start=self.startgrid,
+        draw_grid(self.gridwithweights, width=1, point_to=self.came_from, start=self.startgrid,
                   goal=self.zielgrid)
 
 

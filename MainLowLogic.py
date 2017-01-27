@@ -32,13 +32,13 @@ karte=Karte(encoder)
 plan=Plan()
 kreis=0
 motor=Motor()
-grid=Grid(50,50)
+grid=Grid(20,20)
 logic=Logic()
 manuell=Manuell()
 json=Json()
 weggeber=Weggeber()
 
-grid.setZielInGrid(20,10)
+grid.setZielInGrid(18,10)
 grid.setStartInGrid(1,1)
 karte.setRoboPosZero(0,0)
 plan.setGlobalZiel(2000,0)
@@ -95,8 +95,8 @@ while Robo==True:
     #grid.addClearance()
     grid.saveGridObstacles()
 
-    #solved_path = grid.getSolvedPath(steer,speed,motor)
-   
+    solved_path = grid.getSolvedPath(steer,speed,motor)
+    grid.drawSolvedPath()
     #Position updaten
     weggeber.runAllTime()
     deltaL,deltaR=weggeber.getPulseLR()
@@ -108,10 +108,10 @@ while Robo==True:
     encoder.clearEncoderDist()
     weggeber.clearWeggeberLR()
     #Send Data via NET
-    solved_path = []
+    #solved_path = []
     roundet_walls=grid.getRoundetWalls()
-    #print(roundet_walls)
-    #json.sendVisual(roundet_walls, [[x,y]],solved_path)
+    print(roundet_walls)
+    json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
     #Ziel erreicht?
     logic.setRoboPos(x,y,pose)
@@ -131,7 +131,7 @@ while Robo==True:
     #motor.setCommand(0,0)
 
     #Manuell Control
-    #steer,speed=manuell.getManuellCommand()
+    steer,speed=manuell.getManuellCommand()
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
     #sleep(0.3)
@@ -157,6 +157,6 @@ while Robo==True:
 
     
     print("************")
-    sleep(0.4)
+    sleep(0.1)
 
 
