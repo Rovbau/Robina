@@ -134,8 +134,8 @@ class Visual():
 
         try:
             for pos in self.solved_path:
-                X=pos[0]*10
-                Y=pos[1]*10
+                X=pos[0]*5
+                Y=pos[1]*5
                 #Zeichne A*-Wegpunkte Global ein 
                 can.create_oval(Nullx+X-3,Nully-Y+3,Nullx+X+3,Nully-Y-3, width=1, fill="green",tag="Point")
         except:

@@ -88,15 +88,14 @@ while Robo==True:
     #Grid
     x,y,pose=karte.getRoboPos()
     #print("Pose:"+str(int(pose)))
-    grid.setStartInGrid(int(x/10),int(y/10))
+    grid.setStartInGrid(x,y)
     walls=karte.getObstacles()
 
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
     grid.saveGridObstacles()
 
-    solved_path = grid.getSolvedPath(steer,speed,motor)
-    grid.drawSolvedPath()
+    solved_path = grid.getSolvedPath(steer,speed,moto)
     #Position updaten
     weggeber.runAllTime()
     deltaL,deltaR=weggeber.getPulseLR()
@@ -110,7 +109,7 @@ while Robo==True:
     #Send Data via NET
     #solved_path = []
     roundet_walls=grid.getRoundetWalls()
-    print(roundet_walls)
+    #print(roundet_walls)
     json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
     #Ziel erreicht?
