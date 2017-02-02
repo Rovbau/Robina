@@ -121,8 +121,8 @@ class Visual():
         print("DataPoints [Obsta.][Pos.]: "+str(len(self.obstacles_in_grid))+" "+str(len( self.position_in_grid)))
         
         for pos in self.obstacles_in_grid:
-            X=pos[0]
-            Y=pos[1]
+            X=pos[0]*10
+            Y=pos[1]*10
             #Zeichne Hindernisspunkte Global ein 
             can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill="red",tag="Point")
 
@@ -134,8 +134,8 @@ class Visual():
 
         try:
             for pos in self.solved_path:
-                X=pos[0]*5
-                Y=pos[1]*5
+                X=pos[0]*10
+                Y=pos[1]*10
                 #Zeichne A*-Wegpunkte Global ein 
                 can.create_oval(Nullx+X-3,Nully-Y+3,Nullx+X+3,Nully-Y-3, width=1, fill="green",tag="Point")
         except:
