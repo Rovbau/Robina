@@ -8,13 +8,12 @@ from Astar import *
 
 class Grid():
     def __init__(self, width, heigh):
-        self.gridsize= 5
-        self.width=width/self.gridsize
-        self.heigh=heigh/self.gridsize
+        self.width=width
+        self.heigh=heigh
         self.walls=[]
-        self.gridwithweights=GridWithWeights(width/self.gridsize,heigh/self.gridsize)
+        self.gridwithweights=GridWithWeights(width,heigh)
         self.clearance_add_walls=[]
-        self.last_start_pos=(width/self.gridsize,heigh/self.gridsize)
+        self.last_start_pos=(width,heigh)
         
         
     def obstaclesInGrid(self, obstacles):
@@ -59,13 +58,13 @@ class Grid():
 
     def setStartInGrid(self,x,y):
         """Aktuelle GridPosition uebernehmen cm -> 5cmGrid"""
-        x=int(x/self.gridsize)
-        y=int(y/self.gridsize)
+        x=int(x/10)
+        y=int(y/10)
         self.startgrid=(x,y)
         
     def setZielInGrid(self,x,y):
-        x=int(x/self.gridsize)
-        y=int(y/self.gridsize)
+        x=int(x/10)
+        y=int(y/10)
         self.zielgrid=(x,y)
         
     def addClearance(self):
@@ -97,7 +96,7 @@ class Grid():
         print("SUCHE...Weg")
 
         motor.setCommand(0,0)
-        print(self.gridwithweights.walls)
+        #print(self.gridwithweights.walls)
         #No Wall on Robo-Ist position
         if self.startgrid in self.gridwithweights.walls:
             self.gridwithweights.walls.remove(self.startgrid)
@@ -112,15 +111,15 @@ class Grid():
 
         try:
             self.path=reconstruct_path(self.came_from, self.startgrid, self.zielgrid)
-            print("path: "+str(self.path))
+            print("SUCHE Path zo Ziel: ")
             motor.setCommand(steer,speed)
             return(self.path)
         except:
             print("ERROR")
-            print(self.startgrid)
-            print(self.zielgrid)
-            print(self.came_from)
-            print(self.gridwithweights.walls)
+            print("Grid-Aktual:" +str(self.startgrid))
+            print("Grid-Ziel:" +str(self.zielgrid))
+            #print(self.came_from)
+            #print(self.gridwithweights.walls)
             motor.setCommand(steer,speed)
 
     def saveGridPath(self,path):

@@ -32,14 +32,14 @@ karte=Karte(encoder)
 plan=Plan()
 kreis=0
 motor=Motor()
-grid=Grid(20,20)
+grid=Grid(40,40)
 logic=Logic()
 manuell=Manuell()
 json=Json()
 weggeber=Weggeber()
 
-grid.setZielInGrid(18,10)
-grid.setStartInGrid(1,1)
+grid.setZielInGrid(200,200)
+grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
 plan.setGlobalZiel(2000,0)
 
@@ -95,7 +95,7 @@ while Robo==True:
     #grid.addClearance()
     grid.saveGridObstacles()
 
-    solved_path = grid.getSolvedPath(steer,speed,moto)
+    solved_path = grid.getSolvedPath(steer,speed,motor)
     #Position updaten
     weggeber.runAllTime()
     deltaL,deltaR=weggeber.getPulseLR()
@@ -130,7 +130,7 @@ while Robo==True:
     #motor.setCommand(0,0)
 
     #Manuell Control
-    steer,speed=manuell.getManuellCommand()
+    #steer,speed=manuell.getManuellCommand()
     motor.setCommand(steer,speed)
     print(karte.getRoboPos())
     #sleep(0.3)
