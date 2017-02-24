@@ -41,7 +41,7 @@ weggeber=Weggeber()
 grid.setZielInGrid(200,200)
 grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
-plan.setGlobalZiel(2000,0)
+plan.setGlobalZiel(20000,0)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
@@ -95,7 +95,7 @@ while Robo==True:
     #grid.addClearance()
     grid.saveGridObstacles()
 
-    solved_path = grid.getSolvedPath(steer,speed,motor)
+    #solved_path = grid.getSolvedPath(steer,speed,motor)
     #Position updaten
     weggeber.runAllTime()
     deltaL,deltaR=weggeber.getPulseLR()
@@ -107,10 +107,10 @@ while Robo==True:
     encoder.clearEncoderDist()
     weggeber.clearWeggeberLR()
     #Send Data via NET
-    #solved_path = []
+    solved_path = []
     roundet_walls=grid.getRoundetWalls()
     #print(roundet_walls)
-    json.sendVisual(roundet_walls, [[x,y]],solved_path)
+    #json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
     #Ziel erreicht?
     logic.setRoboPos(x,y,pose)
@@ -156,6 +156,6 @@ while Robo==True:
 
     
     print("************")
-    sleep(0.1)
+    sleep(0.15)
 
 
