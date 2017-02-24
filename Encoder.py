@@ -62,7 +62,7 @@ class Encoder():
         self.DistRad=0
 
         while True:
-            #GPIO.output(16,1)            
+            #GPIO.output(16,1)          
             if GPIO.input(self.PortEncoderL) != EncoderLOld:
                 self.newSpeedL=time()
                 
