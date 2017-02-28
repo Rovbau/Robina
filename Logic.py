@@ -23,7 +23,9 @@ class Logic():
         self.generatorLR = self.ret_flow_LR()
         self.command=[]
         self.retour_done = True
-        self.stop_time = time.time()        
+        self.stop_time = time.time()
+        self.e_prev = 0
+        self.ui_prev = 0
         print("Init Logic")
             
     def wsa(self,dist_front,dist_left,dist_right,pumperL,pumperR):
@@ -52,12 +54,10 @@ class Logic():
         winkel = self.zielkurs
         print("LogicDrehwinkel: "+str(winkel))
         
-        if winkel > 10:
-            self.steer=1
-        elif winkel < -10:
-            self.steer=-1
-        else:
-            self.steer=0
+        stellgroesse_ziel = self.pid_controller(winkel,0)
+
+
+        
         
     def wallMode(self):
         """Wall-Modus Robo folgt Links oder Recht"""
@@ -237,7 +237,7 @@ class Logic():
         steer,speed=self.pumperUmfahren(steer,speed)
         return(steer,speed)
         
-    def blocked(self,steer, speed, countsH, pumperL, pumperR):
+    def blocked(self, steer, speed, countsH, pumperL, pumperR):
         """Wenn Robo stillsteht starte Pumper Routine"""
         
         if pumperL == True or pumperR == True:
@@ -256,7 +256,37 @@ class Logic():
             return(False, False)       
         return(False,False)
 
+    def pid_controller(self, soll, ist, Ki=0.1, Kd=0.1, Kp=2.0):
+            """Calculate System Input using a PID Controller
+            Arguments:
+            ist  .. Measured Output of the System
+            soll .. Desired Output of the System
+            Kp .. Controller Gain Constant
+            Ki .. Controller Integration Constant
+            Kd .. Controller Derivation Constant
+            u0 .. Initial state of the integrator
+            e0 .. Initial error"""
+
+            # Error between the desired and actual output
+            e = soll - ist
+
+            # Integration Input
+            ui = self.ui_prev + Ki * e
+            # Derivation Input
+            ud = Kd * (e - self.e_prev)
+
+            # Adjust previous values
+            self.e_prev = e
+            self.ui_prev = ui
+
+            # Calculate outut for the system
+            u = Kp * (e + ui + ud)
+
+            if u > 255: u = 255
+            if u < -255: u = -255
             
+
+            return u        
 ######################################
 if __name__ == "__main__":
     
@@ -277,8 +307,10 @@ if __name__ == "__main__":
     steer,speed=log.checkPumperStatus(False,False,0,0)
     print(steer,speed)
 
-
-
+    u =log.pid_controller(-10,0)
+    print(u)
+    u =log.pid_controller(-5,0)
+    print(u)
 ##    log.setRoboPos(0,0,10)
 ##    
 ##    log.wsa(50,100,100,1,1)
