@@ -1,15 +1,12 @@
-# Simple two DC motor robot class.  Exposes a simple LOGO turtle-like API for
-# moving a robot forward, backward, and turning.  See RobotTest.py for an
-# example of using this class.
-# Author: Tony DiCola
-# License: MIT License https://opensource.org/licenses/MIT
+# Simple two DC motor PWM robot class
+
 import time
 import atexit
 
 from Adafruit_MotorHAT import Adafruit_MotorHAT
 
 
-class Robot(object):
+class MotorPWM(object):
     def __init__(self, addr=0x60, left_id=1, right_id=2, left_trim=0, right_trim=0,
                  stop_at_exit=True):
         """Create an instance of the robot.  Can specify the following optional
@@ -37,6 +34,28 @@ class Robot(object):
         # Configure all motors to stop at program exit if desired.
         if stop_at_exit:
             atexit.register(self.stop)
+
+    def setCommand(self,steer,speed):
+
+        if 0 < steer and speed == 1:
+            speedL = 127 - steer*127
+            speedR = 127 + steer*127
+            self._left_speed(speedL)
+            self._right_speed(speedR)
+            self._left.run(Adafruit_MotorHAT.FORWARD)
+            self._right.run(Adafruit_MotorHAT.FORWARD)
+
+        if 0 >= steer and speed == 1:
+            speedL = 127 + steer*127
+            speedR = 127 - steer*127
+            self._left_speed(speedL)
+            self._right_speed(speedR)
+            self._left.run(Adafruit_MotorHAT.FORWARD)
+            self._right.run(Adafruit_MotorHAT.FORWARD)
+
+        if speed == 0:
+            self._left.run(Adafruit_MotorHAT.RELEASE)
+            self._right.run(Adafruit_MotorHAT.RELEASE)            
 
     def _left_speed(self, speed):
         """Set the speed of the left motor, taking into account its trim offset.
@@ -133,3 +152,19 @@ class Robot(object):
         if seconds is not None:
             time.sleep(seconds)
             self.stop()
+            
+### MAIN ###
+    
+if __name__ == "__main__":
+
+    motor_pwm = MotorPWM()
+
+    motor_pwm.setCommand(0.5,1)
+    sleep(2)
+    motor_pwm.setCommand(0.0,0)    
+
+
+
+
+
+    

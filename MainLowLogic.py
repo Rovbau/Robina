@@ -8,6 +8,7 @@ import Kompass
 from Karte import *
 from Plan import *
 from Motor import *
+from MotorPWM import *
 from Grid import *
 from Logic import *
 from ManuellKey import *
@@ -32,6 +33,7 @@ karte=Karte(encoder)
 plan=Plan()
 kreis=0
 motor=Motor()
+motor_pwm=MotorPWM()
 grid=Grid(40,40)
 logic=Logic()
 manuell=Manuell()
@@ -41,7 +43,7 @@ weggeber=Weggeber()
 grid.setZielInGrid(200,200)
 grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
-plan.setGlobalZiel(20000,0)
+logic.setGlobalZiel(20000,0)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
@@ -73,6 +75,7 @@ while Robo==True:
 
     #get Distances from IR-Sensors
     dist_front, dist_left , dist_right, obstacles = scanner.getFixData()
+    dist_front, dist_left , dist_right = 200,200,200
     print(dist_front,dist_left, dist_right)
 
     #Obstacles eintragen
@@ -114,11 +117,11 @@ while Robo==True:
     
     #Ziel erreicht?
     logic.setRoboPos(x,y,pose)
-    kurs_to_ziel,dist_to_ziel=plan.calcGlobalZielkurs(x,y,pose)
-    print("KursZuZiel: "+str(kurs_to_ziel))
-    print("DistZuZiel: "+str(dist_to_ziel))
-    logic.setZielkurs(kurs_to_ziel)
-    plan.zielErreicht(dist_to_ziel,motor)
+    #kurs_to_ziel,dist_to_ziel=plan.calcGlobalZielkurs(x,y,pose)
+    #print("KursZuZiel: "+str(kurs_to_ziel))
+    #print("DistZuZiel: "+str(dist_to_ziel))
+    #logic.setZielkurs(kurs_to_ziel)
+    #plan.zielErreicht(dist_to_ziel,motor)
     
     #Plan next Steps    
     steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
@@ -131,7 +134,10 @@ while Robo==True:
 
     #Manuell Control
     #steer,speed=manuell.getManuellCommand()
-    motor.setCommand(steer,speed)
+    #motor.setCommand(steer,speed)
+
+    motor_pwm.setCommand(steer,speed)
+    
     print(karte.getRoboPos())
     #sleep(0.3)
     #motor.setCommand(0,0)

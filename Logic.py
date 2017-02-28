@@ -1,7 +1,7 @@
 #Logic
 
 import time
-import math
+from math import sin,cos,radians,degrees,sqrt,atan2
 
 
 class Logic():
@@ -48,14 +48,12 @@ class Logic():
 
     def turnToGoal(self):
         """Wenn kein Obstacle nahe, Drehe zu Zielkurs"""
-
         print("GOAL")
         #winkel=self.getKursDiff(self.zielkurs,self.pose)
-        winkel = self.zielkurs
-        print("LogicDrehwinkel: "+str(winkel))
+        winkel = globalZielkurs()
         
-        stellgroesse_ziel = self.pid_controller(winkel,0)
-
+        stellgroesse_ziel = self.pid_controller(winkel,self.pose)
+        self.steer = stellgroesse_ziel
 
         
         
@@ -109,6 +107,11 @@ class Logic():
     def getKursDiff(self,soll,ist):
         """Diff zwischen zwei Winkel 0-360grad"""
 
+##        soll = radians(soll)
+##        ist = radians(ist)
+##        winkel = atan2(sin(soll-ist),cos(soll-ist))
+##        return(degrees(winkel))
+    
         if soll>ist:
             if soll-ist>180:
                 Winkel=(abs(ist-soll)-360)
@@ -132,9 +135,18 @@ class Logic():
         self.y = y
         self.pose = pose
 
-    def setZielkurs(self,kurs):
-        self.zielkurs = kurs
-    
+    def setGlobalZiel(self, endziel_x, endziel_y):
+        self.endziel_x, self.endziel_y = endziel_x, endziel_y
+
+    def globalZielkurs(self):
+        """Berechne Zielkurs anhand aktueller Pos"""
+        #Diff EndzielX/Y von Pos 
+        diff = (self.endziel_x - x, self.endziel_y - y)
+        #Kartesisch in Polarkoordinaten
+        x,y=diff
+        kurs_to_globalziel=degrees(atan2(y,x))
+        return(kurs_to_globalziel)
+          
         
     def ret_flow_L(self):
         """Ablauf fuer Retour wenn PumperL"""
@@ -165,7 +177,7 @@ class Logic():
 
         deltaX = self.x-self.oldx
         deltaY = self.y-self.oldy
-        actual_dist= math.sqrt(pow(abs(deltaX),2)+pow(abs(deltaY),2))
+        actual_dist= sqrt(pow(abs(deltaX),2)+pow(abs(deltaY),2))
         #print(actual_dist)
 
         drive_time= time.time() - self.t
@@ -256,7 +268,7 @@ class Logic():
             return(False, False)       
         return(False,False)
 
-    def pid_controller(self, soll, ist, Ki=0.1, Kd=0.1, Kp=2.0):
+    def pid_controller(self, soll, ist, Ki=0.001, Kd=0.001, Kp=0.005):
             """Calculate System Input using a PID Controller
             Arguments:
             ist  .. Measured Output of the System
@@ -268,7 +280,8 @@ class Logic():
             e0 .. Initial error"""
 
             # Error between the desired and actual output
-            e = soll - ist
+            e = self.getKursDiff(soll,ist)
+            print(e)
 
             # Integration Input
             ui = self.ui_prev + Ki * e
@@ -279,14 +292,13 @@ class Logic():
             self.e_prev = e
             self.ui_prev = ui
 
-            # Calculate outut for the system
+            # Calculate output for the system
             u = Kp * (e + ui + ud)
 
-            if u > 255: u = 255
-            if u < -255: u = -255
+            if u > 1: u = 1
+            if u < -1: u = -1
             
-
-            return u        
+            return (u)        
 ######################################
 if __name__ == "__main__":
     
@@ -307,10 +319,9 @@ if __name__ == "__main__":
     steer,speed=log.checkPumperStatus(False,False,0,0)
     print(steer,speed)
 
-    u =log.pid_controller(-10,0)
+    u =log.pid_controller(1,180)
     print(u)
-    u =log.pid_controller(-5,0)
-    print(u)
+
 ##    log.setRoboPos(0,0,10)
 ##    
 ##    log.wsa(50,100,100,1,1)
