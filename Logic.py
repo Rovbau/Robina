@@ -50,7 +50,7 @@ class Logic():
         """Wenn kein Obstacle nahe, Drehe zu Zielkurs"""
         print("GOAL")
         #winkel=self.getKursDiff(self.zielkurs,self.pose)
-        winkel = globalZielkurs()
+        winkel = self.globalZielkurs()
         
         stellgroesse_ziel = self.pid_controller(winkel,self.pose)
         self.steer = stellgroesse_ziel
@@ -141,7 +141,7 @@ class Logic():
     def globalZielkurs(self):
         """Berechne Zielkurs anhand aktueller Pos"""
         #Diff EndzielX/Y von Pos 
-        diff = (self.endziel_x - x, self.endziel_y - y)
+        diff = (self.endziel_x - self.x, self.endziel_y - self.y)
         #Kartesisch in Polarkoordinaten
         x,y=diff
         kurs_to_globalziel=degrees(atan2(y,x))
@@ -268,7 +268,7 @@ class Logic():
             return(False, False)       
         return(False,False)
 
-    def pid_controller(self, soll, ist, Ki=0.001, Kd=0.001, Kp=0.005):
+    def pid_controller(self, soll, ist, Ki=0.001, Kd=0.001, Kp=0.025):
             """Calculate System Input using a PID Controller
             Arguments:
             ist  .. Measured Output of the System

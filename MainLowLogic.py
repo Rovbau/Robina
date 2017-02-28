@@ -47,7 +47,7 @@ logic.setGlobalZiel(20000,0)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
-    motor.setCommand(0,0)
+    #motor.setCommand(0,0)
 atexit.register(cleaning)
 
 #SCAN OFF 
@@ -84,7 +84,7 @@ while Robo==True:
     #Obstacles von Pumper eintragen
     pumperL,pumperR=encoder.getPumper()
     deltaH = encoder.getDistCounts()
-    pumperL, pumperR  = logic.blocked(steer,speed,deltaH, pumperL, pumperR)
+    #pumperL, pumperR  = logic.blocked(steer,speed,deltaH, pumperL, pumperR)
 
     karte.updateHardObstacles(pumperL,pumperR)
 
@@ -126,7 +126,7 @@ while Robo==True:
     #Plan next Steps    
     steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
     steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
-    print(steer,speed)
+    print(round(steer,3),speed)
     speed_L,speed_R = encoder.getSpeedLR()
     motor.booster(speed_L,speed_R)
     #sleep(0.3)

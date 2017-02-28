@@ -36,26 +36,30 @@ class MotorPWM(object):
             atexit.register(self.stop)
 
     def setCommand(self,steer,speed):
+        speedL = 0
+        speedR = 0
 
         if 0 < steer and speed == 1:
             speedL = 127 - steer*127
             speedR = 127 + steer*127
-            self._left_speed(speedL)
-            self._right_speed(speedR)
+            self._left_speed(int(speedL))
+            self._right_speed(int(speedR))
             self._left.run(Adafruit_MotorHAT.FORWARD)
             self._right.run(Adafruit_MotorHAT.FORWARD)
 
         if 0 >= steer and speed == 1:
-            speedL = 127 + steer*127
-            speedR = 127 - steer*127
-            self._left_speed(speedL)
-            self._right_speed(speedR)
+            speedL = 127 - steer*127
+            speedR = 127 + steer*127
+            self._left_speed(int(speedL))
+            self._right_speed(int(speedR))
             self._left.run(Adafruit_MotorHAT.FORWARD)
             self._right.run(Adafruit_MotorHAT.FORWARD)
 
         if speed == 0:
             self._left.run(Adafruit_MotorHAT.RELEASE)
-            self._right.run(Adafruit_MotorHAT.RELEASE)            
+            self._right.run(Adafruit_MotorHAT.RELEASE)
+
+        print("PWM-Contr: "+str(speedL)+" "+str(speedR))
 
     def _left_speed(self, speed):
         """Set the speed of the left motor, taking into account its trim offset.
