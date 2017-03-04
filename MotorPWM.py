@@ -9,6 +9,9 @@ from Adafruit_MotorHAT import Adafruit_MotorHAT
 class MotorPWM(object):
     def __init__(self, addr=0x60, left_id=1, right_id=2, left_trim=0, right_trim=0,
                  stop_at_exit=True):
+        self.e_prev = 0
+        self.ui_prev = 0
+        self.motor_backward = None
         """Create an instance of the robot.  Can specify the following optional
         parameters:
          - addr: The I2C address of the motor HAT, default is 0x60.
@@ -35,32 +38,100 @@ class MotorPWM(object):
         if stop_at_exit:
             atexit.register(self.stop)
 
-    def setCommand(self,steer,speed):
+    def setCommand(self,steer,speed, actual_speed_L = None, actual_speed_R = None):
+        """MotorPWM Command. -1< steer >1 und -1< speed >1"""
         speedL = 0
         speedR = 0
 
-        if 0 < steer and speed == 1:
+        #Negativen ist-speed verhindern
+        actual_speed_L = abs(actual_speed_L)
+        actual_speed_R = abs(actual_speed_R)
+        
+        #Kurve berechnen
+        if steer >= 0:
             speedL = 127 - steer*127
+            speedR = 127
+        else:
+            speedL = 127
             speedR = 127 + steer*127
+            
+        #Soll Speed 
+        speedL = speedL*abs(speed)
+        speedR = speedR*abs(speed)
+
+        #Vor oder Zurueck
+        if  speed > 0:
+            speedL = self.pid_pwm_controller(speedL, actual_speed_L)
+            speedR = self.pid_pwm_controller(speedR, actual_speed_R)
+           
             self._left_speed(int(speedL))
             self._right_speed(int(speedR))
             self._left.run(Adafruit_MotorHAT.FORWARD)
             self._right.run(Adafruit_MotorHAT.FORWARD)
-
-        if 0 >= steer and speed == 1:
-            speedL = 127 - steer*127
-            speedR = 127 + steer*127
+            self.motor_backward = False
+        elif speed < 0:
+            speedL = self.pid_pwm_controller(speedL, actual_speed_L)
+            speedR = self.pid_pwm_controller(speedR, actual_speed_R)
+            
             self._left_speed(int(speedL))
             self._right_speed(int(speedR))
-            self._left.run(Adafruit_MotorHAT.FORWARD)
-            self._right.run(Adafruit_MotorHAT.FORWARD)
-
-        if speed == 0:
+            self._left.run(Adafruit_MotorHAT.BACKWARD)
+            self._right.run(Adafruit_MotorHAT.BACKWARD)
+            self.motor_backward = True
+        elif speed == 0:
             self._left.run(Adafruit_MotorHAT.RELEASE)
             self._right.run(Adafruit_MotorHAT.RELEASE)
+            self.motor_backward = False
+            
+        print("PWM-PID: "+str(int(speedL))+" "+str(int(speedR))) 
 
-        print("PWM-Contr: "+str(speedL)+" "+str(speedR))
 
+    def pid_pwm_controller(self, soll, ist, Ki=0.2, Kd=0.01, Kp=0.3):
+            """Calculate System Input using a PID Controller
+            Arguments:
+            ist  .. Measured Output of the System
+            soll .. Desired Output of the System
+            Kp .. Controller Gain Constant
+            Ki .. Controller Integration Constant
+            Kd .. Controller Derivation Constant
+            u0 .. Initial state of the integrator
+            e0 .. Initial error"""
+
+            #No PID wenn kein Sollwert
+            if ist == None:
+                return(soll)
+
+            # Error between the desired and actual output
+            ist = ist * 8
+            e = soll - ist
+
+            # Integration Input
+            ui = self.ui_prev + Ki * e
+            ui_max = 500
+            if ui > ui_max: ui = ui_max
+            if ui < ui_max*(-1): ui = ui_max*(-1)
+            # Derivation Input
+            ud = Kd * (e - self.e_prev)
+
+            # Adjust previous values
+            self.e_prev = e
+            self.ui_prev = ui
+
+            # Calculate output for the system
+            u = Kp * (e + ui + ud)
+
+            u = u + soll
+
+            if u >= 255: u = 255
+            if u <= 0: u = 0
+            
+            return (u) 
+
+    def motor_is_backward(self):
+        """Returns TRUE wenn Motor retour"""
+        return(self.motor_backward)
+
+    
     def _left_speed(self, speed):
         """Set the speed of the left motor, taking into account its trim offset.
         """
@@ -111,51 +182,9 @@ class MotorPWM(object):
         if seconds is not None:
             time.sleep(seconds)
             self.stop()
-  
-    def curve(self, speedL, speedR, seconds=None):
-        """Spin to the right at the specified speed.  Will start spinning and
-        return unless a seconds value is specified, in which case the robot will
-        spin for that amount of time and then stop.
-        """
-        # Set motor speed and move both forward.
-        self._left_speed(speedL)
-        self._right_speed(speedR)
-        self._left.run(Adafruit_MotorHAT.FORWARD)
-        self._right.run(Adafruit_MotorHAT.FORWARD)
-        # If an amount of time is specified, move for that time and then stop.
-        if seconds is not None:
-            time.sleep(seconds)
-            self.stop()
-            
-    def right(self, speed, seconds=None):
-        """Spin to the right at the specified speed.  Will start spinning and
-        return unless a seconds value is specified, in which case the robot will
-        spin for that amount of time and then stop.
-        """
-        # Set motor speed and move both forward.
-        self._left_speed(speed)
-        self._right_speed(speed)
-        self._left.run(Adafruit_MotorHAT.FORWARD)
-        self._right.run(Adafruit_MotorHAT.BACKWARD)
-        # If an amount of time is specified, move for that time and then stop.
-        if seconds is not None:
-            time.sleep(seconds)
-            self.stop()
 
-    def left(self, speed, seconds=None):
-        """Spin to the left at the specified speed.  Will start spinning and
-        return unless a seconds value is specified, in which case the robot will
-        spin for that amount of time and then stop.
-        """
-        # Set motor speed and move both forward.
-        self._left_speed(speed)
-        self._right_speed(speed)
-        self._left.run(Adafruit_MotorHAT.BACKWARD)
-        self._right.run(Adafruit_MotorHAT.FORWARD)
-        # If an amount of time is specified, move for that time and then stop.
-        if seconds is not None:
-            time.sleep(seconds)
-            self.stop()
+            
+
             
 ### MAIN ###
     

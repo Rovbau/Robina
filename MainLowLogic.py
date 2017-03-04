@@ -38,7 +38,7 @@ grid=Grid(40,40)
 logic=Logic()
 manuell=Manuell()
 json=Json()
-weggeber=Weggeber()
+weggeber=Weggeber(motor_pwm)
 
 grid.setZielInGrid(200,200)
 grid.setStartInGrid(0,0)
@@ -72,10 +72,8 @@ sleep(1)
 
 while Robo==True:
     os.system("clear")
-
     #get Distances from IR-Sensors
     dist_front, dist_left , dist_right, obstacles = scanner.getFixData()
-    dist_front, dist_left , dist_right = 200,200,200
     print(dist_front,dist_left, dist_right)
 
     #Obstacles eintragen
@@ -84,8 +82,7 @@ while Robo==True:
     #Obstacles von Pumper eintragen
     pumperL,pumperR=encoder.getPumper()
     deltaH = encoder.getDistCounts()
-    #pumperL, pumperR  = logic.blocked(steer,speed,deltaH, pumperL, pumperR)
-
+    pumperL, pumperR  = logic.blocked(steer,speed,deltaH, pumperL, pumperR)
     karte.updateHardObstacles(pumperL,pumperR)
 
     #Grid
@@ -97,18 +94,20 @@ while Robo==True:
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
     grid.saveGridObstacles()
-
     #solved_path = grid.getSolvedPath(steer,speed,motor)
+    
     #Position updaten
     weggeber.runAllTime()
     deltaL,deltaR=weggeber.getPulseLR()
-    #print(deltaL,deltaR)
+    speedL,speedR = weggeber.getSpeedLR()
+
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
     karte.saveRoboPath()
     encoder.clearEncoderLR()
     encoder.clearEncoderDist()
     weggeber.clearWeggeberLR()
+    
     #Send Data via NET
     solved_path = []
     roundet_walls=grid.getRoundetWalls()
@@ -129,18 +128,15 @@ while Robo==True:
     print(round(steer,3),speed)
     speed_L,speed_R = encoder.getSpeedLR()
     motor.booster(speed_L,speed_R)
-    #sleep(0.3)
-    #motor.setCommand(0,0)
 
     #Manuell Control
     #steer,speed=manuell.getManuellCommand()
-    #motor.setCommand(steer,speed)
 
-    motor_pwm.setCommand(steer,speed)
-    
+    #Motor Outputs
+    motor_pwm.setCommand(steer,speed,speedL,speedR)
+
+    #Position Ausgeben
     print(karte.getRoboPos())
-    #sleep(0.3)
-    #motor.setCommand(0,0)
 
     if encoder.getTastenPress() > 0.1:
         motor.setCommand(0,0)

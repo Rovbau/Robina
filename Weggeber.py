@@ -10,7 +10,7 @@ bus = smbus.SMBus(1)
 GPIO.setwarnings(False)
 
 class Weggeber():
-    def __init__(self):
+    def __init__(self, motor_pwm):
         """init Weggeber IC """
         self.PortLRueck=33
         self.PortRRueck=29
@@ -20,6 +20,8 @@ class Weggeber():
         self.counts_right_old = 0
         self.CountL = 0
         self.CountR = 0
+        self.last_time = 0
+        self.motor_pwm = motor_pwm
        
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.PortLRueck,GPIO.OUT)
@@ -63,8 +65,8 @@ class Weggeber():
             self.counts_right_old = 0
 
 
-        #Count minus wenn Robo retour                       
-        if GPIO.input(self.PortLRueck)==1 or GPIO.input(self.PortRRueck)==1:
+        #Count minus wenn Robo retour
+        if self.motor_pwm.motor_is_backward()== True :
             self.CountL = self.CountL + aktualL_counts * (-1)
             self.CountR = self.CountR + aktualR_counts * (-1)
         else:
@@ -90,8 +92,13 @@ class Weggeber():
         """Pulse an  L und R Rad"""
         return(self.CountL,self.CountR)
 
-
-
+    def getSpeedLR(self):
+        """Anzahl Pulse je Sec"""
+        diff = time() - self.last_time
+        self.last_time = time()
+        speedL = 1/diff * self.CountL
+        speedR = 1/diff * self.CountR
+        return(speedL, speedR)
 
 if __name__ == "__main__":
 
@@ -102,6 +109,7 @@ if __name__ == "__main__":
     while True:
         weggeber.runAllTime()
         print(weggeber.getPulseLR())
+        print(weggeber.getSpeedLR())
         sleep(0.21)
 
 
