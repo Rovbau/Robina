@@ -75,11 +75,9 @@ class Logic():
             self.aktiv_sensorLR = self.dist_left
         else:
             self.aktiv_sensorLR = self.dist_right
-            
-        #winkel=self.getKursDiff(self.zielkurs,self.pose)
-        winkel = self.zielkurs
-        #print("Winkel:" +str(int(winkel)))
-        
+
+        winkel_to_goal = self.getKursDiff(self.globalZielkurs(),self.pose)
+
         if self.dist_front < 70:
             self.steer = -1
 
@@ -92,7 +90,7 @@ class Logic():
         if self.aktiv_sensorLR > 30 and self.aktiv_sensorLR < 40:
             self.steer = 0
             
-        if abs(winkel)< 25 and self.dist_front > 70: #and self.aktiv_sensorLR > 30:
+        if abs(winkel_to_goal)< 25 and self.dist_front > 70: #and self.aktiv_sensorLR > 30:
             self.flag_leftWall = False
             self.flag_rightWall = False
             self.steer = 0
@@ -304,16 +302,18 @@ if __name__ == "__main__":
     
     log=Logic()
 
+    log.setGlobalZiel(1000,1000)
+
     steer,speed=log.checkPumperStatus(False,True,0,0)
     print(steer,speed)
     
-    log.setRoboPos(10,100,10)
+    log.setRoboPos(0,0,180)
     time.sleep(0.2)
 
     steer,speed=log.checkPumperStatus(False,False,0,0)
     print(steer,speed)   
 
-    log.setRoboPos(10,100,10)
+    log.setRoboPos(0,0,0)
     time.sleep(0.2)
 
     steer,speed=log.checkPumperStatus(False,False,0,0)
