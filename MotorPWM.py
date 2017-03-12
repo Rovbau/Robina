@@ -42,10 +42,6 @@ class MotorPWM(object):
         """MotorPWM Command. -1< steer >1 und -1< speed >1"""
         speedL = 0
         speedR = 0
-
-        #Negativen ist-speed verhindern
-        actual_speed_L = abs(actual_speed_L)
-        actual_speed_R = abs(actual_speed_R)
         
         #Kurve berechnen
         if steer >= 0:
@@ -58,6 +54,12 @@ class MotorPWM(object):
         #Soll Speed 
         speedL = speedL*abs(speed)
         speedR = speedR*abs(speed)
+
+        #PID auschalten wenn acutual None
+        if actual_speed_L and actual_speed_R != None:
+            #Negativen ist-speed verhindern
+            actual_speed_L = abs(actual_speed_L)
+            actual_speed_R = abs(actual_speed_R)
 
         #Vor oder Zurueck
         if  speed > 0:

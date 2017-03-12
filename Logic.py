@@ -1,7 +1,7 @@
 #Logic
 
 import time
-from math import sin,cos,radians,degrees,sqrt,atan2
+from math import sin,cos,radians,degrees,sqrt,atan2,exp
 
 
 class Logic():
@@ -49,20 +49,62 @@ class Logic():
     def turnToGoal(self):
         """Wenn kein Obstacle nahe, Drehe zu Zielkurs"""
         print("GOAL")
-        #winkel=self.getKursDiff(self.zielkurs,self.pose)
+
         winkel = self.globalZielkurs()
         
         stellgroesse_ziel = self.pid_controller(winkel,self.pose)
         self.steer = stellgroesse_ziel
 
-        
-        
     def wallMode(self):
+        """Wall-Modus Robo folgt Links oder Recht"""
+        avoid_front = 0
+        avoid_side = 0
+        #Deside Wall L oder R
+        if self.flag_leftWall == False and self.flag_rightWall == False:
+            if self.dist_left < self.dist_right:            
+                self.flag_leftWall = True
+                self.aktiv_sensorLR = self.dist_left
+            else:
+                self.flag_rightWall = True
+                self.aktiv_sensorLR = self.dist_right
+
+        #set activ Sensor L oder R
+        if self.flag_leftWall == True:
+            self.aktiv_sensorLR = self.dist_left
+        else:
+            self.aktiv_sensorLR = self.dist_right
+
+        #calc Kurvenkomando front und side
+        if self.dist_front < 70:
+            avoid_front = exp(-(self.dist_front-30)*0.05)
+            avoid_front = 0 - avoid_front
+            
+        if self.aktiv_sensorLR < 70:
+            avoid_side = exp(-(self.aktiv_sensorLR-30)*0.05)
+            avoid_side = 1 - avoid_side
+
+        self.steer = avoid_front + avoid_side
+            
+        #Invert Kurvenkommando wenn Right Wall
+        if self.flag_rightWall == True:
+            self.steer = self.steer * (-1)
+            print("RIGHT WALL")
+        else:
+            print("LEFT WALL")
+
+        #Beende Wall-mode       
+        winkel_to_goal = self.getKursDiff(self.globalZielkurs(),self.pose)
+        
+        if abs(winkel_to_goal)< 25 and self.dist_front > 70:
+            self.flag_leftWall = False
+            self.flag_rightWall = False
+            self.steer = 0
+            
+    def wallModeXXX(self):
         """Wall-Modus Robo folgt Links oder Recht"""
 
         #Deside Wall L oder R
-        if self.flag_leftWall == False and self.flag_rightWall == False:         
-            #if self.getKursDiff(self.zielkurs,self.pose) >= 0:
+        if self.flag_leftWall == False and self.flag_rightWall == False:
             if self.dist_left < self.dist_right:            
                 self.flag_leftWall = True
                 self.aktiv_sensorLR = self.dist_left
@@ -76,8 +118,6 @@ class Logic():
         else:
             self.aktiv_sensorLR = self.dist_right
 
-        winkel_to_goal = self.getKursDiff(self.globalZielkurs(),self.pose)
-
         if self.dist_front < 70:
             self.steer = -1
 
@@ -89,7 +129,9 @@ class Logic():
 
         if self.aktiv_sensorLR > 30 and self.aktiv_sensorLR < 40:
             self.steer = 0
-            
+
+        winkel_to_goal = self.getKursDiff(self.globalZielkurs(),self.pose)
+        
         if abs(winkel_to_goal)< 25 and self.dist_front > 70: #and self.aktiv_sensorLR > 30:
             self.flag_leftWall = False
             self.flag_rightWall = False
@@ -228,21 +270,30 @@ class Logic():
     def checkPumperStatus(self,pumperL,pumperR,steer,speed):
         """Starte Ausweichmanoever bei Pumper == True"""
 
-        if pumperL == True and pumperR == True:
-            self.retour_done = False
-            self.command = []
-            self.generatorLR = self.ret_flow_LR()
-            self.generator = self.generatorLR
-        elif pumperL == True:
-            self.retour_done = False
-            self.command = []
-            self.generatorL = self.ret_flow_L()
-            self.generator = self.generatorL
-        elif pumperR == True:
-            self.retour_done = False
-            self.command = []
-            self.generatorR = self.ret_flow_R()
-            self.generator = self.generatorR
+        if self.flag_leftWall == True:
+            if pumperL == True or pumperR == True:
+                self.generatorL = self.ret_flow_L()
+                self.generator = self.generatorL
+        elif self.flag_rightWall == True:
+            if pumperL == True or pumperR == True:
+                self.generatorL = self.ret_flow_R()
+                self.generator = self.generatorR        
+        elif self.flag_leftWall == False and self.flag_rightWall == False:
+            if pumperL == True and pumperR == True:
+                self.retour_done = False
+                self.command = []
+                self.generatorLR = self.ret_flow_LR()
+                self.generator = self.generatorLR
+            elif pumperL == True:
+                self.retour_done = False
+                self.command = []
+                self.generatorL = self.ret_flow_L()
+                self.generator = self.generatorL
+            elif pumperR == True:
+                self.retour_done = False
+                self.command = []
+                self.generatorR = self.ret_flow_R()
+                self.generator = self.generatorR
 
         steer,speed=self.pumperUmfahren(steer,speed)
         return(steer,speed)
@@ -303,24 +354,19 @@ if __name__ == "__main__":
     log=Logic()
 
     log.setGlobalZiel(1000,1000)
-
-    steer,speed=log.checkPumperStatus(False,True,0,0)
-    print(steer,speed)
-    
-    log.setRoboPos(0,0,180)
+   
+    log.setRoboPos(0,0,0)
     time.sleep(0.2)
 
     steer,speed=log.checkPumperStatus(False,False,0,0)
     print(steer,speed)   
 
-    log.setRoboPos(0,0,0)
+    log.setRoboPos(0,0,40)
     time.sleep(0.2)
 
-    steer,speed=log.checkPumperStatus(False,False,0,0)
+    log.flag_leftWall = True
+    steer, speed = log.wsa(70,40,100,False,False)
     print(steer,speed)
-
-    u =log.pid_controller(1,180)
-    print(u)
 
 ##    log.setRoboPos(0,0,10)
 ##    

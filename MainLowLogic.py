@@ -7,7 +7,6 @@ from Encoder import *
 import Kompass
 from Karte import *
 from Plan import *
-from Motor import *
 from MotorPWM import *
 from Grid import *
 from Logic import *
@@ -31,8 +30,6 @@ navigation=Navigation()
 scanner=Scanner()
 karte=Karte(encoder)
 plan=Plan()
-kreis=0
-motor=Motor()
 motor_pwm=MotorPWM()
 grid=Grid(40,40)
 logic=Logic()
@@ -47,13 +44,9 @@ logic.setGlobalZiel(20000,0)
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
-    #motor.setCommand(0,0)
-atexit.register(cleaning)
+    motor_pwm.setCommand(0,0)
 
-#SCAN OFF 
-ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(0,))
-ThreadScanAllTime.daemon=True
-#ThreadScanAllTime.start()
+atexit.register(cleaning)
 
 ThreadEncoder=Thread(target=encoder.runAllTime,args=())
 ThreadEncoder.daemon=True
@@ -62,11 +55,7 @@ ThreadEncoder.start()
 ThreadEncoder=Thread(target=manuell.runManuell,args=())
 ThreadEncoder.daemon=True
 ThreadEncoder.start()
-
-##ThreadEncoder=Thread(target=weggeber.runAllTime,args=())
-##ThreadEncoder.daemon=True
-##ThreadEncoder.start()
-    
+  
 sleep(1)
 
 
@@ -93,7 +82,7 @@ while Robo==True:
 
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
-    grid.saveGridObstacles()
+    #grid.saveGridObstacles()
     #solved_path = grid.getSolvedPath(steer,speed,motor)
     
     #Position updaten
@@ -110,7 +99,7 @@ while Robo==True:
     
     #Send Data via NET
     solved_path = []
-    roundet_walls=grid.getRoundetWalls()
+    #roundet_walls=grid.getRoundetWalls()
     #print(roundet_walls)
     #json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
@@ -126,8 +115,8 @@ while Robo==True:
     steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
     steer,speed=logic.checkPumperStatus(pumperL,pumperR,steer,speed)
     print(round(steer,3),speed)
-    speed_L,speed_R = encoder.getSpeedLR()
-    motor.booster(speed_L,speed_R)
+    #speed_L,speed_R = encoder.getSpeedLR()
+    #motor.booster(speed_L,speed_R)
 
     #Manuell Control
     #steer,speed=manuell.getManuellCommand()
@@ -139,11 +128,11 @@ while Robo==True:
     print(karte.getRoboPos())
 
     if encoder.getTastenPress() > 0.1:
-        motor.setCommand(0,0)
+        motor_pwm.setCommand(0,0)
         sleep(5)
             
     if encoder.getTastenPress() > 2:
-        motor.setCommand(0,0)
+        motor_pwm.setCommand(0,0)
         print("By By goto Sleep")
         sleep(4)
         if encoder.getTastenPress() > 6:
