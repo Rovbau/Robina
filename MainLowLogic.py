@@ -122,7 +122,7 @@ while Robo==True:
     #steer,speed=manuell.getManuellCommand()
 
     #Motor Outputs
-    motor_pwm.setCommand(steer,speed,speedL,speedR)
+    motor_pwm.setCommand(steer,speed)
 
     #Position Ausgeben
     print(karte.getRoboPos())

@@ -76,22 +76,18 @@ class Logic():
 
         #calc Kurvenkomando front und side
         if self.dist_front < 70:
-            avoid_front = exp(-(self.dist_front-30)*0.05)
+            avoid_front = exp(-(self.dist_front-45)*0.05)
             avoid_front = 0 - avoid_front
-            
-        if self.aktiv_sensorLR < 70:
-            avoid_side = exp(-(self.aktiv_sensorLR-30)*0.05)
-            avoid_side = 1 - avoid_side
+
+        avoid_side = (50.0-self.aktiv_sensorLR)/50.0
+        avoid_side = avoid_side*(-1.0)
+        print("Avoid-Side: "+str(avoid_side))
 
         self.steer = avoid_front + avoid_side
-            
-        #Invert Kurvenkommando wenn Right Wall
-        if self.flag_rightWall == True:
-            self.steer = self.steer * (-1)
-            print("RIGHT WALL")
-        else:
-            print("LEFT WALL")
 
+        if self.steer >= 1: self.steer = 1
+        if self.steer <= -1: self.steer = -1
+        
         #Beende Wall-mode       
         winkel_to_goal = self.getKursDiff(self.globalZielkurs(),self.pose)
         
@@ -100,49 +96,13 @@ class Logic():
             self.flag_rightWall = False
             self.steer = 0
             
-    def wallModeXXX(self):
-        """Wall-Modus Robo folgt Links oder Recht"""
-
-        #Deside Wall L oder R
-        if self.flag_leftWall == False and self.flag_rightWall == False:
-            if self.dist_left < self.dist_right:            
-                self.flag_leftWall = True
-                self.aktiv_sensorLR = self.dist_left
-            else:
-                self.flag_rightWall = True
-                self.aktiv_sensorLR = self.dist_right
-                
-        #set activ Sensor L oder R
-        if self.flag_leftWall == True:
-            self.aktiv_sensorLR = self.dist_left
-        else:
-            self.aktiv_sensorLR = self.dist_right
-
-        if self.dist_front < 70:
-            self.steer = -1
-
-        if self.aktiv_sensorLR < 30:
-            self.steer = -1
-            
-        if self.dist_front > 70 and self.aktiv_sensorLR > 40:
-            self.steer = 1
-
-        if self.aktiv_sensorLR > 30 and self.aktiv_sensorLR < 40:
-            self.steer = 0
-
-        winkel_to_goal = self.getKursDiff(self.globalZielkurs(),self.pose)
-        
-        if abs(winkel_to_goal)< 25 and self.dist_front > 70: #and self.aktiv_sensorLR > 30:
-            self.flag_leftWall = False
-            self.flag_rightWall = False
-            self.steer = 0
-            
         #Invert Kurvenkommando wenn Right Wall
         if self.flag_rightWall == True:
             self.steer = self.steer * (-1)
             print("RIGHT WALL")
         else:
             print("LEFT WALL")
+  
                  
     def getKursDiff(self,soll,ist):
         """Diff zwischen zwei Winkel 0-360grad"""
@@ -272,12 +232,16 @@ class Logic():
 
         if self.flag_leftWall == True:
             if pumperL == True or pumperR == True:
-                self.generatorL = self.ret_flow_L()
-                self.generator = self.generatorL
+                self.retour_done = False
+                self.command = []
+                self.generatorL = self.ret_flow_R()
+                self.generator = self.generatorR
         elif self.flag_rightWall == True:
             if pumperL == True or pumperR == True:
-                self.generatorL = self.ret_flow_R()
-                self.generator = self.generatorR        
+                self.retour_done = False
+                self.command = []
+                self.generatorL = self.ret_flow_L()
+                self.generator = self.generatorL       
         elif self.flag_leftWall == False and self.flag_rightWall == False:
             if pumperL == True and pumperR == True:
                 self.retour_done = False
