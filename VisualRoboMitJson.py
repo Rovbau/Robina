@@ -123,8 +123,10 @@ class Visual():
         for pos in self.obstacles_in_grid:
             X=pos[0]*10
             Y=pos[1]*10
+            #Obstacle Farbe nach Anzahlhits
+            obst_color = '#%02x%02x%02x' % (200,200-pos[2]*5 ,200-pos[2]*5 )
             #Zeichne Hindernisspunkte Global ein 
-            can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill="red",tag="Point")
+            can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill=obst_color,tag="Point")
 
         for pos in self.position_in_grid:
             X=pos[0]

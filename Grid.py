@@ -22,15 +22,16 @@ class Grid():
         self.roundet_walls=[]
         
         for obstacle in unpaintedObstacles:
-            #round to _5
-            #obstacle_x_grid=int(round(obstacle[0]/5.0)*5.0)
-            #obstacle_y_grid=int(round(obstacle[1]/5.0)*5.0)
+            #round to 5 Bsp: x=int(round(obstacle[0]/5.0)*5.0)
             obstacle_x_grid=int(obstacle[0]/10)
-            obstacle_y_grid=int(obstacle[1]/10)            
-            if (obstacle_x_grid,obstacle_y_grid) not in  self.walls:
-                self.walls.append((obstacle_x_grid,obstacle_y_grid))
+            obstacle_y_grid=int(obstacle[1]/10)
+            if any(element[0:2] == [obstacle_x_grid,obstacle_y_grid] for element in walls):
+                element[2]=element[2]+1
+            else:
+                self.walls.append((obstacle_x_grid,obstacle_y_grid,1))
                 self.gridwithweights.walls=deepcopy(self.walls)
-                self.roundet_walls.append((obstacle_x_grid,obstacle_y_grid))
+                self.roundet_walls.append((obstacle_x_grid,obstacle_y_grid,1))
+
 
     def getRoundetWalls(self):
         return(self.roundet_walls)
