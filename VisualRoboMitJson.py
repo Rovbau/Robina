@@ -109,8 +109,8 @@ class Visual():
         else:
             obstacles, path, solved_path = serv.getNewValues()
             serv.clearValues()
-            print(obstacles)
             self.obstacles_in_grid.extend(obstacles)
+            #self.obstacles_in_grid = obstacles
             self.position_in_grid.extend(path)
             self.solved_path = solved_path
 
@@ -124,7 +124,8 @@ class Visual():
             X=pos[0]*10
             Y=pos[1]*10
             #Obstacle Farbe nach Anzahlhits
-            obst_color = '#%02x%02x%02x' % (200,200-pos[2]*5 ,200-pos[2]*5 )
+            anzahl_hit = min(200,pos[2]*5)
+            obst_color = '#%02x%02x%02x' % (200,200-anzahl_hit , 200-anzahl_hit)
             #Zeichne Hindernisspunkte Global ein 
             can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill=obst_color,tag="Point")
 
@@ -143,7 +144,7 @@ class Visual():
         except:
             can.create_oval(Nullx-3,Nully+3,Nullx+3,Nully-3, width=1, fill="blue",tag="Point")
 
-        root.after(1500,visual.printObstacles)
+        root.after(1000,visual.printObstacles)
 
 
     def setZoom(self,x,y):
