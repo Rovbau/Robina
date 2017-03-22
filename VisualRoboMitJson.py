@@ -109,7 +109,7 @@ class Visual():
         else:
             obstacles, path, solved_path = serv.getNewValues()
             serv.clearValues()
-            
+            print(obstacles)
             self.obstacles_in_grid.extend(obstacles)
             self.position_in_grid.extend(path)
             self.solved_path = solved_path
