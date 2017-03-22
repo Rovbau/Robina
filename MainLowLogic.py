@@ -36,7 +36,7 @@ logic=Logic()
 manuell=Manuell()
 json=Json()
 weggeber=Weggeber(motor_pwm)
-
+loops =0
 grid.setZielInGrid(200,200)
 grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
@@ -100,7 +100,7 @@ while Robo==True:
     #Send Data via NET
     solved_path = []
     roundet_walls=grid.getRoundetWalls()
-    #print(roundet_walls)
+    print(roundet_walls)
     json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
     #Ziel erreicht?
@@ -148,7 +148,7 @@ while Robo==True:
     
     print("************")
 
-    loops =loop+1
+    loops =loops+1
     if loops > 40:
         motor_pwm.setCommand(0,0)
         sleep(2)
