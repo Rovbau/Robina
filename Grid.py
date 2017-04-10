@@ -26,19 +26,17 @@ class Grid():
             #round to 5 Bsp: x=int(round(obstacle[0]/5.0)*5.0)
             obstacle_x_grid = int(obstacle[0]/10)
             obstacle_y_grid = int(obstacle[1]/10)
-            print("Ein Obstacle")
+            
             for element in self.walls:
                 if element[0:2] == [obstacle_x_grid,obstacle_y_grid]:
                     element[2] = element[2]+1
                     self.roundet_walls.append(element)
-                    print("Element Plus 1")
                     element_allready = True
                     break
             if element_allready == False:
                     self.walls.append([obstacle_x_grid,obstacle_y_grid,1])
                     self.gridwithweights.walls=deepcopy(self.walls)
                     self.roundet_walls.append([obstacle_x_grid,obstacle_y_grid,1])
-                    print("Schon vorhanden")
                                         
     def getRoundetWalls(self):
         return(self.roundet_walls)

@@ -99,9 +99,9 @@ while Robo==True:
     
     #Send Data via NET
     solved_path = []
-    roundet_walls=grid.getRoundetWalls()
-    print(roundet_walls)
-    json.sendVisual(roundet_walls, [[x,y]],solved_path)
+    #roundet_walls=grid.getRoundetWalls()
+    #print(roundet_walls)
+    #json.sendVisual(roundet_walls, [[x,y]],solved_path)
     
     #Ziel erreicht?
     logic.setRoboPos(x,y,pose)
@@ -122,7 +122,7 @@ while Robo==True:
     #steer,speed=manuell.getManuellCommand()
 
     #Motor Outputs
-    motor_pwm.setCommand(steer,speed)
+    motor_pwm.setCommand(steer,speed,speedL,speedR)
 
     #Position Ausgeben
     print(karte.getRoboPos())
@@ -149,7 +149,7 @@ while Robo==True:
     print("************")
 
     loops =loops+1
-    if loops > 40:
+    if loops > 4000:
         motor_pwm.setCommand(0,0)
         sleep(2)
         loops = 0
