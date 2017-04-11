@@ -17,7 +17,7 @@ import sys
 import atexit
 import os
 import profile
-
+from Loggerli import *
 
 count=1
 speed=0
@@ -41,6 +41,7 @@ grid.setZielInGrid(200,200)
 grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
 logic.setGlobalZiel(20000,0)
+#sys.stdout = Logger()  #Schreibe stdout in Datei logfile.log
 
 def cleaning():
     """Do cleanup at end, command are visVersa"""
