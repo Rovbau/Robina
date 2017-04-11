@@ -119,6 +119,9 @@ while Robo==True:
     #speed_L,speed_R = encoder.getSpeedLR()
     #motor.booster(speed_L,speed_R)
 
+    #Save invironment
+    logic.save_invironment(grid.getGridObstacles(), karte.getRoboPath() )
+
     #Manuell Control
     #steer,speed=manuell.getManuellCommand()
 

@@ -55,6 +55,8 @@ class Grid():
                     drive_back=False                    
         return(drive_back)
 
+    def getGridObstacles(self):
+        return(self.gridwithweights.walls)
 
     def saveGridObstacles(self):
         """Hindernisse speichern pickle"""

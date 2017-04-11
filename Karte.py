@@ -107,9 +107,6 @@ class Karte():
         """Pickel Robos Path every Xsec."""
         if time.time()-self.timeold > 2:          
             self.RoboPath.append([round(self.RoboPosX,1),round(self.RoboPosY,1)])
-            pickelRoboPath=open( "RoboPath.p", "wb" )
-            pickle.dump(self.RoboPath, pickelRoboPath)
-            pickelRoboPath.close()
             self.timeold = time.time()
 
     def getRoboPos(self):

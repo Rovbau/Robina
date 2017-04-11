@@ -311,7 +311,20 @@ class Logic():
             if u > 1: u = 1
             if u < -1: u = -1
             
-            return (u)        
+            return (u)
+
+    def save_environment(self, obst, path):
+        """Sichere Path und Obstacle in File"""
+        
+        filename = "Stube"        
+        last_save = time.time()-self.timeold
+        
+        if last_save > 4:           
+            pickelPath=open( "EnvironmentRobo-"+filename+".p", "wb" )
+            pickle.dump({'Obstacle':obst, 'Path':path}, pickelPath)
+            pickelPath.close()
+            self.timeold = time.time()
+            
 ######################################
 if __name__ == "__main__":
     
