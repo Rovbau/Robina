@@ -119,14 +119,14 @@ while Robo==True:
     #speed_L,speed_R = encoder.getSpeedLR()
     #motor.booster(speed_L,speed_R)
 
-    #Save invironment
-    logic.save_invironment(grid.getGridObstacles(), karte.getRoboPath() )
+    #Save environment
+    logic.save_environment(grid.getGridObstacles(), karte.getRoboPath() )
 
     #Manuell Control
     #steer,speed=manuell.getManuellCommand()
 
     #Motor Outputs
-    motor_pwm.setCommand(steer,speed,speedL,speedR)
+    motor_pwm.setCommand(steer,speed,speedL*0.8,speedR*0.8)
 
     #Position Ausgeben
     print(karte.getRoboPos())
@@ -153,7 +153,7 @@ while Robo==True:
     print("************")
 
     loops =loops+1
-    if loops > 4000:
+    if loops > 20:
         motor_pwm.setCommand(0,0)
         sleep(2)
         loops = 0

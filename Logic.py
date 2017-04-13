@@ -43,8 +43,8 @@ class Logic():
         else:
             self.wallMode()
 
-        #if self.dist_left < 30 or self.dist_right < 30 or ( self.flag_leftWall == False and self.flag_rightWall == False):
-        #    self.wallMode() 
+        if (self.dist_left < 30 or self.dist_right < 30) and ( self.flag_leftWall == False and self.flag_rightWall == False):
+            self.wallMode() 
             
         return(self.steer,self.speed)
 
@@ -78,7 +78,7 @@ class Logic():
 
         #calc Kurvenkomando front und side
         if self.dist_front < 70:
-            avoid_front = exp(-(self.dist_front-45)*0.05)
+            avoid_front = exp(-(self.dist_front-60)*0.05)
             avoid_front = 0 - avoid_front
 
         avoid_side = (50.0-self.aktiv_sensorLR)/50.0
@@ -93,7 +93,7 @@ class Logic():
         #Beende Wall-mode       
         winkel_to_goal = self.getKursDiff(self.globalZielkurs(),self.pose)
         
-        if abs(winkel_to_goal)< 25 and self.dist_front > 70:
+        if abs(winkel_to_goal)< 25 and self.dist_front > 80 and self.dist_left > 30 and self.dist_right > 30:
             self.flag_leftWall = False
             self.flag_rightWall = False
             self.steer = 0
