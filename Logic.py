@@ -1,6 +1,7 @@
 #Logic
 
 import time
+import pickle
 from math import sin,cos,radians,degrees,sqrt,atan2,exp
 
 
@@ -26,6 +27,7 @@ class Logic():
         self.stop_time = time.time()
         self.e_prev = 0
         self.ui_prev = 0
+        self.timeold = time.time()
         print("Init Logic")
             
     def wsa(self,dist_front,dist_left,dist_right,pumperL,pumperR):
@@ -329,6 +331,8 @@ class Logic():
 if __name__ == "__main__":
     
     log=Logic()
+
+    log.save_environment([[2,2,4],[3,3,3]],[[10,10],[20,20]])
 
     log.setGlobalZiel(1000,1000)
    
