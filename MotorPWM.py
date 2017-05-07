@@ -102,16 +102,14 @@ class MotorPWM(object):
             #No PID wenn kein Sollwert
             if ist == None:
                 return(soll)
-
+                
             # Error between the desired and actual output
             ist = ist * 8
             e = soll - ist
 
             # Integration Input
             ui = self.ui_prev + Ki * e
-            ui_max = 500
-            if ui > ui_max: ui = ui_max
-            if ui < ui_max*(-1): ui = ui_max*(-1)
+
             # Derivation Input
             ud = Kd * (e - self.e_prev)
 
@@ -121,12 +119,14 @@ class MotorPWM(object):
 
             # Calculate output for the system
             u = Kp * (e + ui + ud)
-
             u = u + soll
 
-            if u >= 255: u = 255
-            if u <= 0: u = 0
-            
+            if u >= 255:
+                u = 255
+                self.ui_prev = self.ui_prev - Ki * e  # I-Anteil begrenzen
+            if u <= 0:
+                u = 0
+                self.ui_prev = self.ui_prev - Ki * e  # I-Anteil begrenzen
             return (u) 
 
     def motor_is_backward(self):
