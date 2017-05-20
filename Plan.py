@@ -13,33 +13,47 @@ class Plan():
     def __init__(self):       
         pass
 
-    def calcGlobalZielkurs(self,x,y,pose):
-        """Berechne Zielkurs anhand aktueller Pos"""
+    def nextZielPattern(self,x,y):
+        """Wenn aktuelles Ziel errreicht, next Ziel anfahren"""
+        _,dist_to_globalziel = self.calcZieldaten(x,y,0)
+        
+        if dist_to_globalziel < 20:
+            try:
+                neu_ziel = next(self.generator_ziel)
+                neu_x , neu_y = neu_ziel
+                self.setGlobalZiel(neu_x,neu_y)
+            except:
+                print("GENERATOR ENDE SLEEP 10s")
+                sleep(10)
 
+    def init_generator_ziel(self,zielliste):
+        """init Generator mit Zieldaten"""
+        self.generator_ziel = self.generiere_ziel(ziellist)
+        self.setGlobalZiel(0,0)
+        
+    def generiere_ziel(self,zielliste):
+        """Generator Funktion mit Zieldaten"""
+        for next_ziel in zielliste:
+            yield(next_ziel)
+
+    def calcZieldaten(self,x,y,pose):
+        """Berechne Zieldaten anhand aktueller Pos"""
         #Diff EndzielX/Y von Pos 
         diff = (self.endziel_x - x, self.endziel_y - y)
         #Kartesisch in Polarkoordinaten
         x,y=diff
         dist_to_globalziel=sqrt(pow(x,2)+pow(y,2))
         kurs_to_globalziel=degrees(atan2(y,x))
-        kurs_korr=self.KursDiff(kurs_to_globalziel,pose)
-        return(int(kurs_korr),int(dist_to_globalziel))
-
-    def zielErreicht(self,dist_to_ziel,motor):
-        """Wenn nahe am Ziel stoppe Robo"""
-        if dist_to_ziel < 10:
-            print("DIST zum ZIEL: "+str(dist_to_ziel))
-            motor.setCommand(0,0)
-            sleep(10)
+        return(int(kurs_to_globalziel),int(dist_to_globalziel))
 
     def setGlobalZiel(self, endziel_x, endziel_y):
         self.endziel_x, self.endziel_y = endziel_x, endziel_y
-
-
-
+        
+    def getGlobalZiel(self):
+        return(self.endziel_x, self.endziel_y)
+        
     def nextStep(self,path,x,y,pose):
         """Plane next steer,speed commando"""
-
         start=path[0]
         zwischenziel=path[7]
 
@@ -52,7 +66,6 @@ class Plan():
         print("Ist: "+str(start))
         print("Soll: "+str(zwischenziel))
         
-
         kurs_korr=self.KursDiff(kurs_to_zwischenziel,pose)
         steer,speed=self.SteuerkursInSteerSpeed((kurs_korr , dist_to_zwischenziel))
 
@@ -82,7 +95,6 @@ class Plan():
                 Winkel=Soll-Ist
         return(Winkel)
 
-
     def SteuerkursInSteerSpeed(self,steuerkurs):
         """Die eingabe steuerkurs=[zielkurs,Dist] wird in (steer, speed) umgewandelt ->returns (steer,speed)"""
         if steuerkurs[0] > 5:
@@ -102,9 +114,6 @@ class Plan():
 
 
 
-
-
-
 class Navigation():
     def __init__(self):
         pass
@@ -120,7 +129,7 @@ class Navigation():
                 scanCopy[i][1]=scanList[i][1]
             else:
                 scanCopy[i][1]=0
-     
+                
         for i in range(len(scanCopy)-2):
             if scanCopy[i][1]>dist and scanCopy[i+1][1]>dist and scanCopy[i+2][1]>dist:
                 #Hier wird die MinDist der drei Elemente ermittelt
@@ -285,7 +294,6 @@ class Navigation():
         AlarmL,AlarmR=GetAlarme()
         RueckmeldungAlarm=""
 
-        
         if AlarmL==True and AlarmR==False:
                 print("Ausweichen L")
                 EncoderClear()
@@ -320,7 +328,7 @@ class Navigation():
                 
         elif arg==("ZuNah",):
                 MotorOby.Drive(-20)
-
+            
         ClearAlarm()
         return(RueckmeldungAlarm)
 
@@ -343,8 +351,12 @@ class Navigation():
 if __name__ == "__main__":
 
     from Karte import *
-    n=Navigation()
-    k=Karte()
-    Plan=Plan(k,n)
-    x=Plan.getCourse()
-    print(x)
+    
+    plan=Plan()
+    ziellist =[[11,0],[12,0],[13,0]]
+    plan.init_generator_ziel(ziellist)
+    
+    x , y = 0,0
+    plan.nextZielPattern(x,y)
+    print(plan.getGlobalZiel())
+

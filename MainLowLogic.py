@@ -40,7 +40,11 @@ loops =0
 grid.setZielInGrid(200,200)
 grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
-logic.setGlobalZiel(20000,0)
+logic.setGlobalZiel(0,0)
+
+ziellist =[[200,0],[200,200],[0,200],[0,0]]
+plan.init_generator_ziel(zielliste)
+
 #sys.stdout = Logger()  #Schreibe stdout in Datei logfile.log
 
 def cleaning():
@@ -102,15 +106,13 @@ while Robo==True:
     solved_path = []
     #roundet_walls=grid.getRoundetWalls()
     #print(roundet_walls)
-    #json.sendVisual(roundet_walls, [[x,y]],solved_path)
+    #json.sendVisual(roundet_walls, [[x,y]],solved_path)    
     
-    #Ziel erreicht?
     logic.setRoboPos(x,y,pose)
-    #kurs_to_ziel,dist_to_ziel=plan.calcGlobalZielkurs(x,y,pose)
-    #print("KursZuZiel: "+str(kurs_to_ziel))
-    #print("DistZuZiel: "+str(dist_to_ziel))
-    #logic.setZielkurs(kurs_to_ziel)
-    #plan.zielErreicht(dist_to_ziel,motor)
+
+    #Ziel erreicht?
+    ziel_x, ziel_y = plan.nextZielPattern(self,x,y)
+    logic.setGlobalZiel(ziel_x,ziel_y)
     
     #Plan next Steps    
     steer,speed=logic.wsa(dist_front,dist_left,dist_right,pumperL,pumperR)
