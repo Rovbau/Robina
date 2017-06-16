@@ -16,17 +16,18 @@ class Plan():
     def nextZielPattern(self,x,y):
         """Wenn aktuelles Ziel errreicht, next Ziel anfahren"""
         _,dist_to_globalziel = self.calcZieldaten(x,y,0)
-        
+        goal = False
         if dist_to_globalziel < 20:
             try:
                 neu_ziel = next(self.generator_ziel)
                 neu_x , neu_y = neu_ziel
                 self.setGlobalZiel(neu_x,neu_y)
             except:
-                print("GENERATOR ENDE SLEEP 10s")
-                sleep(10)
+                print("BIN am ZIEL STOPPE")    
+                goal = True
+        return(self.endziel_x, self.endziel_y, goal)
 
-    def init_generator_ziel(self,zielliste):
+    def init_generator_ziel(self,ziellist):
         """init Generator mit Zieldaten"""
         self.generator_ziel = self.generiere_ziel(ziellist)
         self.setGlobalZiel(0,0)

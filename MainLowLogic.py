@@ -42,8 +42,8 @@ grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
 logic.setGlobalZiel(0,0)
 
-ziellist =[[200,0],[200,200],[0,200],[0,0]]
-plan.init_generator_ziel(zielliste)
+ziellist =[[150,0],[150,150],[0,150],[0,0]]
+plan.init_generator_ziel(ziellist)
 
 #sys.stdout = Logger()  #Schreibe stdout in Datei logfile.log
 
@@ -111,7 +111,8 @@ while Robo==True:
     logic.setRoboPos(x,y,pose)
 
     #Ziel erreicht?
-    ziel_x, ziel_y = plan.nextZielPattern(self,x,y)
+    ziel_x, ziel_y, ziel_done = plan.nextZielPattern(x,y)
+    print("Ziel ist: "+ str(ziel_x) +" "+str(ziel_y))
     logic.setGlobalZiel(ziel_x,ziel_y)
     
     #Plan next Steps    
@@ -128,10 +129,14 @@ while Robo==True:
     #steer,speed=manuell.getManuellCommand()
 
     #Motor Outputs
-    motor_pwm.setCommand(steer,speed,speedL*0.8,speedR*0.8)
+    motor_pwm.setCommand(steer,speed,speedL*0.9,speedR*0.9)
 
     #Position Ausgeben
     print(karte.getRoboPos())
+
+    if ziel_done == True:
+        motor_pwm.setCommand(0,0)
+        sleep(1)
 
     if encoder.getTastenPress() > 0.1:
         motor_pwm.setCommand(0,0)
@@ -155,7 +160,7 @@ while Robo==True:
     print("************")
 
     loops =loops+1
-    if loops > 20:
+    if loops > 2000:
         motor_pwm.setCommand(0,0)
         sleep(2)
         loops = 0

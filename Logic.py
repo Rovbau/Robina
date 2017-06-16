@@ -272,6 +272,8 @@ class Logic():
         #Wenn 3Sec keine Bewegung simuliere PumperLR=TRUE
         if (time.time()-self.stop_time) > 3:
             self.stop_time = time.time()
+            print("RETOUR TIME to high")
+            time.sleep(1)
             return(True,True)
         #Solange CountHinten zaehlt  normal weiter
         if (speed != 0 or steer  != 0) and countsH != 0:
