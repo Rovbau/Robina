@@ -21,6 +21,8 @@ class Encoder():
         self.PortLRueck=33
         self.PortRRueck=29
 
+        self.Led=16
+
         self.WegCount=0
         self.DiffCount=0
         self.DistRad=0
@@ -44,7 +46,7 @@ class Encoder():
 
         GPIO.setup(self.PortLRueck,GPIO.OUT)
         GPIO.setup(self.PortRRueck,GPIO.OUT)
-        #GPIO.setup(16,GPIO.OUT)
+        GPIO.setup(self.Led,GPIO.OUT)
         #Motorern EIN/AUS
         GPIO.output(self.PortRRueck,0)
         GPIO.output(self.PortLRueck,0)
@@ -147,6 +149,12 @@ class Encoder():
     def getTastenPress(self):
         """Time Sec. Keypress der Roten Taste ausgeben"""
         return(float(self.keypress_rot/50))
+
+    def setLedHigh(self):
+        GPIO.output(self.Led,1)
+
+    def setLedLow(self):
+        GPIO.output(self.Led,0)
 
 
 if __name__ == "__main__":

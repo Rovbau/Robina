@@ -317,10 +317,10 @@ class Logic():
             
             return (u)
 
-    def save_environment(self, obst, path):
+    def save_environment(self, obst, path, filename):
         """Sichere Path und Obstacle in File"""
         
-        filename = "Stube"        
+        self.filename = filename        
         last_save = time.time()-self.timeold
         
         if last_save > 4:           

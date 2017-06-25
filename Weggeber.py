@@ -104,12 +104,20 @@ if __name__ == "__main__":
 
     from threading import *
     print("Starte")
-    weggeber=Weggeber()
+
+    class Psydo():
+        def __init__(self):
+            pass
+        def motor_is_backward(self):
+            return(False)
+
+    p = Psydo()
+    weggeber=Weggeber(p)
 
     while True:
         weggeber.runAllTime()
         print(weggeber.getPulseLR())
-        print(weggeber.getSpeedLR())
+#        print(weggeber.getSpeedLR())
         sleep(0.21)
 
 

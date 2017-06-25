@@ -13,7 +13,7 @@ bus = smbus.SMBus(1)
 def getKompass():
     """Returns KompassKurs"""
     Kurs=0
-    KompassAdress=0x60
+    KompassAdress=0x61
     daten1=bus.read_byte_data(KompassAdress,0x02)
     daten2=bus.read_byte_data(KompassAdress,0x03)
 

@@ -42,8 +42,9 @@ grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
 logic.setGlobalZiel(0,0)
 
-ziellist =[[150,0],[150,150],[0,150],[0,0]]
+ziellist =[[650,0],[650,250],[0,250],[0,0]]
 plan.init_generator_ziel(ziellist)
+filename_enviroment = "Weg"
 
 #sys.stdout = Logger()  #Schreibe stdout in Datei logfile.log
 
@@ -65,6 +66,7 @@ sleep(1)
 
 
 while Robo==True:
+    encoder.setLedHigh()
     os.system("clear")
     #get Distances from IR-Sensors
     dist_front, dist_left , dist_right, obstacles = scanner.getFixData()
@@ -123,13 +125,13 @@ while Robo==True:
     #motor.booster(speed_L,speed_R)
 
     #Save environment
-    logic.save_environment(grid.getGridObstacles(), karte.getRoboPath() )
+    logic.save_environment(grid.getGridObstacles(), karte.getRoboPath(), filename_enviroment )
 
     #Manuell Control
     #steer,speed=manuell.getManuellCommand()
 
     #Motor Outputs
-    motor_pwm.setCommand(steer,speed,speedL*0.9,speedR*0.9)
+    motor_pwm.setCommand(steer,speed,speedL*0.6,speedR*0.6)
 
     #Position Ausgeben
     print(karte.getRoboPos())
@@ -164,6 +166,8 @@ while Robo==True:
         motor_pwm.setCommand(0,0)
         sleep(2)
         loops = 0
+
+    encoder.setLedLow()
     sleep(0.15)
 
 
