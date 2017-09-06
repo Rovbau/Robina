@@ -21,29 +21,29 @@ class Manuell():
             print("Taste: "+str(comm))
 
             if comm == "8":
-                speed=1
-                steer=0
+                speed=1.0
+                steer=0.0
             elif comm == "6":
-                speed=0
-                steer=-1
+                speed=1.0
+                steer=-1.0
             elif comm == "4":
-                speed=0
-                steer=1
+                speed=1.0
+                steer=1.0
             elif comm == "0":
-                speed=0
-                steer=0
+                speed=0.0
+                steer=0.0
             elif comm == "2":
-                speed=-1
-                steer=0
+                speed=-1.0
+                steer=0.0
             elif comm == "1":
-                speed=-1
-                steer=1
+                speed=-1.0
+                steer=1.0
             elif comm == "3":
-                speed=-1
-                steer=-1            
+                speed=-1.0
+                steer=-1.0            
             else:
-                speed=0
-                steer=0
+                speed=0.0
+                steer=0.0
             self.speed = speed
             self.steer = steer
 

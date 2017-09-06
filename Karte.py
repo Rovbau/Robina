@@ -51,7 +51,7 @@ class Karte():
         a=13.3 
         c=13.3
         Radstand=a+c
-        countsRadGross=32
+        countsRadGross= 288
 
         #Werte Uebernehmen: Counts in (cm) umrechnen
         deltaL=deltaL*((5.5*pi)/countsRadGross)           #(Radumfang)/counts

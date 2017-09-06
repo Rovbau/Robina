@@ -195,10 +195,11 @@ if __name__ == "__main__":
     motor_pwm = MotorPWM()
 
     motor_pwm.setCommand(0.5,1)
-    sleep(2)
+    time.sleep(2)
     motor_pwm.setCommand(0.0,0)    
-
-
+    time.sleep(2)
+    motor_pwm.setCommand(-0.5,-0.5)
+    time.sleep(2)
 
 
 
