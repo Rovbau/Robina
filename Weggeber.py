@@ -30,7 +30,7 @@ class Weggeber():
         #PIC Adresse
         self.addrweggeber=0x18
         _ = bus.read_byte_data(self.addrweggeber,0x01)  #Dummy read damit Counter null
-        _ = bus.read_byte_data(self.addrweggeber,0x02)
+        _ = bus.read_byte_data(self.addrweggeber,0x03)
 
         print("Init Weggeber")    
 
@@ -38,47 +38,22 @@ class Weggeber():
         """Count pulse L und R und DistanzRad, loop"""
 
         #Get Weggeber counts and clear Register
-        left = bus.read_byte_data(self.addrweggeber,0x01)  #Read PIC Register1 => CountsL
-        if left > 127:
-            left = (256-left) * (-1)
+        left_low = bus.read_byte_data(self.addrweggeber,0x01)  #Read PIC Register1 => CountsLowByte
+        left_high = bus.read_byte_data(self.addrweggeber,0x02)  #read CountsHighByte
+        left = (left_high << 8) + left_low
+        if left > 32767:
+            left = (65536 - left) * (-1)
         self.CountL = left
-        assert left < 100 , "Counter left Overrun"
+       
+        right_low = bus.read_byte_data(self.addrweggeber,0x03)  #Read PIC Register1 => CountsLowByte
+        right_high = bus.read_byte_data(self.addrweggeber,0x04)  #read CountsHighByte
+        right = (right_high << 8) + right_low
+        if right > 32767:
+            right = (65536 - right) * (-1)
+        self.CountR = right        
         
-        right = bus.read_byte_data(self.addrweggeber,0x02)  #Read PIC Register2 => CountsR
-        if right > 127:
-            right = (256-right) * (-1)
-        self.CountR  = right
-        assert right < 100 , "Counter right Overrun"
-        
-##        aktualL_counts = countsL - self.counts_left_old 
-##        aktualR_counts = countsR - self.counts_right_old
-##
-##        self.counts_left_old = countsL
-##        self.counts_right_old = countsR
-##        
-##        if countsL > 900 or countsR > 900:
-##            bus.write_word_data(self.addrweggeberL,0x01,0x00)       
-##            bus.write_word_data(self.addrweggeberR,0x01,0x00)            
-##
-##            self.counts_left_old = 0
-##            self.counts_right_old = 0
-
-
-##        #Count minus wenn Robo retour
-##        if self.motor_pwm.motor_is_backward()== True :
-##            self.CountL = self.CountL + aktualL_counts * (-1)
-##            self.CountR = self.CountR + aktualR_counts * (-1)
-##        else:
-##            self.CountL = self.CountL + aktualL_counts
-##            self.CountR = self.CountR + aktualR_counts
-##        
-##        #if GPIO.input(self.PortRRueck)==1:
-##        #    self.CountR = self.CountR + aktualR_counts * (-1)
-##        #else:
-##        #    self.CountR = self.CountR + aktualR_counts
-
         self.DiffCount=self.CountR-self.CountL
-
+        return
     
     def clearWeggeberLR(self):
         """clears L / R Counts"""
@@ -116,7 +91,7 @@ if __name__ == "__main__":
     while True:
         weggeber.runAllTime()
         print(weggeber.getPulseLR())
-#        print(weggeber.getSpeedLR())
+        print(weggeber.getSpeedLR())
         sleep(0.21)
 
 

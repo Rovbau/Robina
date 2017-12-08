@@ -42,7 +42,7 @@ grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
 logic.setGlobalZiel(0,0)
 
-ziellist =[[80,0],[80,80],[0,80],[0,0]]
+ziellist =[[280,0],[280,280],[0,280],[0,0]]
 plan.init_generator_ziel(ziellist)
 filename_enviroment = "Weg"
 
@@ -128,11 +128,11 @@ while Robo==True:
     logic.save_environment(grid.getGridObstacles(), karte.getRoboPath(), filename_enviroment )
 
     #Manuell Control
-    steer,speed=manuell.getManuellCommand()
+    #steer,speed=manuell.getManuellCommand()
     print(steer,speed)
 
     #Motor Outputs
-    motor_pwm.setCommand(steer,speed,speedL*0.1,speedR*0.1)
+    motor_pwm.setCommand(steer,speed,speedL*0.4,speedR*0.4)
 
     #Position Ausgeben
     print(karte.getRoboPos())
