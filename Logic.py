@@ -270,7 +270,7 @@ class Logic():
         if pumperL == True or pumperR == True:
             return(pumperL, pumperR)
         #Wenn 3Sec keine Bewegung simuliere PumperLR=TRUE
-        if (time.time()-self.stop_time) > 3:
+        if (time.time()-self.stop_time) > 30:
             self.stop_time = time.time()
             print("RETOUR TIME to high")
             time.sleep(1)

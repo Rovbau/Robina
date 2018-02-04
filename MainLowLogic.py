@@ -42,7 +42,7 @@ grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
 logic.setGlobalZiel(0,0)
 
-ziellist =[[280,0],[280,280],[0,280],[0,0]]
+ziellist =[[2800,0],[2800,2800],[0,2800],[0,0]]
 plan.init_generator_ziel(ziellist)
 filename_enviroment = "Weg"
 
@@ -106,7 +106,7 @@ while Robo==True:
     
     #Send Data via NET
     solved_path = []
-    #roundet_walls=grid.getRoundetWalls()
+    roundet_walls=grid.getRoundetWalls()
     #print(roundet_walls)
     #json.sendVisual(roundet_walls, [[x,y]],solved_path)    
     
@@ -132,7 +132,7 @@ while Robo==True:
     print(steer,speed)
 
     #Motor Outputs
-    motor_pwm.setCommand(steer,speed,speedL*0.4,speedR*0.4)
+    motor_pwm.setCommand(steer,speed,speedL*0.8,speedR*0.8)
 
     #Position Ausgeben
     print(karte.getRoboPos())

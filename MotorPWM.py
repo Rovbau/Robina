@@ -104,7 +104,7 @@ class MotorPWM(object):
                 return(soll)
                 
             # Error between the desired and actual output
-            ist = ist * 32
+            ist = ist * 1
             e = soll - ist
 
             # Integration Input
