@@ -5,7 +5,7 @@
 
 from copy import deepcopy
 import cPickle as pickle
-#from Astar import *
+from Astar import *
 import math
 import numpy as np
 import sys
@@ -15,7 +15,7 @@ class Grid():
         self.width = width
         self.heigh = heigh
         self.walls = []
-        #self.gridwithweights=GridWithWeights(width,heigh)
+        self.gridwithweights=GridWithWeights(width,heigh)
         self.clearance_add_walls = []
         self.last_start_pos = (width,heigh)
         self.karten_arr = np.zeros(shape = (self.width, self.heigh))
@@ -60,10 +60,11 @@ class Grid():
                     x_occ_pre, y_occ_pre = x_occ, y_occ
 
                     self.check_for_double(x_occ + x_start ,y_occ + y_start)                                 #Keine doppel in roundet_walls
-            
-        print(self.karten_arr)
-        print(sys.getsizeof(self.karten_arr))
-        print(sys.getsizeof(self.roundet_walls))
+
+        self.gridwithweights.walls.append(deepcopy(self.roundet_walls))
+        #print(self.karten_arr)
+        #print(sys.getsizeof(self.karten_arr))
+        #print(sys.getsizeof(self.roundet_walls))
         
     def check_for_double(self,x_occ, y_occ):
         x_occ = x_occ - self.x_middle

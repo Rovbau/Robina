@@ -128,7 +128,7 @@ while Robo==True:
     logic.save_environment(grid.getGridObstacles(), karte.getRoboPath(), filename_enviroment )
 
     #Manuell Control
-    #steer,speed=manuell.getManuellCommand()
+    steer,speed=manuell.getManuellCommand()
     print(steer,speed)
 
     #Motor Outputs
