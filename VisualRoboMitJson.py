@@ -119,16 +119,18 @@ class Visual():
 
         can.delete("Point")
         print("DataPoints [Obsta.][Pos.]: "+str(len(self.obstacles_in_grid))+" "+str(len( self.position_in_grid)))
-        
+        print(len(self.obstacles_in_grid))
         for pos in self.obstacles_in_grid:
             X=pos[0]*10
             Y=pos[1]*10
             #Obstacle Farbe nach Anzahlhits
-            anzahl_hit = min(200,pos[2]*5)
+            anzahl_hit = min(200,abs(pos[2]*5))
             obst_color = '#%02x%02x%02x' % (200,200-anzahl_hit , 200-anzahl_hit)
-            #Zeichne Hindernisspunkte Global ein 
-            can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill=obst_color,tag="Point")
-
+            #Zeichne Hindernisspunkte Global ein
+            try:
+                can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill=obst_color,tag="Point")
+            except:
+                print("ERROR:" +str(pos))
         for pos in self.position_in_grid:
             X=pos[0]
             Y=pos[1]

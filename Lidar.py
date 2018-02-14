@@ -12,6 +12,7 @@ class Lidar_Lite():
     self.velWriteVal = 0x08
     self.velReadReg = 0x09
     self.status = 0x01
+    print("Init Lidar")
 
   def connect(self, bus):
     try:
@@ -24,14 +25,13 @@ class Lidar_Lite():
   def writeAndWait(self, register, value):
     self.bus.write_byte_data(self.address, register, value);
 
-
   def readAndWait(self, register):
     res = self.bus.read_byte_data(self.address, register)
     return res
 
   def getDistance(self):
+    """Read Lidar distance [cm], Waits for BusyFlag = low""" 
     self.writeAndWait(self.distWriteReg, self.distWriteVal)
-    #time.sleep(0.01)
     status_bit = bin(self.readAndWait(self.status))
     
     while status_bit[7] == "1":
@@ -59,7 +59,7 @@ if __name__ == "__main__":
   lidar.connect(1)
   liste = []
   start = time.time()
-  for  i in range(1000):
+  for  i in range(10):
     x = lidar.getDistance()
     time.sleep(0.5)    
   

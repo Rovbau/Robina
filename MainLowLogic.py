@@ -2,6 +2,7 @@
 
 Robo=True
 
+from Lidar import *
 from Scanner import *
 from Encoder import *
 import Kompass
@@ -61,6 +62,10 @@ ThreadEncoder.start()
 ThreadEncoder=Thread(target=manuell.runManuell,args=())
 ThreadEncoder.daemon=True
 ThreadEncoder.start()
+
+ThreadScanAllTime=Thread(target=scanner.runAllTime, args=(1,))
+ThreadScanAllTime.daemon=True
+ThreadScanAllTime.start()
   
 sleep(1)
 
@@ -68,8 +73,9 @@ sleep(1)
 while Robo==True:
     encoder.setLedHigh()
     os.system("clear")
-    #get Distances from IR-Sensors
-    dist_front, dist_left , dist_right, obstacles = scanner.getFixData()
+    #get Distances from IR-Sensors and Lidar
+    dist_front, dist_left , dist_right, _ = scanner.getFixData()
+    obstacles = scanner.getNewDistValues()
     print(dist_front,dist_left, dist_right)
 
     #Obstacles eintragen
@@ -86,7 +92,6 @@ while Robo==True:
     #print("Pose:"+str(int(pose)))
     grid.setStartInGrid(x,y)
     walls=karte.getObstacles()
-
     grid.obstaclesInGrid(walls)
     #grid.addClearance()
     #grid.saveGridObstacles()
@@ -108,7 +113,7 @@ while Robo==True:
     solved_path = []
     roundet_walls=grid.getRoundetWalls()
     #print(roundet_walls)
-    #json.sendVisual(roundet_walls, [[x,y]],solved_path)    
+    json.sendVisual(roundet_walls, [[x,y]],solved_path)    
     
     logic.setRoboPos(x,y,pose)
 
@@ -123,7 +128,7 @@ while Robo==True:
     print(round(steer,3),speed)
     #speed_L,speed_R = encoder.getSpeedLR()
     #motor.booster(speed_L,speed_R)
-
+    #print(grid.getGridObstacles())
     #Save environment
     logic.save_environment(grid.getGridObstacles(), karte.getRoboPath(), filename_enviroment )
 

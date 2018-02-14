@@ -8,6 +8,7 @@ import RPi.GPIO as GPIO
 from Sonar import *
 from math import cos,sin,radians
 from threading import *
+from Lidar import *
 GPIO.setwarnings(False)
 import smbus
 bus = smbus.SMBus(1)
@@ -20,7 +21,9 @@ class Scanner():
         self.lock=Lock()
         self.RunScan=0
         self.ScanList=[]
-	self.setServo(90)
+        self.setServo(90)
+	self.lidar = Lidar_Lite()
+	self.lidar.connect(1)
         print("Init Scanner")
 
     def runAllTime(self,RunScan):
@@ -28,31 +31,28 @@ class Scanner():
         self.ScanList=[]
         
         while RunScan==1:
-            for angle in range(160, 0, -10):
+            for angle in range(160, 0, -1):
                 self.readSensorAndUpdateObstacles(angle)
-            for angle in range(10, 170, 10):
+            for angle in range(10, 170, 1):
                 self.readSensorAndUpdateObstacles(angle)
 
     def readSensorAndUpdateObstacles(self,angle):
         self.setServo(angle)
-        sleep(0.2)
-        Messwert,Error=self.Sonar1.GetADC(0)
-        Messwert,Error=self.Sonar1.GetADC(0)
-        if Messwert<120:
-            self.lock.acquire()
-            self.ScanList.append([(angle-90),Messwert])
-            self.lock.release()
+        sleep(0.5)
+        #Messwert,Error=self.Sonar1.GetADC(0)
+        #Messwert,Error=self.Sonar1.GetADC(0)
+        Messwert = self.lidar.getDistance()
+        self.ScanList.append([(angle-90),Messwert])
+           
 
     def getNewDistValues(self):
         Obstacles=self.ScanList
-        Ausgabe=[]
-        
+        Ausgabe=[]        
         #Delta X/Y für Hindernis
         for i in range(len(Obstacles)):
             Dx=(Obstacles[i][1]*cos(radians(Obstacles[i][0])))
             Dy=(Obstacles[i][1]*sin(radians(Obstacles[i][0])))
-            #print(int(Dx),int(Dy))
-            Ausgabe.append((int(Dx),int(Dy)))
+            Ausgabe.append([int(Dx),int(Dy)])
         self.ScanList=[]
         return(Ausgabe)
 
@@ -115,7 +115,6 @@ if __name__ == "__main__":
 
     sleep(1)
     while True:
-        #print(Scanner1.getNewDistValues())
-        
-        print(Scanner1.getFixData())
-        sleep(0.6)
+        print(Scanner1.getNewDistValues())
+        #print(Scanner1.getFixData())
+        sleep(1)

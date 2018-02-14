@@ -46,25 +46,19 @@ class Grid():
             self.karten_arr[obstacle_x_grid, obstacle_y_grid] = hinderniss
             
             self.check_for_double(obstacle_x_grid, obstacle_y_grid)                         #Keine doppel
-            
-            print("start" +str(x_start))
-            dist, winkel = self.cart2pol(obstacle_x_grid -  x_start, obstacle_y_grid - y_start)
-            print(dist, winkel)
 
-            for distance in range(0, int(round(dist))):                                 #Von dist=0 bis zum Hinderniss
+            dist, winkel = self.cart2pol(obstacle_x_grid -  x_start, obstacle_y_grid - y_start)
+
+            for distance in range(int(round(dist-1.7)), int(round(dist))):                                 #Von dist=0 bis zum Hinderniss
                 x_occ, y_occ = self.pol2cart(distance, winkel)
-                print(x_occ, y_occ)
                 
                 if x_occ != x_occ_pre or  y_occ != y_occ_pre:
                     self.karten_arr[x_occ + x_start ,y_occ + y_start] = self.karten_arr[x_occ + x_start ,y_occ + y_start] - 1     #Reduziere Feldwert da kein Hinderniss
                     x_occ_pre, y_occ_pre = x_occ, y_occ
 
                     self.check_for_double(x_occ + x_start ,y_occ + y_start)                                 #Keine doppel in roundet_walls
-
-        self.gridwithweights.walls.append(deepcopy(self.roundet_walls))
-        #print(self.karten_arr)
-        #print(sys.getsizeof(self.karten_arr))
-        #print(sys.getsizeof(self.roundet_walls))
+        walls = deepcopy(self.roundet_walls)
+        self.gridwithweights.walls.extend(walls)
         
     def check_for_double(self,x_occ, y_occ):
         x_occ = x_occ - self.x_middle
