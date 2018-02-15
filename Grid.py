@@ -49,7 +49,7 @@ class Grid():
 
             dist, winkel = self.cart2pol(obstacle_x_grid -  x_start, obstacle_y_grid - y_start)
 
-            for distance in range(int(round(dist-1.7)), int(round(dist))):                                 #Von dist=0 bis zum Hinderniss
+            for distance in range(int(round(dist)), int(round(dist))):                                 #Von dist=0 bis zum Hinderniss
                 x_occ, y_occ = self.pol2cart(distance, winkel)
                 
                 if x_occ != x_occ_pre or  y_occ != y_occ_pre:

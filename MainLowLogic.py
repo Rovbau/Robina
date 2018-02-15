@@ -2,7 +2,6 @@
 
 Robo=True
 
-from Lidar import *
 from Scanner import *
 from Encoder import *
 import Kompass
@@ -32,13 +31,13 @@ scanner=Scanner()
 karte=Karte(encoder)
 plan=Plan()
 motor_pwm=MotorPWM()
-grid=Grid(40,40)
+grid=Grid(120,120)
 logic=Logic()
 manuell=Manuell()
 json=Json()
 weggeber=Weggeber(motor_pwm)
 loops =0
-grid.setZielInGrid(200,200)
+grid.setZielInGrid(900,900)
 grid.setStartInGrid(0,0)
 karte.setRoboPosZero(0,0)
 logic.setGlobalZiel(0,0)
@@ -113,7 +112,7 @@ while Robo==True:
     solved_path = []
     roundet_walls=grid.getRoundetWalls()
     #print(roundet_walls)
-    json.sendVisual(roundet_walls, [[x,y]],solved_path)    
+    #json.sendVisual(roundet_walls, [[x,y]],solved_path)    
     
     logic.setRoboPos(x,y,pose)
 
@@ -160,7 +159,7 @@ while Robo==True:
         else:
             sys.exit()
 
-    Spann, _ = scanner.Sonar1.GetBatSpann()
+    Spann, _ = scanner.sonar1.GetBatSpann()
     if Spann < 7:
         print("ACHTUNG BATTERIE LEER")
 

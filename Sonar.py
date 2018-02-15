@@ -14,6 +14,7 @@ class Sonar():
         OffTime=0
 
         GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
         GPIO.setup(self.PortTrig,GPIO.OUT)
         GPIO.output(self.PortTrig,0)
         GPIO.setup(self.PortEchoL,GPIO.IN)

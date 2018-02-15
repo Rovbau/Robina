@@ -32,11 +32,11 @@ class Lidar_Lite():
   def getDistance(self):
     """Read Lidar distance [cm], Waits for BusyFlag = low""" 
     self.writeAndWait(self.distWriteReg, self.distWriteVal)
+
     status_bit = bin(self.readAndWait(self.status))
-    
     while status_bit[7] == "1":
       status_bit = bin(self.readAndWait(self.status))
-      
+      time.sleep(0.02)
     dist1 = self.readAndWait(self.distReadReg1)
     dist2 = self.readAndWait(self.distReadReg2)
     return (dist1 << 8) + dist2

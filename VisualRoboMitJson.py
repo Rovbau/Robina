@@ -177,7 +177,7 @@ class Visual():
     def loaden(self):
         """Oeffnet Dialogfenster um Datei zu laden"""
         self.flag_load_file = False
-        self.file_name = tkFileDialog.askopenfilename(initialdir = "/",title = "Select file",
+        self.file_name = tkFileDialog.askopenfilename(initialdir = "home/pi",title = "Select file",
                                                       filetypes = (("pickels","*.p"),("all files","*.*")))
         self.flag_load_file = True
         root.title (self.file_name)

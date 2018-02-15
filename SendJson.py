@@ -16,9 +16,12 @@ class Json():
 
         send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         
-        ip = "127.0.0.1"
+        ip = "192.168.4.165"
 
         msg = json.dumps({'Obstacles': obstacles, 'Path': path, 'Solved_path': solved_path})
-        send.sendto(msg, (ip, 50000)) 
-        send.close()
-        
+        try:
+            send.sendto(msg, (ip, 50000)) 
+            send.close()
+        except:
+            print("ERROR Netzwerk nicht erreichbar")
+            send.close()
