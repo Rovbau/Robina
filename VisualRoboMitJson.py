@@ -38,7 +38,7 @@ class Server():
                 daten, addr = s.recvfrom(1024)
                 nachricht = json.loads(daten)
                 
-                self.obs.extend( nachricht["Obstacles"])
+                self.obs = nachricht["Obstacles"] #obs.extend(
                 self.path = nachricht["Path"]
                 self.solved_path1 = nachricht["Solved_path"]
         finally: 
@@ -119,7 +119,7 @@ class Visual():
 
         can.delete("Point")
         print("DataPoints [Obsta.][Pos.]: "+str(len(self.obstacles_in_grid))+" "+str(len( self.position_in_grid)))
-        print(len(self.obstacles_in_grid))
+
         for pos in self.obstacles_in_grid:
             X=pos[0]*10
             Y=pos[1]*10

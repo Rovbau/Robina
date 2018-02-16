@@ -123,7 +123,7 @@ class Karte():
         return(self.RoboPath)
 
     def getObstacles(self):
-        """return latest Obstacles"""
+        """return latest Obstacles and clears obstacles"""
         ausgabeObstacle = self.globalObstaclesList
         self.globalObstaclesList = []
         return(ausgabeObstacle)

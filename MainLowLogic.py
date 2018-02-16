@@ -100,10 +100,9 @@ while Robo==True:
     weggeber.runAllTime()
     deltaL,deltaR=weggeber.getPulseLR()
     speedL,speedR = weggeber.getSpeedLR()
-
     kompassCourse=Kompass.getKompass()
     karte.updateRoboPos(deltaL,deltaR,kompassCourse)
-    karte.saveRoboPath()
+    #karte.saveRoboPath()
     encoder.clearEncoderLR()
     encoder.clearEncoderDist()
     weggeber.clearWeggeberLR()
@@ -112,7 +111,7 @@ while Robo==True:
     solved_path = []
     roundet_walls=grid.getRoundetWalls()
     #print(roundet_walls)
-    #json.sendVisual(roundet_walls, [[x,y]],solved_path)    
+    json.sendVisual(roundet_walls, [[x,y]],solved_path)    
     
     logic.setRoboPos(x,y,pose)
 
@@ -129,7 +128,7 @@ while Robo==True:
     #motor.booster(speed_L,speed_R)
     #print(grid.getGridObstacles())
     #Save environment
-    logic.save_environment(grid.getGridObstacles(), karte.getRoboPath(), filename_enviroment )
+    #logic.save_environment(grid.getGridObstacles(), karte.getRoboPath(), filename_enviroment )
 
     #Manuell Control
     steer,speed=manuell.getManuellCommand()
