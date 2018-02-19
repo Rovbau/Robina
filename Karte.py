@@ -9,11 +9,11 @@ import cPickle as pickle
 class Karte():
     def __init__(self,encoder):
         self.encoder=encoder
-        self.RoboPosY=0
-        self.RoboPosX=0
+        self.RoboPosY= 0
+        self.RoboPosX= 0
         self.RoboPath=[]
         self.globalObstaclesList=[]
-        self.global_kurs=0
+        self.global_kurs= 0
         self.kompassOld=0
         self.timeold=0
 
