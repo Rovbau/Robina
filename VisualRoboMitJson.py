@@ -1,3 +1,4 @@
+#! python
 #Programm Zeigt in Tkinter die RoboPos und die Hindernisse an.
 #Daten via Socket und Json
 
@@ -35,7 +36,7 @@ class Server():
                 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 s.bind(("", 50000)) 
 
-                daten, addr = s.recvfrom(1024)
+                daten, addr = s.recvfrom(2024)
                 nachricht = json.loads(daten)
                 
                 self.obs.extend( nachricht["Obstacles"])
@@ -93,6 +94,16 @@ class Visual():
         self.solved_path = []
         self.sichern = sichern
         self.flag_load_file=False
+        self.color = None
+
+    def setColor(self):
+        self.color = "blue"
+        self.obstacles_in_grid = []
+
+    def save(self):
+        pickeln = open ("oneScan"+str(int(time.time()))+".p", "wb" )
+        data= pickle.dump(self.obstacles_in_grid, pickeln)
+        pickeln.close()        
        
     def printObstacles(self):
         """Zeichne die Hindernisse und RoboPath"""
@@ -109,7 +120,7 @@ class Visual():
         else:
             obstacles, path, solved_path = serv.getNewValues()
             serv.clearValues()
-            self.obstacles_in_grid.extend(obstacles)
+            self.obstacles_in_grid = obstacles
             #self.obstacles_in_grid = obstacles
             self.position_in_grid.extend(path)
             self.solved_path = solved_path
@@ -117,25 +128,29 @@ class Visual():
             #Save neu Points
             self.sichern.storeFile(self.obstacles_in_grid, self.position_in_grid)
 
-        can.delete("Point")
+        #can.delete("Point")
         print("DataPoints [Obsta.][Pos.]: "+str(len(self.obstacles_in_grid))+" "+str(len( self.position_in_grid)))
         print(len(self.obstacles_in_grid))
+        
         for pos in self.obstacles_in_grid:
             X=pos[0]*10
             Y=pos[1]*10
             #Obstacle Farbe nach Anzahlhits
-            anzahl_hit = min(200,abs(pos[2]*5))
-            obst_color = '#%02x%02x%02x' % (200,200-anzahl_hit , 200-anzahl_hit)
+            if self.color == "blue":
+                obst_color = "blue"
+            else:
+                anzahl_hit = min(200,abs(pos[2]*5))
+                obst_color = '#%02x%02x%02x' % (200,200-anzahl_hit , 200-anzahl_hit)
             #Zeichne Hindernisspunkte Global ein
             try:
-                can.create_rectangle(Nullx+X-5,Nully-Y+5,Nullx+X+5,Nully-Y-5, width=1, fill=obst_color,tag="Point")
+                can.create_rectangle(Nullx+X-4,Nully-Y+4,Nullx+X+4,Nully-Y-4, width=1, fill=obst_color,tag="Point")
             except:
                 print("ERROR:" +str(pos))
         for pos in self.position_in_grid:
-            X=pos[0]
-            Y=pos[1]
+            X=pos[0]/2
+            Y=pos[1]/2
             #Zeichne Path Global ein 
-            can.create_oval(Nullx+X-15,Nully-Y+15,Nullx+X+15,Nully-Y-15, width=1, fill=None,tag="Point")
+            can.create_oval(Nullx+X-1,Nully-Y+1,Nullx+X+1,Nully-Y-1, width=1, fill=None,tag="Point")
 
         try:
             for pos in self.solved_path:
@@ -203,6 +218,8 @@ buttonU = Button(root, text="Unten", fg="blue",command=lambda: visual.setZoom(0,
 buttonO = Button(root, text="Oben", fg="blue",command=lambda: visual.setZoom(0,-100))
 buttonMenu = Button(root, text="Load", fg="blue",command=visual.loaden)
 buttonClear = Button(root, text="Clear", fg="blue",command=visual.clearPoints)
+buttonColor = Button(root, text="Color", fg="blue",command=visual.setColor)
+buttonSave = Button(root, text="Save", fg="blue",command=visual.save)
 
 buttonO.pack(side=TOP)
 buttonMenu.pack()
@@ -210,6 +227,8 @@ buttonClear.pack()
 buttonU.pack(side=BOTTOM)
 buttonR.pack(side=RIGHT)
 buttonL.pack(side=LEFT)
+buttonColor.pack(side=LEFT)
+buttonSave.pack(side=LEFT)
 
 entryIP = Entry(root, width= 30)
 entryIP.pack()
