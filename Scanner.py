@@ -17,7 +17,7 @@ class Scanner():
         self.run_scan = 0
         self.scan_list= []
         self.servo = Servo()
-        self.servo_step = 10
+        self.servo_step = 1
 	self.lidar = Lidar_Lite()
 	self.lidar.connect(1)
         print("Init Scanner, Servo")
@@ -36,8 +36,7 @@ class Scanner():
     def readSensorAndUpdateObstacles(self,angle):
         """Set Servo angle, get Distance[cm] from Lidar append to scan_list"""
         self.servo.set_servo(angle)
-        print(angle)
-        sleep(0.20)
+        sleep(0.10)
         messwert = self.lidar.getDistance()
         if messwert < 900:
             self.scan_list.append([angle, messwert])

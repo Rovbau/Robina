@@ -15,65 +15,34 @@ class Grid():
         self.width = width
         self.heigh = heigh
         self.walls = []
-        self.gridwithweights=GridWithWeights(width,heigh)
+        self.gridwithweights=GridWithWeights(self.width, self.heigh)
         self.clearance_add_walls = []
         self.last_start_pos = (width,heigh)
         self.karten_arr = np.zeros(shape = (self.width, self.heigh))
         self.x_middle = self.width / 2
         self.y_middle = self.heigh / 2         
         
-    def obstaclesInGrid(self, obstacles):
-        """GlobaleHinderniss (x[cm],y[cm]) in Grid eintragen (RasterX,RasterY)"""        
-        unpaintedObstacles=obstacles
-        self.roundet_walls=[]
-        neg_element = []
+    def obstaclesInGrid(self, walls):
+        """GlobaleHinderniss (x[cm],y[cm]) in Array eintragen (RasterX,RasterY)"""        
+        unpainted_obstacles = walls
+        self.roundet_walls = []
+
         
-        for obstacle in unpaintedObstacles:
+        for obstacle in unpainted_obstacles:           
+            x_grid = int(obstacle[0]/10) + int(self.x_middle)
+            y_grid = int(obstacle[1]/10) + int(self.y_middle)
+            #Add Value zu Hinderniss
+            self.karten_arr[x_grid, y_grid] = self.karten_arr[x_grid, y_grid] + 10      
+            cell_value = self.karten_arr[x_grid, y_grid]
+            #Add to roundet_walls minus grid-middle
+            self.roundet_walls.append([x_grid - int(self.x_middle),
+                                       y_grid - int(self.y_middle), cell_value])
             
-            #round to 5 Bsp: x=int(round(obstacle[0]/5.0)*5.0)
-            obstacle_x_grid = int(obstacle[0]/10)
-            obstacle_y_grid = int(obstacle[1]/10)
-            obstacle_x_grid = obstacle_x_grid + self.x_middle
-            obstacle_y_grid = obstacle_y_grid + self.y_middle
-            x_occ_pre = obstacle_x_grid
-            y_occ_pre = obstacle_y_grid
-
-#************************
-            x_start, y_start = self.startgrid
-            x_start = x_start + self.x_middle
-            y_start = y_start + self.y_middle
-            hinderniss = self.karten_arr[obstacle_x_grid, obstacle_y_grid] + 10 #Add Value zu Hinderniss
-            self.karten_arr[obstacle_x_grid, obstacle_y_grid] = hinderniss
-            
-            self.check_for_double(obstacle_x_grid, obstacle_y_grid)                         #Keine doppel
-
-            dist, winkel = self.cart2pol(obstacle_x_grid -  x_start, obstacle_y_grid - y_start)
-
-            for distance in range(int(round(dist)), int(round(dist))):                                 #Von dist=0 bis zum Hinderniss
-                x_occ, y_occ = self.pol2cart(distance, winkel)
-                
-                if x_occ != x_occ_pre or  y_occ != y_occ_pre:
-                    self.karten_arr[x_occ + x_start ,y_occ + y_start] = self.karten_arr[x_occ + x_start ,y_occ + y_start] - 1     #Reduziere Feldwert da kein Hinderniss
-                    x_occ_pre, y_occ_pre = x_occ, y_occ
-
-                    self.check_for_double(x_occ + x_start ,y_occ + y_start)                                 #Keine doppel in roundet_walls
-        walls = deepcopy(self.roundet_walls)
-        self.gridwithweights.walls.extend(walls)
-        
-    def check_for_double(self,x_occ, y_occ):
-        x_occ = x_occ - self.x_middle
-        y_occ = y_occ - self.y_middle
-        element_allready = False
-        for element in self.roundet_walls:                                  #Keine doppel in roundet_walls
-            element_allready = False
-            if element[0:2] == [x_occ, y_occ]:
-                element[2] = self.karten_arr[x_occ, y_occ]
-                element_allready = True
-                break                           
-        if element_allready == False:                                       #Add neue Felder zu roundet_walls
-            self.walls.append([x_occ, y_occ,1])
-            #self.gridwithweights.walls=deepcopy(self.walls)
-            self.roundet_walls.append([x_occ, y_occ, self.karten_arr[x_occ + self.x_middle, y_occ + self.x_middle]])
+        #self.gridwithweights.walls.extend(walls)
+        #Add neue Felder zu roundet_walls
+        #self.walls.append([x_occ, y_occ,1])
+        #self.gridwithweights.walls=deepcopy(self.walls)
+        #self.roundet_walls.append([x_occ, y_occ, self.karten_arr[x_occ + self.x_middle, y_occ + self.x_middle]])
 
     def cart2pol(self, x, y):
         dist = math.sqrt(x**2 + y**2)
@@ -108,16 +77,17 @@ class Grid():
     def saveGridObstacles(self):
         """Hindernisse speichern pickle"""
         pickelObstacles=open( "RoboObstacles.p", "wb" )
-        pickle.dump(self.gridwithweights.walls,pickelObstacles)
+        pickle.dump(self.gridwithweights.walls, pickelObstacles)
         pickelObstacles.close()
 
     def setStartInGrid(self,x,y):
-        """Aktuelle GridPosition uebernehmen cm -> 5cmGrid"""
+        """Aktuelle GridPosition uebernehmen [cm]"""
         x=int(x/10)
         y=int(y/10)
         self.startgrid=(x,y)
         
     def setZielInGrid(self,x,y):
+        """Neue ziel Position uebernehmen [cm]"""
         x=int(x/10)
         y=int(y/10)
         self.zielgrid=(x,y)
@@ -179,7 +149,7 @@ class Grid():
 
     def saveGridPath(self,path):
         """Path speichern pickle"""
-        pickleSolved=open( "RoboSolved.p", "wb" )
+        pickleSolved = open( "RoboSolved.p", "wb" )
         pickle.dump(path,pickleSolved)
         pickleSolved.close()
     
